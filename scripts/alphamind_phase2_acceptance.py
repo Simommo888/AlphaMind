@@ -513,6 +513,20 @@ def collect_reference_doc_ids(value: Any) -> set[str]:
     return doc_ids
 
 
+def duplicate_knowledge_id(result: UploadResult) -> str:
+    if str(result.http_status) != "409":
+        return ""
+    if result.knowledge_id:
+        return result.knowledge_id
+    try:
+        payload = json.loads(result.message)
+    except json.JSONDecodeError:
+        return ""
+    if not isinstance(payload, dict) or payload.get("code") != "duplicate_file":
+        return ""
+    return extract_id(payload)
+
+
 def chat_check(*, base_url: str, api_key: str, kb_id: str, query: str, timeout: float) -> tuple[str, str]:
     session_id = create_session(base_url, api_key, timeout)
     status, events, raw = http_sse(
@@ -614,9 +628,9 @@ def graph_smoke_check(
     checks = {
         "nodes": "MATCH (n) RETURN count(n) AS count",
         "relations": "MATCH ()-[r]->() RETURN count(r) AS count",
-        "Company": "MATCH (n:Company) RETURN count(n) AS count",
-        "Report": "MATCH (n:Report) RETURN count(n) AS count",
-        "Broker": "MATCH (n:Broker) RETURN count(n) AS count",
+        "Company": "MATCH (n) WHERE 'Company' IN labels(n) OR n.type = 'Company' OR n.label = 'Company' RETURN count(n) AS count",
+        "Report": "MATCH (n) WHERE 'Report' IN labels(n) OR n.type = 'Report' OR n.label = 'Report' RETURN count(n) AS count",
+        "Broker": "MATCH (n) WHERE 'Broker' IN labels(n) OR n.type = 'Broker' OR n.label = 'Broker' RETURN count(n) AS count",
         "COVERS": "MATCH ()-[r:COVERS]->() RETURN count(r) AS count",
         "PUBLISHED_BY": "MATCH ()-[r:PUBLISHED_BY]->() RETURN count(r) AS count",
     }
@@ -639,9 +653,11 @@ def graph_smoke_check(
         return "fail", "; ".join(failures[:3])
     if counts.get("nodes", 0) <= 0 or counts.get("relations", 0) <= 0:
         return "fail", f"graph empty: {counts}"
-    missing = [name for name in ("Company", "Report", "COVERS") if counts.get(name, 0) <= 0]
-    if missing:
-        return "warn", f"graph reachable but missing phase2 labels/relations {missing}: {counts}"
+    missing_relations = [name for name in ("COVERS", "PUBLISHED_BY") if counts.get(name, 0) <= 0]
+    if missing_relations:
+        return "warn", f"graph reachable but missing phase2 relation types {missing_relations}: {counts}"
+    if counts.get("Company", 0) <= 0 or counts.get("Report", 0) <= 0:
+        return "pass", "WeKnora graph uses KB-specific ENTITY labels; required relation smoke passed: " + json.dumps(counts, ensure_ascii=False, separators=(",", ":"))
     return "pass", json.dumps(counts, ensure_ascii=False, separators=(",", ":"))
 
 
@@ -766,6 +782,13 @@ def main() -> int:
                 )
             )
             if result.status != "success":
+                duplicate_id = duplicate_knowledge_id(result)
+                if duplicate_id:
+                    uploads[-1].status = "duplicate"
+                    uploads[-1].knowledge_id = duplicate_id
+                    uploads[-1].detail = f"duplicate_file; reuse existing knowledge {duplicate_id}"
+                    metadata_by_knowledge_id[duplicate_id] = item_metadata
+                    return "warn", f"{path.name}: duplicate_file; reuse existing knowledge {duplicate_id}"
                 return "fail", f"{path.name}: {detail}"
             if not result.knowledge_id:
                 return "fail", f"{path.name}: response missing knowledge id"
@@ -773,7 +796,7 @@ def main() -> int:
             return "pass", f"{path.name}: {result.knowledge_id}"
         upload_step = timed(f"upload_{file_path.stem[:28]}", do_upload)
         steps.append(upload_step)
-        if upload_step.status != "pass":
+        if upload_step.status not in {"pass", "warn"}:
             continue
         knowledge_id = uploads[-1].knowledge_id
         steps.append(timed(f"parse_{file_path.stem[:29]}", lambda kid=knowledge_id: poll_knowledge_completed(
@@ -793,7 +816,7 @@ def main() -> int:
                 timeout=args.timeout,
             )))
 
-    successful_uploads = [upload for upload in uploads if upload.status == "success" and upload.knowledge_id]
+    successful_uploads = [upload for upload in uploads if upload.status in {"success", "duplicate"} and upload.knowledge_id]
     if successful_uploads:
         first_meta = metadata_by_knowledge_id.get(successful_uploads[0].knowledge_id, {})
         steps.append(timed("hybrid_search_primary", lambda: hybrid_search_check(

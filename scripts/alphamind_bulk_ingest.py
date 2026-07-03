@@ -569,7 +569,7 @@ def upload_file(
             doc_id=metadata["doc_id"],
             status="error",
             http_status=exc.code,
-            knowledge_id="",
+            knowledge_id=extract_knowledge_id(response_body),
             message=response_body[:1000],
             metadata_json=metadata_json,
         )
