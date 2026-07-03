@@ -1,0 +1,45 @@
+# AlphaMind 第一阶段内置模型配置
+#
+# 由 docker-compose.phase1-basic.yml 挂载到 /app/config/builtin_models.yaml。
+# 敏感值从 .env.phase1-basic 注入；不要把真实 API key 写入本文件。
+#
+# 第一阶段要求本地模型服务：Qwen 35B + Embedding + Rerank。
+# 不要使用远程网关或 smoke-only hash embedding 作为正式验收。
+
+builtin_models:
+  - id: alphamind-phase1-llm-qwen35b
+    type: KnowledgeQA
+    source: local
+    is_default: true
+    name: ${LLM_MODEL_NAME}
+    description: AlphaMind 第一阶段本地 Qwen 35B 问答模型（OpenAI-compatible）
+    parameters:
+      base_url: ${LLM_BASE_URL}
+      api_key: ${LLM_API_KEY}
+      provider: ${LLM_PROVIDER}
+
+  - id: alphamind-phase1-embedding
+    type: Embedding
+    source: local
+    is_default: true
+    name: ${EMBEDDING_MODEL_NAME}
+    description: AlphaMind 第一阶段本地向量化模型（OpenAI-compatible）
+    parameters:
+      base_url: ${EMBEDDING_BASE_URL}
+      api_key: ${EMBEDDING_API_KEY}
+      provider: ${EMBEDDING_PROVIDER}
+      embedding_parameters:
+        dimension: ${EMBEDDING_DIMENSION}
+        truncate_prompt_tokens: ${EMBEDDING_TRUNCATE_PROMPT_TOKENS}
+        supports_dimension_override: true
+
+  - id: alphamind-phase1-rerank
+    type: Rerank
+    source: local
+    is_default: true
+    name: ${RERANK_MODEL_NAME}
+    description: AlphaMind 第一阶段本地重排模型
+    parameters:
+      base_url: ${RERANK_BASE_URL}
+      api_key: ${RERANK_API_KEY}
+      provider: ${RERANK_PROVIDER}

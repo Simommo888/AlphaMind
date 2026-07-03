@@ -1,0 +1,61 @@
+# AlphaMind 本地投研 RAG 覆盖配置
+# 用法：
+#   docker compose -f docker-compose.yml -f docker-compose.alphamind.yml \
+#     --profile qdrant --profile neo4j --profile minio --profile langfuse up -d
+#
+# 说明：不修改上游 docker-compose.yml；仅追加 AlphaMind 需要的本地挂载与资源提示。
+services:
+  app:
+    volumes:
+      # 声明式内置模型配置；实际模型名/base_url/api_key 从 .env 注入。
+      - ./config/builtin_models.yaml:/app/config/builtin_models.yaml:ro
+      # AlphaMind 的说明/评测文件保留在 docs/ 与 dataset/，不挂载进运行容器，避免覆盖上游路径。
+    environment:
+      - BUILTIN_MODELS_CONFIG=/app/config/builtin_models.yaml
+    depends_on:
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      neo4j:
+        condition: service_started
+      # 当前 latest docreader 镜像内置 grpc_health_probe 在本机 Docker 环境报 exec format error，
+      # 但服务日志显示 gRPC 50051 已 ready；这里改为 service_started，避免 app 被错误 healthcheck 卡住。
+      docreader:
+        condition: service_started
+
+  docreader:
+    environment:
+      # 研报 PDF 多、页面多，先保守提高并发；若 CPU/内存吃紧再降回 1。
+      - DOCREADER_ODL_MAX_WORKERS=${DOCREADER_ODL_MAX_WORKERS:-2}
+      - DOCREADER_MARKITDOWN_MAX_WORKERS=${DOCREADER_MARKITDOWN_MAX_WORKERS:-2}
+      - DOCREADER_PDF_RENDER_MAX_WORKERS=${DOCREADER_PDF_RENDER_MAX_WORKERS:-2}
+    # 上游 latest 镜像的 grpc_health_probe 当前在本机环境 exec format error；
+    # 关闭容器 healthcheck，并由 app 实际连接 + logs/healthcheck 脚本做外部验收。
+    healthcheck:
+      disable: true
+
+  qdrant:
+    # 当前 Docker Desktop 在本机对 Qdrant host port 绑定偶发 stale reservation；
+    # WeKnora app 只需要通过 compose 内网 qdrant:6334 访问，因此先不发布到宿主机。
+    ports: !reset []
+
+  neo4j:
+    # 覆盖上游端口列表，避免同时绑定 0.0.0.0 和 127.0.0.1 的重复端口。
+    ports: !override
+      - "127.0.0.1:${NEO4J_HTTP_PORT:-7474}:7474"
+      - "127.0.0.1:${NEO4J_BOLT_PORT:-7687}:7687"
+    environment:
+      - NEO4J_dbms_memory_heap_initial__size=${NEO4J_HEAP_INITIAL:-1G}
+      - NEO4J_dbms_memory_heap_max__size=${NEO4J_HEAP_MAX:-2G}
+      - NEO4J_dbms_memory_pagecache_size=${NEO4J_PAGECACHE:-1G}
+
+  minio:
+    # 覆盖上游端口列表，只绑定 localhost。
+    ports: !override
+      - "127.0.0.1:${MINIO_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"

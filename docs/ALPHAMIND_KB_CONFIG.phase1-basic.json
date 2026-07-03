@@ -1,0 +1,39 @@
+{
+  "name": "AlphaMind Phase1 Basic RAG",
+  "description": "第一阶段基础部署与打通版验收知识库：仅用于 Markdown/TXT/MHTML 纯文本基础 RAG 问答验证，不包含 PDF、GraphRAG、图谱抽取或金融表格攻坚。",
+  "type": "document",
+  "is_temporary": false,
+  "embedding_model_id": "alphamind-embedding-default",
+  "summary_model_id": "alphamind-llm-default",
+  "chunking_config": {
+    "chunk_size": 900,
+    "chunk_overlap": 100,
+    "separators": ["\n\n", "\n", "。", "！", "？", ";", "；"],
+    "strategy": "auto",
+    "token_limit": 0,
+    "languages": ["zh"],
+    "enable_parent_child": false,
+    "parent_chunk_size": 4096,
+    "child_chunk_size": 384,
+    "parser_engine_rules": [
+      {
+        "file_types": [".md", ".markdown", ".txt", ".html", ".mhtml"],
+        "engine": "builtin"
+      }
+    ]
+  },
+  "storage_provider_config": {
+    "provider": "local"
+  },
+  "indexing_strategy": {
+    "vector_enabled": true,
+    "keyword_enabled": true,
+    "wiki_enabled": false,
+    "graph_enabled": false
+  },
+  "extract_config": null,
+  "question_generation_config": {
+    "enabled": false,
+    "question_count": 0
+  }
+}

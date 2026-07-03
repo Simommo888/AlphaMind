@@ -1,0 +1,33 @@
+{
+  "chunking_config": {
+    "strategy": "auto",
+    "chunk_size": 900,
+    "chunk_overlap": 100,
+    "separators": ["\n\n", "\n", "。", "！", "？", ";", "；"],
+    "token_limit": 0,
+    "languages": ["zh"],
+    "enable_parent_child": false,
+    "parent_chunk_size": 4096,
+    "child_chunk_size": 384,
+    "parser_engine_rules": [
+      {
+        "file_types": [".md", ".markdown", ".txt", ".html", ".mhtml"],
+        "engine": "builtin"
+      }
+    ]
+  },
+  "enable_multimodel": false,
+  "graph_enabled": false,
+  "extract_config": {
+    "enabled": false,
+    "text": "",
+    "tags": [],
+    "nodes": [],
+    "relations": []
+  },
+  "question_generation_config": {
+    "enabled": false,
+    "question_count": 0
+  },
+  "parser_engine_overrides": {}
+}

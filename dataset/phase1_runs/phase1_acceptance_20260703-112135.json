@@ -1,0 +1,126 @@
+{
+  "steps": [
+    {
+      "name": "local_files",
+      "status": "pass",
+      "detail": "sample_files=3",
+      "elapsed_ms": 0
+    },
+    {
+      "name": "weknora_health",
+      "status": "pass",
+      "detail": "ok",
+      "elapsed_ms": 34
+    },
+    {
+      "name": "kb_find_existing",
+      "status": "warn",
+      "detail": "no existing phase1 KB found",
+      "elapsed_ms": 8
+    },
+    {
+      "name": "kb_create",
+      "status": "pass",
+      "detail": "created KB 5cb6234a-d2b6-4b9e-8bff-ed255b4fc565",
+      "elapsed_ms": 32
+    },
+    {
+      "name": "upload_sample_facts",
+      "status": "pass",
+      "detail": "sample_facts.md: 1f415ad4-5664-40f5-9183-e05fa4791717",
+      "elapsed_ms": 106
+    },
+    {
+      "name": "parse_sample_facts",
+      "status": "pass",
+      "detail": "completed",
+      "elapsed_ms": 15079
+    },
+    {
+      "name": "chunks_sample_facts",
+      "status": "pass",
+      "detail": "1 chunks returned; expected fact found",
+      "elapsed_ms": 6
+    },
+    {
+      "name": "search_sample_facts",
+      "status": "pass",
+      "detail": "2 results; expected fact found",
+      "elapsed_ms": 442
+    },
+    {
+      "name": "upload_sample_policy",
+      "status": "pass",
+      "detail": "sample_policy.txt: 30c6a554-f261-4b3a-9afe-a129ae21361f",
+      "elapsed_ms": 31
+    },
+    {
+      "name": "parse_sample_policy",
+      "status": "pass",
+      "detail": "completed",
+      "elapsed_ms": 9035
+    },
+    {
+      "name": "chunks_sample_policy",
+      "status": "pass",
+      "detail": "1 chunks returned; expected fact found",
+      "elapsed_ms": 28
+    },
+    {
+      "name": "search_sample_policy",
+      "status": "pass",
+      "detail": "4 results; expected fact found",
+      "elapsed_ms": 292
+    },
+    {
+      "name": "upload_sample_web_archive",
+      "status": "pass",
+      "detail": "sample_web_archive.mhtml: b3c99d64-a25d-4745-ae75-6974c107a360",
+      "elapsed_ms": 31
+    },
+    {
+      "name": "parse_sample_web_archive",
+      "status": "pass",
+      "detail": "completed",
+      "elapsed_ms": 9045
+    },
+    {
+      "name": "chunks_sample_web_archive",
+      "status": "pass",
+      "detail": "1 chunks returned; expected fact found",
+      "elapsed_ms": 27
+    },
+    {
+      "name": "search_sample_web_archive",
+      "status": "pass",
+      "detail": "5 results; expected fact found",
+      "elapsed_ms": 300
+    },
+    {
+      "name": "knowledge_chat",
+      "status": "pass",
+      "detail": "events=56 references=1 answer_preview='根据检索到的信息，验收口令 **PHASE1-RAG-BASIC-2026** 是 AlphaMind 项目第一阶段针对 **Markdown 文档** 设定的检索验收关键指标。\\n\\n具体含义如下：\\n*   **验证目标**：证明 Markd'",
+      "elapsed_ms": 6018
+    }
+  ],
+  "uploads": [
+    {
+      "file_path": "D:\\AlphaMind\\dataset\\phase1_samples\\sample_facts.md",
+      "knowledge_id": "1f415ad4-5664-40f5-9183-e05fa4791717",
+      "status": "success",
+      "detail": "uploaded"
+    },
+    {
+      "file_path": "D:\\AlphaMind\\dataset\\phase1_samples\\sample_policy.txt",
+      "knowledge_id": "30c6a554-f261-4b3a-9afe-a129ae21361f",
+      "status": "success",
+      "detail": "uploaded"
+    },
+    {
+      "file_path": "D:\\AlphaMind\\dataset\\phase1_samples\\sample_web_archive.mhtml",
+      "knowledge_id": "b3c99d64-a25d-4745-ae75-6974c107a360",
+      "status": "success",
+      "detail": "uploaded"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+# AlphaMind 内置模型配置
+# 由 docker-compose.alphamind.yml 挂载到 /app/config/builtin_models.yaml。
+# 敏感值从项目根目录 .env 注入；不要把真实 API key 写入本文件。
+#
+# 注意：模型可用性与价格会变化；上线前请以供应商官方页面或网关文档为准。
+
+builtin_models:
+  - id: alphamind-llm-default
+    type: KnowledgeQA
+    source: remote
+    is_default: true
+    name: ${LLM_MODEL_NAME}
+    description: AlphaMind 默认投研问答模型（OpenAI-compatible）
+    parameters:
+      base_url: ${LLM_BASE_URL}
+      api_key: ${LLM_API_KEY}
+      provider: ${LLM_PROVIDER}
+
+  - id: alphamind-embedding-default
+    type: Embedding
+    source: remote
+    is_default: true
+    name: ${EMBEDDING_MODEL_NAME}
+    description: AlphaMind 默认投研向量化模型（DashScope / OpenAI-compatible）
+    parameters:
+      base_url: ${EMBEDDING_BASE_URL}
+      api_key: ${EMBEDDING_API_KEY}
+      provider: ${EMBEDDING_PROVIDER}
+      embedding_parameters:
+        dimension: ${EMBEDDING_DIMENSION}
+        truncate_prompt_tokens: ${EMBEDDING_TRUNCATE_PROMPT_TOKENS}
+        supports_dimension_override: true
+
+  - id: alphamind-rerank-default
+    type: Rerank
+    source: remote
+    is_default: true
+    name: ${RERANK_MODEL_NAME}
+    description: AlphaMind 默认投研重排模型（DashScope qwen3-rerank）
+    parameters:
+      base_url: ${RERANK_BASE_URL}
+      api_key: ${RERANK_API_KEY}
+      provider: ${RERANK_PROVIDER}

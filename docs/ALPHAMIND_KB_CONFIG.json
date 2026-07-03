@@ -1,0 +1,73 @@
+{
+  "name": "AlphaMind 投研研报库",
+  "description": "面向股票投研的券商研报、公司公告、财务报表和行业资料 RAG 知识库。第一阶段以研报 PDF/Word 为主，后续接入结构化财务数据和知识图谱。",
+  "type": "document",
+  "is_temporary": false,
+  "chunking_config": {
+    "chunk_size": 1000,
+    "chunk_overlap": 150,
+    "separators": ["\n\n", "\n", "。", "！", "？", ";", "；"],
+    "strategy": "auto",
+    "token_limit": 0,
+    "languages": ["zh"],
+    "enable_parent_child": true,
+    "parent_chunk_size": 4096,
+    "child_chunk_size": 512,
+    "parser_engine_rules": [
+      {
+        "file_types": [".pdf", ".docx", ".doc", ".ppt", ".pptx"],
+        "engine": "builtin"
+      },
+      {
+        "file_types": [".md", ".txt", ".html", ".csv", ".xlsx", ".json"],
+        "engine": "builtin"
+      }
+    ]
+  },
+  "storage_provider_config": {
+    "provider": "minio"
+  },
+  "indexing_strategy": {
+    "vector_enabled": true,
+    "keyword_enabled": true,
+    "wiki_enabled": false,
+    "graph_enabled": true
+  },
+  "extract_config": {
+    "enabled": true,
+    "text": "抽取股票投研领域实体与关系。重点识别公司、股票代码、行业、券商、分析师、报告、财务指标、预测期、目标价、评级、投资逻辑、风险因素、产品、产业链上下游和关键事件。实体名称必须规范化：公司优先保留股票代码和简称，报告保留 doc_id，财务指标保留 period/value/unit/source_doc_id。不要抽取没有原文证据的关系。",
+    "tags": ["COVERS", "PUBLISHED_BY", "WRITTEN_BY", "BELONGS_TO", "HAS_METRIC", "ABOUT_COMPANY", "HAS_VIEW", "HAS_RISK", "MENTIONS", "AFFECTS", "HAS_PRODUCT", "COMPETES_WITH", "SUPPLIES_TO"],
+    "nodes": [
+      {"name": "Company", "attributes": ["name", "ticker", "exchange", "aliases"]},
+      {"name": "Industry", "attributes": ["name", "level", "taxonomy_source"]},
+      {"name": "Report", "attributes": ["doc_id", "title", "broker", "publish_date", "report_type"]},
+      {"name": "Broker", "attributes": ["name"]},
+      {"name": "Analyst", "attributes": ["name", "broker"]},
+      {"name": "FinancialMetric", "attributes": ["name", "period", "value", "unit", "source_doc_id"]},
+      {"name": "InvestmentView", "attributes": ["thesis", "rating", "target_price", "direction"]},
+      {"name": "RiskFactor", "attributes": ["name", "description"]},
+      {"name": "Event", "attributes": ["type", "event_date", "description"]},
+      {"name": "Product", "attributes": ["name", "category"]}
+    ],
+    "relations": [
+      "Report-COVERS-Company",
+      "Report-PUBLISHED_BY-Broker",
+      "Report-WRITTEN_BY-Analyst",
+      "Company-BELONGS_TO-Industry",
+      "Report-HAS_METRIC-FinancialMetric",
+      "FinancialMetric-ABOUT_COMPANY-Company",
+      "Report-HAS_VIEW-InvestmentView",
+      "InvestmentView-ABOUT_COMPANY-Company",
+      "Report-HAS_RISK-RiskFactor",
+      "Report-MENTIONS-Event",
+      "Event-AFFECTS-Company",
+      "Company-HAS_PRODUCT-Product",
+      "Company-COMPETES_WITH-Company",
+      "Company-SUPPLIES_TO-Company"
+    ]
+  },
+  "question_generation_config": {
+    "enabled": true,
+    "question_count": 3
+  }
+}

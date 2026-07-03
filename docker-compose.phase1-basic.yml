@@ -1,0 +1,69 @@
+# AlphaMind 第一阶段（基础部署与打通版）覆盖配置
+#
+# 用法：
+#   copy .env.phase1-basic.example .env.phase1-basic
+#   # 编辑 .env.phase1-basic，填入本地 Qwen 35B / Embedding / Rerank API
+#   docker compose --env-file .env.phase1-basic \
+#     -f docker-compose.yml -f docker-compose.phase1-basic.yml \
+#     --profile qdrant up -d
+#
+# 第一阶段只跑通本地模型 API + WeKnora + Markdown/TXT/MHTML 基础 RAG。
+# 不启动 Neo4j / MinIO / Langfuse，不把 PDF/GraphRAG 作为验收范围。
+services:
+  app:
+    env_file: !override
+      - ${PHASE1_ENV_FILE:-.env.phase1-basic}
+    volumes:
+      - data-files:/data/files
+      - docreader-tmp:/tmp/docreader:ro
+      - ./config/config.yaml:/app/config/config.yaml
+      - ./skills/preloaded:/app/skills/preloaded
+      - ./config/builtin_models.phase1-basic.yaml:/app/config/builtin_models.yaml:ro
+    environment:
+      - BUILTIN_MODELS_CONFIG=/app/config/builtin_models.yaml
+      - ENABLE_GRAPH_RAG=false
+      - NEO4J_ENABLE=false
+      - LANGFUSE_ENABLED=false
+      - STORAGE_TYPE=local
+      - RETRIEVE_DRIVER=qdrant
+    depends_on: !override
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      # 上游 latest docreader 镜像内置 grpc_health_probe 在本机 Docker 环境可能 exec format error；
+      # 第一阶段由 app 连接与 scripts/alphamind_healthcheck.py --phase phase1-basic 外部验收。
+      docreader:
+        condition: service_started
+
+  docreader:
+    env_file: !override
+      - ${PHASE1_ENV_FILE:-.env.phase1-basic}
+    environment:
+      - DOCREADER_IMAGE_OUTPUT_DIR=/tmp/docreader
+      - DOCREADER_PDF_FORCE_SCANNED=false
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-20}
+      - DOCREADER_ODL_MAX_WORKERS=${DOCREADER_ODL_MAX_WORKERS:-1}
+      - DOCREADER_MARKITDOWN_MAX_WORKERS=${DOCREADER_MARKITDOWN_MAX_WORKERS:-1}
+      - DOCREADER_PDF_RENDER_MAX_WORKERS=${DOCREADER_PDF_RENDER_MAX_WORKERS:-1}
+    healthcheck:
+      disable: true
+
+  qdrant:
+    # 第一阶段验收优先走 app 容器内 qdrant:6333；宿主机端口可选暴露，便于人工 curl 排查。
+    ports: !override
+      - "127.0.0.1:${QDRANT_REST_PORT:-6333}:6333"
+
+  frontend:
+    env_file: !override
+      - ${PHASE1_ENV_FILE:-.env.phase1-basic}
+
+  postgres:
+    env_file: !override
+      - ${PHASE1_ENV_FILE:-.env.phase1-basic}
+
+  redis:
+    env_file: !override
+      - ${PHASE1_ENV_FILE:-.env.phase1-basic}

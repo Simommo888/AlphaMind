@@ -1,0 +1,20 @@
+{
+  "document_types": ["mixed", "financial_reports", "broker_research_reports", "tables"],
+  "document_count": 2500,
+  "avg_document_size": 80000,
+  "queries_per_day": 300,
+  "query_patterns": [
+    "company_view",
+    "financial_metric_lookup",
+    "broker_comparison",
+    "industry_summary",
+    "risk_factor_summary",
+    "multi_doc_reasoning",
+    "table_calculation"
+  ],
+  "latency_requirement": "interactive",
+  "budget_monthly": 300,
+  "accuracy_priority": 0.85,
+  "cost_priority": 0.55,
+  "maintenance_complexity": "medium"
+}

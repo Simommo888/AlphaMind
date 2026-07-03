@@ -55,5 +55,12 @@ Claude.md
 configure-ollama.sh
 fix-docker.sh
 
+# AlphaMind 本地语料、结构化数据库和批量入库运行产物
+/数据/
+/dataset/ingest_runs/
+*.db
+*.db-wal
+*.db-shm
+
 # WeChat Mini Program local/private configuration
 miniprogram/project.private.config.json
