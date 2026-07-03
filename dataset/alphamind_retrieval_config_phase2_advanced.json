@@ -2,7 +2,7 @@
   "embedding_top_k": 70,
   "vector_threshold": 0.12,
   "keyword_threshold": 0.25,
-  "rerank_model_id": "<fill-rerank-model-id>",
+  "rerank_model_id": "alphamind-rerank-default",
   "rerank_top_k": 20,
   "rerank_threshold": 0.15,
   "rrf_k": 60,

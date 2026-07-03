@@ -47,29 +47,31 @@ NEO4J_URI=bolt://neo4j:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=alphamind_phase2_neo4j_change_me
 
-LLM_MODEL_NAME=qwen-35b-local
-LLM_BASE_URL=http://host.docker.internal:8000/v1
-LLM_API_KEY=local-no-auth
-LLM_PROVIDER=openai
+LLM_MODEL_NAME=qwen3.7-plus
+LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+LLM_API_KEY=<private>
+LLM_PROVIDER=aliyun
 
-EMBEDDING_MODEL_NAME=qwen3-embedding-local
-EMBEDDING_BASE_URL=http://host.docker.internal:8001/v1
-EMBEDDING_API_KEY=local-no-auth
-EMBEDDING_PROVIDER=openai
+EMBEDDING_MODEL_NAME=text-embedding-v4
+EMBEDDING_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+EMBEDDING_API_KEY=<private>
+EMBEDDING_PROVIDER=aliyun
 EMBEDDING_DIMENSION=1024
 
-RERANK_MODEL_NAME=qwen3-reranker-local
-RERANK_BASE_URL=http://host.docker.internal:8002
-RERANK_API_KEY=local-no-auth
-RERANK_PROVIDER=generic
+RERANK_MODEL_NAME=qwen3-rerank
+RERANK_BASE_URL=https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank
+RERANK_API_KEY=<private>
+RERANK_PROVIDER=aliyun
 ```
 
 要求：
 
 - `LLM_BASE_URL` 必须提供 `/v1/chat/completions`。
 - `EMBEDDING_BASE_URL` 必须提供 `/v1/embeddings`。
-- `RERANK_BASE_URL` 必须提供 WeKnora 兼容 rerank 接口，通常是 `/rerank`。
-- `NEO4J_PASSWORD`、`MINIO_SECRET_ACCESS_KEY`、`DB_PASSWORD`、`REDIS_PASSWORD` 应在真实环境中改成私有值。
+- `RERANK_BASE_URL` 必须提供 WeKnora 兼容 rerank 接口，DashScope 可使用完整 rerank service URL。
+- `config/builtin_models.phase2-advanced.yaml` 中的模型 `source` 必须与服务类型一致；使用 DashScope / OpenAI-compatible HTTP API 时应为 `remote`，避免后端按 `local` 走 Ollama 拉模型路径。
+- `TENANT_AES_KEY` 必须与既有数据库租户 API key 生成时的值一致，否则已有 `WEKNORA_API_KEY` 会认证失败。
+- `NEO4J_PASSWORD`、`MINIO_SECRET_ACCESS_KEY`、`DB_PASSWORD`、`REDIS_PASSWORD`、`SYSTEM_AES_KEY`、`TENANT_AES_KEY` 应在真实环境中改成私有值。
 
 ## 3. 启动 phase2 栈
 
@@ -198,7 +200,7 @@ dataset\phase2_runs\phase2_uploads_<timestamp>.csv
 - 每个成功解析样本至少有一个 chunk。
 - hybrid search 能召回公司、券商、报告或表格字段。
 - knowledge chat 返回 references。
-- Neo4j 中至少能看到 Company / Report 基础节点，且出现 `COVERS` 或 `PUBLISHED_BY` 关系。
+- Neo4j 中至少能看到实体节点与关系；若 WeKnora 使用 KB-specific `ENTITY` 标签，则以实体节点总数、关系总数，以及 `COVERS` / `PUBLISHED_BY` 关系作为 graph smoke 验收依据，不硬要求 `Company` / `Report` / `Broker` 标签计数非零。
 - 基础跨文档问题至少能返回多个来源引用；如果 references 不足，必须在报告中记录为 warn/fail。
 
 ## 9. 调优顺序
@@ -231,6 +233,8 @@ dataset\phase2_runs\phase2_uploads_<timestamp>.csv
 - KB config 与 process config 均启用了 `graph_enabled` / `extract_config.enabled`。
 - LLM 模型 API 可用于抽取。
 - 文档解析已完成，而不是仍在 processing。
+
+如果节点存在但 `Company` / `Report` / `Broker` 标签计数为 0，先检查是否为 WeKnora 的 KB-specific `ENTITY` 标签模式；只要实体节点、关系总数以及 `COVERS` / `PUBLISHED_BY` 等核心关系存在，Phase2 graph smoke 可判定通过。
 
 ### Chat 有答案但无 references
 
