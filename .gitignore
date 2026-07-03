@@ -2,6 +2,7 @@
 .*
 # 但不忽略特定隐藏文件和目录
 !.env.example
+!.env.phase2-advanced.example
 !.gitignore
 !.github/
 
@@ -58,6 +59,9 @@ fix-docker.sh
 # AlphaMind 本地语料、结构化数据库和批量入库运行产物
 /数据/
 /dataset/ingest_runs/
+/dataset/phase1_runs/
+/dataset/phase2_runs/
+/dataset/*kb_id*.txt
 *.db
 *.db-wal
 *.db-shm

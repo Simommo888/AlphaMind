@@ -51,6 +51,7 @@ DEFAULT_EXTENSIONS = (
 )
 PHASE1_EXTENSIONS = (".md", ".markdown", ".txt", ".html", ".mhtml")
 PHASE1_PROCESS_CONFIG = "alphamind_process_config_phase1_basic.json"
+PHASE2_PROCESS_CONFIG = "alphamind_process_config_phase2_advanced.json"
 
 ORIGINAL_DOCUMENT_EXTENSIONS = {".pdf", ".doc", ".docx", ".ppt", ".pptx"}
 DERIVED_TEXT_EXTENSIONS = {".txt", ".md", ".markdown", ".html", ".htm"}
@@ -84,9 +85,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--phase",
-        choices=("research-report", "phase1-basic"),
+        choices=("research-report", "phase1-basic", "phase2-advanced"),
         default="research-report",
-        help="Use phase-specific safe defaults. phase1-basic only allows Markdown/TXT/HTML/MHTML samples.",
+        help=(
+            "Use phase-specific safe defaults. phase1-basic only allows Markdown/TXT/HTML/MHTML "
+            "samples; phase2-advanced targets PDF/Office/table research corpora with GraphRAG process config."
+        ),
     )
     parser.add_argument(
         "--root",
@@ -651,8 +655,8 @@ def main() -> int:
         print(f"Root directory does not exist: {root}", file=sys.stderr)
         return 2
 
+    default_research_process_config = str(PROJECT_ROOT / "dataset" / "alphamind_process_config_research_report.json")
     if args.phase == "phase1-basic":
-        default_research_process_config = str(PROJECT_ROOT / "dataset" / "alphamind_process_config_research_report.json")
         if str(Path(args.process_config)) == default_research_process_config:
             args.process_config = str(PROJECT_ROOT / "dataset" / PHASE1_PROCESS_CONFIG)
         if tuple(args.extensions) == DEFAULT_EXTENSIONS:
@@ -660,6 +664,12 @@ def main() -> int:
         args.prefer_originals = False
         if args.channel == "alphamind-bulk-ingest":
             args.channel = "alphamind-phase1-basic-ingest"
+    elif args.phase == "phase2-advanced":
+        if str(Path(args.process_config)) == default_research_process_config:
+            args.process_config = str(PROJECT_ROOT / "dataset" / PHASE2_PROCESS_CONFIG)
+        if args.channel == "alphamind-bulk-ingest":
+            args.channel = "alphamind-phase2-advanced-ingest"
+        args.prefer_originals = True
 
     if not args.dry_run and not args.api_key:
         print("Missing --api-key or WEKNORA_API_KEY for non-dry-run upload.", file=sys.stderr)

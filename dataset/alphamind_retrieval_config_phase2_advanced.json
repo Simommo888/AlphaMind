@@ -1,0 +1,17 @@
+{
+  "embedding_top_k": 70,
+  "vector_threshold": 0.12,
+  "keyword_threshold": 0.25,
+  "rerank_model_id": "<fill-rerank-model-id>",
+  "rerank_top_k": 20,
+  "rerank_threshold": 0.15,
+  "rrf_k": 60,
+  "rrf_vector_weight": 0.6,
+  "rrf_keyword_weight": 0.4,
+  "answer_policy": {
+    "require_references": true,
+    "no_evidence_response": "未在知识库中检索到足够证据，不能编造目标价、评级或财务数据。",
+    "financial_metric_fields": ["period", "value", "unit", "source_doc_id"],
+    "cross_document_min_distinct_doc_ids": 2
+  }
+}

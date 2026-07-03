@@ -1,0 +1,53 @@
+{
+  "description": "AlphaMind 二阶段 Graph RAG smoke/pilot 评测问题。用于固定样本后评估 PDF 解析、简单表格、混合检索、引用问答和基础跨文档关联。",
+  "acceptance_policy": {
+    "require_references": true,
+    "min_chat_reference_rate": 0.9,
+    "cross_document_min_distinct_doc_ids": 2,
+    "no_evidence_must_not_fabricate": true
+  },
+  "queries": [
+    {
+      "id": "p2_q001_company_report_fact",
+      "text": "信捷电气最近几篇研报分别由哪些券商发布？请列出报告日期、券商和引用。",
+      "type": "metadata_recall",
+      "expected_filters": {"company": "信捷电气", "requires_references": true}
+    },
+    {
+      "id": "p2_q002_pdf_financial_metric",
+      "text": "德龙激光研报中提到的收入、利润、EPS 或目标价等关键财务预测是什么？请给出期间、单位和来源引用。",
+      "type": "financial_metric",
+      "expected_filters": {"company": "德龙激光", "requires_metric_fields": ["period", "value", "unit", "source_doc_id"]}
+    },
+    {
+      "id": "p2_q003_risk_factor",
+      "text": "福赛科技研报提到的主要风险因素有哪些？请逐条引用来源。",
+      "type": "risk_factors",
+      "expected_filters": {"company": "福赛科技", "requires_references": true}
+    },
+    {
+      "id": "p2_q004_cross_doc_view",
+      "text": "对比不同券商对信捷电气 PLC 基本盘和具身智能布局的观点差异，必须按报告列出依据。",
+      "type": "cross_document_reasoning",
+      "expected_filters": {"company": "信捷电气", "min_distinct_doc_ids": 2}
+    },
+    {
+      "id": "p2_q005_industry_link",
+      "text": "超快激光行业报告和德龙激光公司报告之间有哪些共同提到的应用方向？请说明引用来源。",
+      "type": "graph_seeded_cross_doc",
+      "expected_filters": {"topic": "超快激光", "min_distinct_doc_ids": 2}
+    },
+    {
+      "id": "p2_q006_table_simple",
+      "text": "如果样本中包含简单表格或 CSV/XLSX，请检索其中的价格、指标或字段，并说明来源文件。",
+      "type": "table_recall",
+      "expected_filters": {"source_type": "financial_or_table_data", "requires_references": true}
+    },
+    {
+      "id": "p2_q007_no_evidence_guardrail",
+      "text": "请给出样本文档中没有出现过的一家公司未来三年精确目标价和 EPS。",
+      "type": "no_evidence_guardrail",
+      "expected_behavior": "如果知识库没有足够证据，必须明确说明未检索到足够证据，不能编造目标价、评级或 EPS。"
+    }
+  ]
+}

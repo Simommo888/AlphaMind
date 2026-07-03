@@ -1,0 +1,87 @@
+# AlphaMind 第二阶段（进阶调优与图谱接入版）覆盖配置
+#
+# 用法：
+#   copy .env.phase2-advanced.example .env.phase2-advanced
+#   # 编辑 .env.phase2-advanced，填入本地 Qwen 35B / Embedding / Rerank API
+#   docker compose --env-file .env.phase2-advanced `
+#     -f docker-compose.yml -f docker-compose.phase2-advanced.yml `
+#     --profile qdrant --profile neo4j --profile minio up -d
+#
+# 第二阶段启用 MinIO + Qdrant + Neo4j，用于金融 PDF/简单表格解析与基础 Graph RAG。
+services:
+  app:
+    env_file: !override
+      - ${PHASE2_ENV_FILE:-.env.phase2-advanced}
+    volumes:
+      - data-files:/data/files
+      - docreader-tmp:/tmp/docreader:ro
+      - ./config/config.yaml:/app/config/config.yaml
+      - ./skills/preloaded:/app/skills/preloaded
+      - ./config/builtin_models.phase2-advanced.yaml:/app/config/builtin_models.yaml:ro
+    environment:
+      - BUILTIN_MODELS_CONFIG=/app/config/builtin_models.yaml
+      - STORAGE_TYPE=minio
+      - RETRIEVE_DRIVER=qdrant
+      - ENABLE_GRAPH_RAG=true
+      - NEO4J_ENABLE=true
+    depends_on: !override
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      neo4j:
+        condition: service_started
+      # 上游 latest docreader 镜像内置 grpc_health_probe 在本机 Docker 环境可能 exec format error；
+      # 第二阶段由 app 连接与 scripts/alphamind_healthcheck.py --phase phase2-advanced 外部验收。
+      docreader:
+        condition: service_started
+
+  docreader:
+    env_file: !override
+      - ${PHASE2_ENV_FILE:-.env.phase2-advanced}
+    environment:
+      - DOCREADER_IMAGE_OUTPUT_DIR=/tmp/docreader
+      - DOCREADER_PDF_FORCE_SCANNED=${DOCREADER_PDF_FORCE_SCANNED:-false}
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-300}
+      - DOCREADER_ODL_MAX_WORKERS=${DOCREADER_ODL_MAX_WORKERS:-2}
+      - DOCREADER_MARKITDOWN_MAX_WORKERS=${DOCREADER_MARKITDOWN_MAX_WORKERS:-2}
+      - DOCREADER_PDF_RENDER_MAX_WORKERS=${DOCREADER_PDF_RENDER_MAX_WORKERS:-2}
+      - DOCREADER_PDF_RENDER_PARALLELISM=${DOCREADER_PDF_RENDER_PARALLELISM:-2}
+      - DOCREADER_PDF_RENDER_DPI=${DOCREADER_PDF_RENDER_DPI:-200}
+    healthcheck:
+      disable: true
+
+  qdrant:
+    ports: !override
+      - "127.0.0.1:${QDRANT_REST_PORT:-6333}:6333"
+      - "127.0.0.1:${QDRANT_PORT:-6334}:6334"
+
+  neo4j:
+    ports: !override
+      - "127.0.0.1:${NEO4J_HTTP_PORT:-7474}:7474"
+      - "127.0.0.1:${NEO4J_BOLT_PORT:-7687}:7687"
+    environment:
+      - NEO4J_dbms_memory_heap_initial__size=${NEO4J_HEAP_INITIAL:-1G}
+      - NEO4J_dbms_memory_heap_max__size=${NEO4J_HEAP_MAX:-2G}
+      - NEO4J_dbms_memory_pagecache_size=${NEO4J_PAGECACHE:-1G}
+
+  minio:
+    ports: !override
+      - "127.0.0.1:${MINIO_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
+
+  frontend:
+    env_file: !override
+      - ${PHASE2_ENV_FILE:-.env.phase2-advanced}
+
+  postgres:
+    env_file: !override
+      - ${PHASE2_ENV_FILE:-.env.phase2-advanced}
+
+  redis:
+    env_file: !override
+      - ${PHASE2_ENV_FILE:-.env.phase2-advanced}

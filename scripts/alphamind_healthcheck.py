@@ -33,6 +33,7 @@ from urllib.request import Request, urlopen
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ENV_FILE = PROJECT_ROOT / ".env"
 PHASE1_ENV_FILE = PROJECT_ROOT / ".env.phase1-basic"
+PHASE2_ENV_FILE = PROJECT_ROOT / ".env.phase2-advanced"
 
 
 @dataclass
@@ -46,7 +47,7 @@ class CheckResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Check AlphaMind/WeKnora services before ingestion.")
-    parser.add_argument("--phase", choices=("alphamind", "phase1-basic"), default="alphamind", help="Select dependency profile.")
+    parser.add_argument("--phase", choices=("alphamind", "phase1-basic", "phase2-advanced"), default="alphamind", help="Select dependency profile.")
     parser.add_argument("--base-url", default=os.environ.get("WEKNORA_BASE_URL", "http://localhost:8080"))
     parser.add_argument("--api-key", default=os.environ.get("WEKNORA_API_KEY"))
     parser.add_argument("--qdrant-url", default=os.environ.get("QDRANT_REST_URL", "http://localhost:6333"))
@@ -145,8 +146,8 @@ def json_http_check(
             payload = json.loads(body) if body else {}
         except json.JSONDecodeError:
             return "pass", f"HTTP {status} non-JSON response"
-        if expect_success_field and payload.get("success") is not True:
-            return ("fail" if required else "warn", f"success field not true: {body[:200]}")
+        if expect_success_field and payload.get("success") is not True and payload.get("code") != 0:
+            return ("fail" if required else "warn", f"success/code field not OK: {body[:200]}")
         if detail_keys and isinstance(payload.get("data"), dict):
             data = payload["data"]
             details = []
@@ -352,7 +353,14 @@ def print_table(results: list[CheckResult]) -> None:
 
 def main() -> int:
     args = parse_args()
-    env_file = Path(args.env_file) if args.env_file else (PHASE1_ENV_FILE if args.phase == "phase1-basic" else DEFAULT_ENV_FILE)
+    if args.env_file:
+        env_file = Path(args.env_file)
+    elif args.phase == "phase1-basic":
+        env_file = PHASE1_ENV_FILE
+    elif args.phase == "phase2-advanced":
+        env_file = PHASE2_ENV_FILE
+    else:
+        env_file = DEFAULT_ENV_FILE
     env_values = parse_env_file(env_file)
 
     api_key = args.api_key or env_get(env_values, "WEKNORA_API_KEY")
@@ -363,18 +371,27 @@ def main() -> int:
     storage_type = env_get(env_values, "STORAGE_TYPE", "")
     neo4j_enabled = bool_env(env_get(env_values, "NEO4J_ENABLE", "")) or bool_env(env_get(env_values, "ENABLE_GRAPH_RAG", ""))
     phase1 = args.phase == "phase1-basic"
+    phase2 = args.phase == "phase2-advanced"
 
-    require_qdrant = args.require_qdrant or retrieve_driver == "qdrant"
-    require_minio = False if phase1 else (args.require_minio or storage_type == "minio")
-    require_neo4j = False if phase1 else (args.require_neo4j or neo4j_enabled)
+    require_qdrant = args.require_qdrant or retrieve_driver == "qdrant" or phase2
+    require_minio = False if phase1 else (args.require_minio or storage_type == "minio" or phase2)
+    require_neo4j = False if phase1 else (args.require_neo4j or neo4j_enabled or phase2)
 
     results: list[CheckResult] = []
-    results.append(file_check(env_file, "env_file", required=phase1))
+    results.append(file_check(env_file, "env_file", required=phase1 or phase2))
     if phase1:
         results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_process_config_phase1_basic.json", "phase1_process_config"))
         results.append(file_check(PROJECT_ROOT / "docs" / "ALPHAMIND_KB_CONFIG.phase1-basic.json", "phase1_kb_config"))
         results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_bulk_ingest.py", "bulk_ingest_script"))
         results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_phase1_model_check.py", "phase1_model_check"))
+    elif phase2:
+        results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_process_config_phase2_advanced.json", "phase2_process_config"))
+        results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_retrieval_config_phase2_advanced.json", "phase2_retrieval_config"))
+        results.append(file_check(PROJECT_ROOT / "docs" / "ALPHAMIND_KB_CONFIG.phase2-advanced.json", "phase2_kb_config"))
+        results.append(file_check(PROJECT_ROOT / "docker-compose.phase2-advanced.yml", "phase2_compose_overlay"))
+        results.append(file_check(PROJECT_ROOT / "config" / "builtin_models.phase2-advanced.yaml", "phase2_builtin_models"))
+        results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_bulk_ingest.py", "bulk_ingest_script"))
+        results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_phase2_acceptance.py", "phase2_acceptance_script", required=False))
     else:
         results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_process_config_research_report.json", "process_config"))
         results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_retrieval_config_recommended.json", "retrieval_config"))
@@ -382,9 +399,9 @@ def main() -> int:
         results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_bulk_ingest.py", "bulk_ingest_script"))
 
     results.append(env_presence_check(env_values, "WEKNORA_API_KEY", required=False))
-    results.append(env_presence_check(env_values, "LLM_MODEL_NAME", required=phase1))
-    results.append(env_presence_check(env_values, "EMBEDDING_MODEL_NAME", required=phase1))
-    results.append(env_presence_check(env_values, "RERANK_MODEL_NAME", required=phase1))
+    results.append(env_presence_check(env_values, "LLM_MODEL_NAME", required=phase1 or phase2))
+    results.append(env_presence_check(env_values, "EMBEDDING_MODEL_NAME", required=phase1 or phase2))
+    results.append(env_presence_check(env_values, "RERANK_MODEL_NAME", required=phase1 or phase2))
 
     results.append(
         json_http_check(

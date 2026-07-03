@@ -1,0 +1,61 @@
+{
+  "description": "AlphaMind 二阶段 ground truth 占位文件。固定真实验收样本后，将每个 query_id 对应的相关 doc_id、chunk_id、必须包含词和图谱期望补齐。",
+  "sample_source_candidates": [
+    "D:\\AlphaMind\\数据\\Documents(1)",
+    "D:\\AlphaMind\\数据\\数据库\\Documents",
+    "D:\\AlphaMind\\dataset\\ingest_runs\\alphamind_smoke_manifest_20260702-023028.jsonl"
+  ],
+  "graph_expectations": {
+    "required_node_labels": ["Company", "Report", "Broker"],
+    "required_relation_types": ["COVERS", "PUBLISHED_BY"],
+    "optional_node_labels": ["FinancialMetric", "InvestmentView", "RiskFactor", "Event", "Product", "Industry"],
+    "cross_document_min_distinct_doc_ids": 2
+  },
+  "queries": [
+    {
+      "id": "p2_q001_company_report_fact",
+      "relevant_doc_ids": [],
+      "must_contain": ["信捷电气", "券商", "报告日期"],
+      "notes": "固定信捷电气样本后填入华泰证券、国金证券、银河证券等报告 doc_id。"
+    },
+    {
+      "id": "p2_q002_pdf_financial_metric",
+      "relevant_doc_ids": [],
+      "must_contain": ["德龙激光", "期间", "单位", "引用"],
+      "notes": "填入德龙激光研报中真实出现的收入/利润/EPS/目标价字段。"
+    },
+    {
+      "id": "p2_q003_risk_factor",
+      "relevant_doc_ids": [],
+      "must_contain": ["福赛科技", "风险"],
+      "notes": "填入福赛科技研报风险提示所在 chunk。"
+    },
+    {
+      "id": "p2_q004_cross_doc_view",
+      "relevant_doc_ids": [],
+      "must_contain": ["PLC", "具身智能"],
+      "min_distinct_doc_ids": 2,
+      "notes": "至少两篇信捷电气报告。"
+    },
+    {
+      "id": "p2_q005_industry_link",
+      "relevant_doc_ids": [],
+      "must_contain": ["超快激光", "应用"],
+      "min_distinct_doc_ids": 2,
+      "notes": "一篇行业报告 + 一篇德龙激光公司报告。"
+    },
+    {
+      "id": "p2_q006_table_simple",
+      "relevant_doc_ids": [],
+      "must_contain": [],
+      "notes": "固定 CSV/XLSX 样本后补齐字段名和值。"
+    },
+    {
+      "id": "p2_q007_no_evidence_guardrail",
+      "relevant_doc_ids": [],
+      "must_contain": ["未检索到足够证据"],
+      "must_not_contain_fabricated_numbers": true,
+      "notes": "用于防幻觉验收。"
+    }
+  ]
+}

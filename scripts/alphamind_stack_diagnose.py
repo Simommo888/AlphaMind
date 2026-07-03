@@ -59,6 +59,18 @@ PHASE1_PORTS = [
     ("app", "127.0.0.1", 8080),
     ("qdrant_rest", "127.0.0.1", 6333),
 ]
+PHASE2_COMPOSE_FILES = ["docker-compose.yml", "docker-compose.phase2-advanced.yml"]
+PHASE2_PROFILES = ["qdrant", "neo4j", "minio"]
+PHASE2_KEY_SERVICES = ["frontend", "app", "docreader", "postgres", "redis", "qdrant", "neo4j", "minio"]
+PHASE2_PORTS = [
+    ("frontend", "127.0.0.1", 8088),
+    ("app", "127.0.0.1", 8080),
+    ("qdrant_rest", "127.0.0.1", 6333),
+    ("neo4j_http", "127.0.0.1", 7474),
+    ("neo4j_bolt", "127.0.0.1", 7687),
+    ("minio_s3", "127.0.0.1", 9000),
+    ("minio_console", "127.0.0.1", 9001),
+]
 ERROR_KEYWORDS = (
     "error",
     "fatal",
@@ -83,7 +95,7 @@ class DiagnosticResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Diagnose AlphaMind Docker stack readiness.")
-    parser.add_argument("--phase", choices=("alphamind", "phase1-basic"), default="alphamind", help="Select compose/profile/service set.")
+    parser.add_argument("--phase", choices=("alphamind", "phase1-basic", "phase2-advanced"), default="alphamind", help="Select compose/profile/service set.")
     parser.add_argument("--project-dir", default=str(PROJECT_ROOT))
     parser.add_argument("--include-logs", action="store_true", help="Print recent logs for key services.")
     parser.add_argument("--log-lines", type=int, default=80)
@@ -116,6 +128,8 @@ def run_command(command: list[str], cwd: Path, timeout: int = 30) -> tuple[int, 
 def phase_settings(phase: str) -> tuple[list[str], list[str], list[str], list[tuple[str, str, int]]]:
     if phase == "phase1-basic":
         return PHASE1_COMPOSE_FILES, PHASE1_PROFILES, PHASE1_KEY_SERVICES, PHASE1_PORTS
+    if phase == "phase2-advanced":
+        return PHASE2_COMPOSE_FILES, PHASE2_PROFILES, PHASE2_KEY_SERVICES, PHASE2_PORTS
     return DEFAULT_COMPOSE_FILES, DEFAULT_PROFILES, DEFAULT_KEY_SERVICES, DEFAULT_PORTS
 
 
@@ -245,6 +259,13 @@ def recommended_start_command(project_dir: Path, phase: str) -> str:
             "docker compose --env-file .env.phase1-basic -f docker-compose.yml -f docker-compose.phase1-basic.yml `\n"
             "  --profile qdrant up -d"
         )
+    if phase == "phase2-advanced":
+        return (
+            f"cd {project_dir}\n"
+            "copy .env.phase2-advanced.example .env.phase2-advanced  # first run only; then edit local model endpoints and API key\n"
+            "docker compose --env-file .env.phase2-advanced -f docker-compose.yml -f docker-compose.phase2-advanced.yml `\n"
+            "  --profile qdrant --profile neo4j --profile minio up -d"
+        )
     return (
         f"cd {project_dir}\n"
         "docker compose -f docker-compose.yml -f docker-compose.alphamind.yml `\n"
@@ -273,6 +294,17 @@ def main() -> int:
             results.append(DiagnosticResult("file_.env.phase1-basic", "warn", f"missing {env_path}; using {example_path} for config validation"))
         else:
             results.append(DiagnosticResult("file_.env.phase1-basic", "fail", f"missing {env_path} and {example_path}"))
+    elif args.phase == "phase2-advanced":
+        env_path = project_dir / ".env.phase2-advanced"
+        example_path = project_dir / ".env.phase2-advanced.example"
+        if env_path.exists():
+            results.append(DiagnosticResult("file_.env.phase2-advanced", "pass", str(env_path)))
+        elif example_path.exists():
+            # Let compose config render before the user has copied the real env file.
+            os.environ.setdefault("PHASE2_ENV_FILE", ".env.phase2-advanced.example")
+            results.append(DiagnosticResult("file_.env.phase2-advanced", "warn", f"missing {env_path}; using {example_path} for config validation"))
+        else:
+            results.append(DiagnosticResult("file_.env.phase2-advanced", "fail", f"missing {env_path} and {example_path}"))
 
     results.append(check_command("docker_version", ["docker", "--version"], project_dir, timeout=10))
     results.append(check_command("docker_daemon", ["docker", "info", "--format", "{{.ServerVersion}}"], project_dir, timeout=10))
