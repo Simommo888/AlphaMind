@@ -1,25 +1,73 @@
 {
-  "description": "AlphaMind 投研 RAG ground truth 模板。将每个 query_id 映射到人工确认相关的 doc_id/chunk_id。",
+  "description": "AlphaMind 投研 RAG smoke ground truth。每个 query_id 映射到人工确认相关的 doc_id 与可校验关键词；chunk_ids 在接入 WeKnora chunk 导出后补齐。",
+  "scope": "smoke",
   "ground_truth": {
-    "q001_company_view_recent": [
+    "q_smoke_001_delong_eps_2026e": [
       {
-        "doc_id": "TODO",
-        "chunk_ids": ["TODO"],
-        "must_contain": ["券商", "报告日期", "核心分歧"]
+        "doc_id": "2026-05-31-国盛证券-德龙激光(688170.SH)超快激光平台型小巨人，下游应用全面开花",
+        "chunk_ids": [],
+        "must_contain": ["德龙激光", "2026E", "EPS", "0.86", "国盛证券"]
       }
     ],
-    "q002_metric_eps": [],
-    "q003_target_price_change": [],
-    "q004_industry_demand": [],
-    "q005_broker_compare": [],
-    "q006_risk_factors": [],
-    "q007_table_cagr": [],
-    "q008_consensus": []
+    "q_smoke_002_delong_revenue_profit": [
+      {
+        "doc_id": "2026-05-31-国盛证券-德龙激光(688170.SH)超快激光平台型小巨人，下游应用全面开花",
+        "chunk_ids": [],
+        "must_contain": ["德龙激光", "2026E", "1,076", "89", "36.6"]
+      }
+    ],
+    "q_smoke_003_ultrafast_market_cagr": [
+      {
+        "doc_id": "2019-06-14-华泰证券-机械设备-激光产业链系列报告之七-技术成熟优势渐显 超快激光未来可期",
+        "chunk_ids": [],
+        "must_contain": ["2018", "2024", "128", "CAGR", "25.02%"]
+      }
+    ],
+    "q_smoke_004_m9_pcb_tgv": [
+      {
+        "doc_id": "2026-06-09-华泰证券-机械设备行业超快激光：封装材料革命的“手术刀”",
+        "chunk_ids": [],
+        "must_contain": ["M8/M9", "PCB", "TGV", "封装"]
+      }
+    ],
+    "q_smoke_005_pingan_eps_table": [
+      {
+        "doc_id": "2019-04-25-平安证券-智能制造行业专题报告(六)：超快激光 能量激光领域的下一个制高点",
+        "chunk_ids": [],
+        "must_contain": ["EPS", "2019E", "2020E", "2021E", "002008", "300747", "000988"]
+      }
+    ],
+    "q_smoke_006_strategy_sharpe": [
+      {
+        "doc_id": "华创证券华创金工机构服务系统",
+        "chunk_ids": [],
+        "must_contain": ["乔尔格林布拉特的神奇公式", "价值", "26.98%", "-0.02"]
+      }
+    ],
+    "q_smoke_007_ai_pcb_multi_doc": [
+      {
+        "doc_id": "2026-05-31-国盛证券-德龙激光(688170.SH)超快激光平台型小巨人，下游应用全面开花",
+        "chunk_ids": [],
+        "must_contain": ["AI PCB", "M9", "PCB", "德龙激光"]
+      },
+      {
+        "doc_id": "2026-06-09-华泰证券-机械设备行业超快激光：封装材料革命的“手术刀”",
+        "chunk_ids": [],
+        "must_contain": ["M9", "PCB", "TGV", "封装"]
+      }
+    ],
+    "q_smoke_008_ultrafast_competitors": [
+      {
+        "doc_id": "2019-06-14-华泰证券-机械设备-激光产业链系列报告之七-技术成熟优势渐显 超快激光未来可期",
+        "chunk_ids": [],
+        "must_contain": ["IPG", "NTK", "Amplitude", "IMRA", "America"]
+      }
+    ]
   },
   "metrics": {
-    "precision_at_5_target": 0.75,
-    "recall_at_10_target": 0.85,
-    "citation_accuracy_target": 0.9,
+    "precision_at_5_target": 0.7,
+    "recall_at_10_target": 0.8,
+    "citation_accuracy_target": 0.85,
     "hallucination_rate_max": 0.05
   }
 }

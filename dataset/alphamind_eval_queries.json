@@ -1,53 +1,55 @@
 {
-  "description": "AlphaMind 股票投研 RAG 第一批评测问题模板。正式评测前请把 query_id 对应的相关 doc_id/chunk_id 写入 ground_truth。",
+  "description": "AlphaMind 股票投研 RAG smoke 评测问题集。问题绑定当前 Phase2 已入库的小样本文档，用于验证 PDF/CSV 解析、metadata-first 检索、hybrid/rerank 和引用能力。",
+  "scope": "smoke",
+  "corpus_hint": "D:\\AlphaMind\\数据\\数据库\\Documents 与 Phase2 KB: AlphaMind Phase2 Advanced Graph RAG",
   "queries": [
     {
-      "id": "q001_company_view_recent",
-      "text": "最近三个月券商对贵州茅台的核心分歧是什么？请给出券商、报告日期和引用。",
-      "type": "company_view",
-      "expected_filters": {"company": "贵州茅台", "date_range": "recent_3_months"}
-    },
-    {
-      "id": "q002_metric_eps",
-      "text": "宁德时代 2025E EPS 预测是多少？不同券商的预测是否一致？",
+      "id": "q_smoke_001_delong_eps_2026e",
+      "text": "德龙激光 2026E EPS 预测是多少？请引用国盛证券研报。",
       "type": "financial_metric",
-      "expected_filters": {"company": "宁德时代", "metric": "EPS", "period": "2025E"}
+      "expected_filters": {"company": "德龙激光", "ticker": "688170.SH", "broker": "国盛证券", "period": "2026E", "metric": "EPS"}
     },
     {
-      "id": "q003_target_price_change",
-      "text": "最近有哪些研报上调了宁德时代目标价？上调理由是什么？",
-      "type": "target_price_event",
-      "expected_filters": {"company": "宁德时代", "metric": "target_price"}
+      "id": "q_smoke_002_delong_revenue_profit",
+      "text": "德龙激光 2026E 收入和归母净利润预测是多少？",
+      "type": "financial_metric",
+      "expected_filters": {"company": "德龙激光", "ticker": "688170.SH", "broker": "国盛证券", "period": "2026E", "metrics": ["收入", "归母净利润"]}
     },
     {
-      "id": "q004_industry_demand",
-      "text": "光伏设备行业 2026 年需求驱动因素有哪些？请区分国内和海外因素。",
-      "type": "industry_summary",
-      "expected_filters": {"industry": "光伏设备", "period": "2026"}
+      "id": "q_smoke_003_ultrafast_market_cagr",
+      "text": "华泰证券 2019 年报告中，超快激光市场规模从 2018 到 2024 的 CAGR 是多少？",
+      "type": "industry_market_size",
+      "expected_filters": {"broker": "华泰证券", "industry": "超快激光", "periods": ["2018", "2024"], "metric": "CAGR"}
     },
     {
-      "id": "q005_broker_compare",
-      "text": "中信证券和华泰证券对比亚迪毛利率假设有什么不同？",
-      "type": "broker_comparison",
-      "expected_filters": {"company": "比亚迪", "metric": "毛利率", "brokers": ["中信证券", "华泰证券"]}
+      "id": "q_smoke_004_m9_pcb_tgv",
+      "text": "M8/M9 PCB 与 TGV 在华泰证券封装材料报告中的关系是什么？",
+      "type": "industry_technology",
+      "expected_filters": {"broker": "华泰证券", "topics": ["M8/M9 PCB", "TGV", "封装材料"]}
     },
     {
-      "id": "q006_risk_factors",
-      "text": "最近关于半导体设备国产替代的主要风险因素有哪些？",
-      "type": "risk_factors",
-      "expected_filters": {"industry": "半导体设备", "topic": "国产替代"}
+      "id": "q_smoke_005_pingan_eps_table",
+      "text": "平安证券 2019 年超快激光报告中的 EPS 预测表覆盖了哪些股票代码？",
+      "type": "table_lookup",
+      "expected_filters": {"broker": "平安证券", "industry": "超快激光", "metric": "EPS", "periods": ["2019E", "2020E", "2021E"]}
     },
     {
-      "id": "q007_table_cagr",
-      "text": "如果研报给出了某公司 2024A 到 2026E 的收入预测，请计算 CAGR 并引用来源。",
-      "type": "table_calculation",
-      "expected_filters": {"metric": "revenue", "periods": ["2024A", "2026E"]}
+      "id": "q_smoke_006_strategy_sharpe",
+      "text": "乔尔格林布拉特的神奇公式策略类型、2019 年涨跌幅和 Sharp 比率是多少？",
+      "type": "structured_table_lookup",
+      "expected_filters": {"source_type": "csv", "strategy": "乔尔格林布拉特的神奇公式", "metrics": ["策略类型", "2019年涨跌幅", "Sharp比率"]}
     },
     {
-      "id": "q008_consensus",
-      "text": "多篇研报对同一家公司盈利预测不一致时，差异主要来自哪些假设？",
+      "id": "q_smoke_007_ai_pcb_multi_doc",
+      "text": "AI PCB / M9 PCB 相关需求在德龙激光和华泰封装材料报告中有哪些线索？",
       "type": "multi_doc_reasoning",
-      "expected_filters": {"requires_multi_doc": true}
+      "expected_filters": {"requires_multi_doc": true, "topics": ["AI PCB", "M9 PCB", "德龙激光", "封装材料"]}
+    },
+    {
+      "id": "q_smoke_008_ultrafast_competitors",
+      "text": "2019 华泰超快激光报告提到哪些海外超快激光厂商或品牌？",
+      "type": "entity_lookup",
+      "expected_filters": {"broker": "华泰证券", "industry": "超快激光", "entity_type": "海外厂商"}
     }
   ]
 }

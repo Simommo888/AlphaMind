@@ -34,16 +34,37 @@
 
 ## 3. Smoke 评测集（5-10 篇）
 
-人工从 smoke 文档中标注 10-20 个 query：
+当前 smoke query 已绑定到 Phase2 小样本文档，而不是占位公司：
+
+- Query: `dataset/alphamind_eval_queries.json`
+- Ground truth: `dataset/alphamind_ground_truth_template.json`
+- 离线 smoke evaluator: `scripts/alphamind_smoke_retrieval_eval.py`
+- 最新离线结果: `dataset/alphamind_smoke_retrieval_eval_latest.json`
+
+运行命令：
+
+```powershell
+python scripts\alphamind_smoke_retrieval_eval.py `
+  --queries dataset\alphamind_eval_queries.json `
+  --ground-truth dataset\alphamind_ground_truth_template.json `
+  --corpus-root "D:\AlphaMind\数据\数据库\Documents" `
+  --out dataset\alphamind_smoke_retrieval_eval_latest.json
+```
+
+当前 smoke 覆盖：
 
 | 类别 | 示例 |
 |---|---|
-| 公司观点 | “这篇报告的核心投资逻辑是什么？请引用原文。” |
-| 指标查询 | “公司 2026E EPS/收入/净利润预测是多少？” |
-| 目标价/评级 | “该报告给出的目标价和评级是什么，理由是什么？” |
-| 风险因素 | “报告列出的主要风险因素有哪些？” |
-| 表格计算 | “2024A 到 2026E 收入 CAGR 是多少？” |
-| 多文档比较 | “不同券商对同一公司预测差异来自哪些假设？” |
+| 财务指标 | “德龙激光 2026E EPS 预测是多少？” |
+| 收入/利润预测 | “德龙激光 2026E 收入和归母净利润预测是多少？” |
+| 行业市场规模 | “超快激光市场规模从 2018 到 2024 的 CAGR 是多少？” |
+| 技术主题 | “M8/M9 PCB 与 TGV 在封装材料报告中的关系是什么？” |
+| 表格查找 | “平安证券 EPS 预测表覆盖哪些股票代码？” |
+| CSV 结构化表 | “乔尔格林布拉特的神奇公式策略类型、2019 年涨跌幅和 Sharp 比率是多少？” |
+| 多文档推理 | “AI PCB / M9 PCB 相关需求在德龙激光和华泰封装材料报告中有哪些线索？” |
+| 实体查找 | “2019 华泰超快激光报告提到哪些海外超快激光厂商或品牌？” |
+
+最新离线结果：`validation=pass`、`Precision@1=1.000`、`Recall@5=1.000`、`Recall@10=1.000`、`MRR=1.000`。`Precision@5=0.225` 是因为当前离线语料只有 5 个文档且每题相关文档通常只有 1-2 个；后续用于对比 rerank/top-k 变化，不单独作为 smoke 阻断项。
 
 ## 4. Pilot 评测集（100 篇）
 
