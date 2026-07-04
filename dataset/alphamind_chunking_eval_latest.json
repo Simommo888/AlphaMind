@@ -1,0 +1,1447 @@
+{
+  "corpus_info": {
+    "document_count": 4,
+    "total_size": 118325,
+    "avg_document_size": 29581.25
+  },
+  "strategy_results": {
+    "fixed_size_char": {
+      "strategy_config": {
+        "chunk_size": 1500,
+        "overlap": 100,
+        "unit": "char"
+      },
+      "total_chunks": 86,
+      "overall_analysis": {
+        "size_statistics": {
+          "count": 86,
+          "mean": 1471.2209302325582,
+          "median": 1500.0,
+          "std": 144.43581119920208,
+          "min": 518,
+          "max": 1500,
+          "total": 126525
+        },
+        "boundary_quality": {
+          "sentence_boundary_ratio": 0.18604651162790697,
+          "word_boundary_ratio": 0.872093023255814,
+          "clean_breaks": 16,
+          "total_chunks": 86
+        },
+        "semantic_coherence": 0.16497287581284373,
+        "vocabulary_statistics": {
+          "total_vocabulary": 1208,
+          "avg_chunk_vocabulary": 46.348837209302324,
+          "vocabulary_diversity": 0.1792816859602256,
+          "most_common_words": [
+            [
+              "0",
+              247
+            ],
+            [
+              "1",
+              193
+            ],
+            [
+              "2",
+              181
+            ],
+            [
+              "6",
+              139
+            ],
+            [
+              "5",
+              137
+            ],
+            [
+              "18818258031",
+              131
+            ],
+            [
+              "3",
+              127
+            ],
+            [
+              "10",
+              109
+            ],
+            [
+              "pcb",
+              105
+            ],
+            [
+              "20",
+              103
+            ]
+          ]
+        }
+      },
+      "document_results": [
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-04-25-\u5e73\u5b89\u8bc1\u5238-\u667a\u80fd\u5236\u9020\u884c\u4e1a\u4e13\u9898\u62a5\u544a(\u516d)\uff1a\u8d85\u5feb\u6fc0\u5149 \u80fd\u91cf\u6fc0\u5149\u9886\u57df\u7684\u4e0b\u4e00\u4e2a\u5236\u9ad8\u70b9.txt",
+          "chunk_count": 14,
+          "analysis": {
+            "size_statistics": {
+              "count": 14,
+              "mean": 1475.5,
+              "median": 1500.0,
+              "std": 91.67060597596156,
+              "min": 1157,
+              "max": 1500,
+              "total": 20657
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.2857142857142857,
+              "word_boundary_ratio": 0.9285714285714286,
+              "clean_breaks": 4,
+              "total_chunks": 14
+            },
+            "semantic_coherence": 0.17275310934563992,
+            "vocabulary_statistics": {
+              "total_vocabulary": 284,
+              "avg_chunk_vocabulary": 44.142857142857146,
+              "vocabulary_diversity": 0.2973821989528796,
+              "most_common_words": [
+                [
+                  "18818258031",
+                  28
+                ],
+                [
+                  "1",
+                  28
+                ],
+                [
+                  "26",
+                  28
+                ],
+                [
+                  "20",
+                  25
+                ],
+                [
+                  "6",
+                  23
+                ],
+                [
+                  "2018",
+                  21
+                ],
+                [
+                  "2",
+                  21
+                ],
+                [
+                  "2017",
+                  20
+                ],
+                [
+                  "3",
+                  20
+                ],
+                [
+                  "10",
+                  18
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-06-14-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907-\u6fc0\u5149\u4ea7\u4e1a\u94fe\u7cfb\u5217\u62a5\u544a\u4e4b\u4e03-\u6280\u672f\u6210\u719f\u4f18\u52bf\u6e10\u663e \u8d85\u5feb\u6fc0\u5149\u672a\u6765\u53ef\u671f.txt",
+          "chunk_count": 24,
+          "analysis": {
+            "size_statistics": {
+              "count": 24,
+              "mean": 1466.6666666666667,
+              "median": 1500.0,
+              "std": 163.2993161855452,
+              "min": 700,
+              "max": 1500,
+              "total": 35200
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.20833333333333334,
+              "word_boundary_ratio": 0.875,
+              "clean_breaks": 5,
+              "total_chunks": 24
+            },
+            "semantic_coherence": 0.13354809553608799,
+            "vocabulary_statistics": {
+              "total_vocabulary": 369,
+              "avg_chunk_vocabulary": 37.458333333333336,
+              "vocabulary_diversity": 0.2645161290322581,
+              "most_common_words": [
+                [
+                  "2019",
+                  42
+                ],
+                [
+                  "14",
+                  40
+                ],
+                [
+                  "06",
+                  36
+                ],
+                [
+                  "18818258031",
+                  31
+                ],
+                [
+                  "cpa",
+                  27
+                ],
+                [
+                  "ekspla",
+                  24
+                ],
+                [
+                  "5",
+                  23
+                ],
+                [
+                  "20",
+                  22
+                ],
+                [
+                  "2018",
+                  19
+                ],
+                [
+                  "10",
+                  19
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1.txt",
+          "chunk_count": 31,
+          "analysis": {
+            "size_statistics": {
+              "count": 31,
+              "mean": 1468.3225806451612,
+              "median": 1500,
+              "std": 176.37240659029294,
+              "min": 518,
+              "max": 1500,
+              "total": 45518
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.16129032258064516,
+              "word_boundary_ratio": 0.8387096774193549,
+              "clean_breaks": 5,
+              "total_chunks": 31
+            },
+            "semantic_coherence": 0.20031398746245674,
+            "vocabulary_statistics": {
+              "total_vocabulary": 508,
+              "avg_chunk_vocabulary": 46.354838709677416,
+              "vocabulary_diversity": 0.19286256643887623,
+              "most_common_words": [
+                [
+                  "0",
+                  212
+                ],
+                [
+                  "2",
+                  104
+                ],
+                [
+                  "1",
+                  97
+                ],
+                [
+                  "6",
+                  81
+                ],
+                [
+                  "5",
+                  75
+                ],
+                [
+                  "2026",
+                  69
+                ],
+                [
+                  "3",
+                  62
+                ],
+                [
+                  "7",
+                  53
+                ],
+                [
+                  "4",
+                  46
+                ],
+                [
+                  "10",
+                  45
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-06-09-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907\u884c\u4e1a\u8d85\u5feb\u6fc0\u5149\uff1a\u5c01\u88c5\u6750\u6599\u9769\u547d\u7684\u201c\u624b\u672f\u5200\u201d.txt",
+          "chunk_count": 17,
+          "analysis": {
+            "size_statistics": {
+              "count": 17,
+              "mean": 1479.4117647058824,
+              "median": 1500,
+              "std": 84.88746876271654,
+              "min": 1150,
+              "max": 1500,
+              "total": 25150
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.11764705882352941,
+              "word_boundary_ratio": 0.8823529411764706,
+              "clean_breaks": 2,
+              "total_chunks": 17
+            },
+            "semantic_coherence": 0.16020179277548788,
+            "vocabulary_statistics": {
+              "total_vocabulary": 525,
+              "avg_chunk_vocabulary": 60.705882352941174,
+              "vocabulary_diversity": 0.2993158494868871,
+              "most_common_words": [
+                [
+                  "pcb",
+                  67
+                ],
+                [
+                  "1",
+                  59
+                ],
+                [
+                  "2",
+                  46
+                ],
+                [
+                  "3",
+                  33
+                ],
+                [
+                  "18818258031",
+                  32
+                ],
+                [
+                  "tgv",
+                  32
+                ],
+                [
+                  "m9",
+                  30
+                ],
+                [
+                  "20",
+                  30
+                ],
+                [
+                  "10",
+                  27
+                ],
+                [
+                  "000",
+                  26
+                ]
+              ]
+            }
+          }
+        }
+      ],
+      "performance_score": 0.531667535546012
+    },
+    "sentence_based": {
+      "strategy_config": {
+        "max_size": 1200
+      },
+      "total_chunks": 29,
+      "overall_analysis": {
+        "size_statistics": {
+          "count": 29,
+          "mean": 4074.862068965517,
+          "median": 1199,
+          "std": 5835.889060216336,
+          "min": 224,
+          "max": 26341,
+          "total": 118171
+        },
+        "boundary_quality": {
+          "sentence_boundary_ratio": 0.8620689655172413,
+          "word_boundary_ratio": 1.0,
+          "clean_breaks": 25,
+          "total_chunks": 29
+        },
+        "semantic_coherence": 0.0955964488073557,
+        "vocabulary_statistics": {
+          "total_vocabulary": 1197,
+          "avg_chunk_vocabulary": 85.93103448275862,
+          "vocabulary_diversity": 0.18921909579513121,
+          "most_common_words": [
+            [
+              "0",
+              233
+            ],
+            [
+              "1",
+              182
+            ],
+            [
+              "2",
+              167
+            ],
+            [
+              "6",
+              130
+            ],
+            [
+              "18818258031",
+              123
+            ],
+            [
+              "5",
+              122
+            ],
+            [
+              "3",
+              122
+            ],
+            [
+              "20",
+              100
+            ],
+            [
+              "pcb",
+              98
+            ],
+            [
+              "10",
+              96
+            ]
+          ]
+        }
+      },
+      "document_results": [
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-04-25-\u5e73\u5b89\u8bc1\u5238-\u667a\u80fd\u5236\u9020\u884c\u4e1a\u4e13\u9898\u62a5\u544a(\u516d)\uff1a\u8d85\u5feb\u6fc0\u5149 \u80fd\u91cf\u6fc0\u5149\u9886\u57df\u7684\u4e0b\u4e00\u4e2a\u5236\u9ad8\u70b9.txt",
+          "chunk_count": 4,
+          "analysis": {
+            "size_statistics": {
+              "count": 4,
+              "mean": 4828.5,
+              "median": 4673.5,
+              "std": 3754.869061187975,
+              "min": 777,
+              "max": 9190,
+              "total": 19314
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.75,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 3,
+              "total_chunks": 4
+            },
+            "semantic_coherence": 0.14029650572712773,
+            "vocabulary_statistics": {
+              "total_vocabulary": 283,
+              "avg_chunk_vocabulary": 99.25,
+              "vocabulary_diversity": 0.31444444444444447,
+              "most_common_words": [
+                [
+                  "26",
+                  27
+                ],
+                [
+                  "18818258031",
+                  26
+                ],
+                [
+                  "20",
+                  24
+                ],
+                [
+                  "1",
+                  24
+                ],
+                [
+                  "2018",
+                  21
+                ],
+                [
+                  "6",
+                  21
+                ],
+                [
+                  "2",
+                  20
+                ],
+                [
+                  "3",
+                  19
+                ],
+                [
+                  "10",
+                  18
+                ],
+                [
+                  "2017",
+                  16
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-06-14-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907-\u6fc0\u5149\u4ea7\u4e1a\u94fe\u7cfb\u5217\u62a5\u544a\u4e4b\u4e03-\u6280\u672f\u6210\u719f\u4f18\u52bf\u6e10\u663e \u8d85\u5feb\u6fc0\u5149\u672a\u6765\u53ef\u671f.txt",
+          "chunk_count": 11,
+          "analysis": {
+            "size_statistics": {
+              "count": 11,
+              "mean": 2984.5454545454545,
+              "median": 1545,
+              "std": 3465.1286083964146,
+              "min": 224,
+              "max": 10609,
+              "total": 32830
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.9090909090909091,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 10,
+              "total_chunks": 11
+            },
+            "semantic_coherence": 0.0771439164251175,
+            "vocabulary_statistics": {
+              "total_vocabulary": 366,
+              "avg_chunk_vocabulary": 65.54545454545455,
+              "vocabulary_diversity": 0.2798165137614679,
+              "most_common_words": [
+                [
+                  "2019",
+                  41
+                ],
+                [
+                  "14",
+                  39
+                ],
+                [
+                  "06",
+                  35
+                ],
+                [
+                  "18818258031",
+                  31
+                ],
+                [
+                  "cpa",
+                  24
+                ],
+                [
+                  "20",
+                  21
+                ],
+                [
+                  "2018",
+                  19
+                ],
+                [
+                  "ekspla",
+                  19
+                ],
+                [
+                  "5",
+                  18
+                ],
+                [
+                  "10",
+                  18
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1.txt",
+          "chunk_count": 9,
+          "analysis": {
+            "size_statistics": {
+              "count": 9,
+              "mean": 4721.222222222223,
+              "median": 1143,
+              "std": 8474.026961512716,
+              "min": 707,
+              "max": 26341,
+              "total": 42491
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.8888888888888888,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 8,
+              "total_chunks": 9
+            },
+            "semantic_coherence": 0.10021820997430753,
+            "vocabulary_statistics": {
+              "total_vocabulary": 504,
+              "avg_chunk_vocabulary": 81.88888888888889,
+              "vocabulary_diversity": 0.20363636363636364,
+              "most_common_words": [
+                [
+                  "0",
+                  198
+                ],
+                [
+                  "2",
+                  93
+                ],
+                [
+                  "1",
+                  92
+                ],
+                [
+                  "6",
+                  75
+                ],
+                [
+                  "5",
+                  68
+                ],
+                [
+                  "2026",
+                  66
+                ],
+                [
+                  "3",
+                  59
+                ],
+                [
+                  "7",
+                  52
+                ],
+                [
+                  "4",
+                  44
+                ],
+                [
+                  "9",
+                  42
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-06-09-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907\u884c\u4e1a\u8d85\u5feb\u6fc0\u5149\uff1a\u5c01\u88c5\u6750\u6599\u9769\u547d\u7684\u201c\u624b\u672f\u5200\u201d.txt",
+          "chunk_count": 5,
+          "analysis": {
+            "size_statistics": {
+              "count": 5,
+              "mean": 4707.2,
+              "median": 1112,
+              "std": 6993.990577631628,
+              "min": 979,
+              "max": 17099,
+              "total": 23536
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.8,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 4,
+              "total_chunks": 5
+            },
+            "semantic_coherence": 0.1150519111657351,
+            "vocabulary_statistics": {
+              "total_vocabulary": 519,
+              "avg_chunk_vocabulary": 127.4,
+              "vocabulary_diversity": 0.31588557516737675,
+              "most_common_words": [
+                [
+                  "pcb",
+                  63
+                ],
+                [
+                  "1",
+                  57
+                ],
+                [
+                  "2",
+                  45
+                ],
+                [
+                  "3",
+                  32
+                ],
+                [
+                  "tgv",
+                  31
+                ],
+                [
+                  "18818258031",
+                  30
+                ],
+                [
+                  "m9",
+                  30
+                ],
+                [
+                  "20",
+                  30
+                ],
+                [
+                  "000",
+                  25
+                ],
+                [
+                  "300",
+                  23
+                ]
+              ]
+            }
+          }
+        }
+      ],
+      "performance_score": 0.401092727745655
+    },
+    "paragraph_based": {
+      "strategy_config": {
+        "max_size": 2000,
+        "min_paragraph_size": 50
+      },
+      "total_chunks": 36,
+      "overall_analysis": {
+        "size_statistics": {
+          "count": 36,
+          "mean": 1891.2777777777778,
+          "median": 1946.5,
+          "std": 979.620935759224,
+          "min": 50,
+          "max": 4676,
+          "total": 68086
+        },
+        "boundary_quality": {
+          "sentence_boundary_ratio": 0.0,
+          "word_boundary_ratio": 0.9444444444444444,
+          "clean_breaks": 0,
+          "total_chunks": 36
+        },
+        "semantic_coherence": 0.12225784702572144,
+        "vocabulary_statistics": {
+          "total_vocabulary": 909,
+          "avg_chunk_vocabulary": 61.5,
+          "vocabulary_diversity": 0.22063106796116505,
+          "most_common_words": [
+            [
+              "0",
+              211
+            ],
+            [
+              "1",
+              113
+            ],
+            [
+              "6",
+              104
+            ],
+            [
+              "2",
+              98
+            ],
+            [
+              "5",
+              81
+            ],
+            [
+              "20",
+              78
+            ],
+            [
+              "3",
+              74
+            ],
+            [
+              "10",
+              69
+            ],
+            [
+              "7",
+              66
+            ],
+            [
+              "9",
+              55
+            ]
+          ]
+        }
+      },
+      "document_results": [
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-04-25-\u5e73\u5b89\u8bc1\u5238-\u667a\u80fd\u5236\u9020\u884c\u4e1a\u4e13\u9898\u62a5\u544a(\u516d)\uff1a\u8d85\u5feb\u6fc0\u5149 \u80fd\u91cf\u6fc0\u5149\u9886\u57df\u7684\u4e0b\u4e00\u4e2a\u5236\u9ad8\u70b9.txt",
+          "chunk_count": 6,
+          "analysis": {
+            "size_statistics": {
+              "count": 6,
+              "mean": 1846,
+              "median": 1938.5,
+              "std": 673.7961115945981,
+              "min": 688,
+              "max": 2789,
+              "total": 11076
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 0,
+              "total_chunks": 6
+            },
+            "semantic_coherence": 0.1523491142258717,
+            "vocabulary_statistics": {
+              "total_vocabulary": 243,
+              "avg_chunk_vocabulary": 61.166666666666664,
+              "vocabulary_diversity": 0.44343065693430656,
+              "most_common_words": [
+                [
+                  "20",
+                  16
+                ],
+                [
+                  "2018",
+                  12
+                ],
+                [
+                  "25",
+                  11
+                ],
+                [
+                  "6",
+                  11
+                ],
+                [
+                  "10",
+                  11
+                ],
+                [
+                  "2017",
+                  10
+                ],
+                [
+                  "18",
+                  10
+                ],
+                [
+                  "2",
+                  9
+                ],
+                [
+                  "0",
+                  9
+                ],
+                [
+                  "40",
+                  8
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-06-14-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907-\u6fc0\u5149\u4ea7\u4e1a\u94fe\u7cfb\u5217\u62a5\u544a\u4e4b\u4e03-\u6280\u672f\u6210\u719f\u4f18\u52bf\u6e10\u663e \u8d85\u5feb\u6fc0\u5149\u672a\u6765\u53ef\u671f.txt",
+          "chunk_count": 9,
+          "analysis": {
+            "size_statistics": {
+              "count": 9,
+              "mean": 2171.8888888888887,
+              "median": 1957,
+              "std": 1537.9993859267665,
+              "min": 288,
+              "max": 4676,
+              "total": 19547
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 0,
+              "total_chunks": 9
+            },
+            "semantic_coherence": 0.04841760853948084,
+            "vocabulary_statistics": {
+              "total_vocabulary": 323,
+              "avg_chunk_vocabulary": 57.111111111111114,
+              "vocabulary_diversity": 0.3854415274463007,
+              "most_common_words": [
+                [
+                  "2019",
+                  22
+                ],
+                [
+                  "14",
+                  22
+                ],
+                [
+                  "06",
+                  19
+                ],
+                [
+                  "20",
+                  17
+                ],
+                [
+                  "18818258031",
+                  16
+                ],
+                [
+                  "cpa",
+                  14
+                ],
+                [
+                  "laser",
+                  13
+                ],
+                [
+                  "5",
+                  12
+                ],
+                [
+                  "photonics",
+                  12
+                ],
+                [
+                  "25",
+                  11
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1.txt",
+          "chunk_count": 15,
+          "analysis": {
+            "size_statistics": {
+              "count": 15,
+              "mean": 1795.0666666666666,
+              "median": 1923,
+              "std": 851.5664110220367,
+              "min": 50,
+              "max": 4188,
+              "total": 26926
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 0.8666666666666667,
+              "clean_breaks": 0,
+              "total_chunks": 15
+            },
+            "semantic_coherence": 0.17541144305466855,
+            "vocabulary_statistics": {
+              "total_vocabulary": 379,
+              "avg_chunk_vocabulary": 59.2,
+              "vocabulary_diversity": 0.20939226519337018,
+              "most_common_words": [
+                [
+                  "0",
+                  187
+                ],
+                [
+                  "1",
+                  75
+                ],
+                [
+                  "6",
+                  69
+                ],
+                [
+                  "2",
+                  65
+                ],
+                [
+                  "5",
+                  50
+                ],
+                [
+                  "7",
+                  47
+                ],
+                [
+                  "3",
+                  46
+                ],
+                [
+                  "9",
+                  37
+                ],
+                [
+                  "4",
+                  37
+                ],
+                [
+                  "10",
+                  35
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-06-09-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907\u884c\u4e1a\u8d85\u5feb\u6fc0\u5149\uff1a\u5c01\u88c5\u6750\u6599\u9769\u547d\u7684\u201c\u624b\u672f\u5200\u201d.txt",
+          "chunk_count": 6,
+          "analysis": {
+            "size_statistics": {
+              "count": 6,
+              "mean": 1756.1666666666667,
+              "median": 1962.0,
+              "std": 504.53559504426113,
+              "min": 727,
+              "max": 1981,
+              "total": 10537
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 0,
+              "total_chunks": 6
+            },
+            "semantic_coherence": 0.09262694711893625,
+            "vocabulary_statistics": {
+              "total_vocabulary": 338,
+              "avg_chunk_vocabulary": 74.16666666666667,
+              "vocabulary_diversity": 0.3658008658008658,
+              "most_common_words": [
+                [
+                  "1",
+                  27
+                ],
+                [
+                  "pcb",
+                  25
+                ],
+                [
+                  "20",
+                  25
+                ],
+                [
+                  "000",
+                  25
+                ],
+                [
+                  "300",
+                  20
+                ],
+                [
+                  "m9",
+                  19
+                ],
+                [
+                  "3",
+                  19
+                ],
+                [
+                  "2",
+                  19
+                ],
+                [
+                  "60",
+                  18
+                ],
+                [
+                  "htsc",
+                  16
+                ]
+              ]
+            }
+          }
+        }
+      ],
+      "performance_score": 0.3701759115598985
+    },
+    "semantic_heading": {
+      "strategy_config": {
+        "max_size": 1800,
+        "heading_weight": 2.0
+      },
+      "total_chunks": 52,
+      "overall_analysis": {
+        "size_statistics": {
+          "count": 52,
+          "mean": 1713.0576923076924,
+          "median": 1753.5,
+          "std": 843.7938465228721,
+          "min": 65,
+          "max": 4676,
+          "total": 89079
+        },
+        "boundary_quality": {
+          "sentence_boundary_ratio": 0.0,
+          "word_boundary_ratio": 0.9038461538461539,
+          "clean_breaks": 0,
+          "total_chunks": 52
+        },
+        "semantic_coherence": 0.15670545356018134,
+        "vocabulary_statistics": {
+          "total_vocabulary": 1199,
+          "avg_chunk_vocabulary": 65.53846153846153,
+          "vocabulary_diversity": 0.18917639633953928,
+          "most_common_words": [
+            [
+              "0",
+              233
+            ],
+            [
+              "1",
+              182
+            ],
+            [
+              "2",
+              167
+            ],
+            [
+              "6",
+              130
+            ],
+            [
+              "18818258031",
+              123
+            ],
+            [
+              "5",
+              122
+            ],
+            [
+              "3",
+              122
+            ],
+            [
+              "20",
+              100
+            ],
+            [
+              "pcb",
+              98
+            ],
+            [
+              "10",
+              96
+            ]
+          ]
+        }
+      },
+      "document_results": [
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-04-25-\u5e73\u5b89\u8bc1\u5238-\u667a\u80fd\u5236\u9020\u884c\u4e1a\u4e13\u9898\u62a5\u544a(\u516d)\uff1a\u8d85\u5feb\u6fc0\u5149 \u80fd\u91cf\u6fc0\u5149\u9886\u57df\u7684\u4e0b\u4e00\u4e2a\u5236\u9ad8\u70b9.txt",
+          "chunk_count": 8,
+          "analysis": {
+            "size_statistics": {
+              "count": 8,
+              "mean": 1770.125,
+              "median": 1793.5,
+              "std": 519.6156374805186,
+              "min": 866,
+              "max": 2789,
+              "total": 14161
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 0,
+              "total_chunks": 8
+            },
+            "semantic_coherence": 0.20258113660352894,
+            "vocabulary_statistics": {
+              "total_vocabulary": 285,
+              "avg_chunk_vocabulary": 65.875,
+              "vocabulary_diversity": 0.31561461794019935,
+              "most_common_words": [
+                [
+                  "26",
+                  27
+                ],
+                [
+                  "18818258031",
+                  26
+                ],
+                [
+                  "20",
+                  24
+                ],
+                [
+                  "1",
+                  24
+                ],
+                [
+                  "2018",
+                  21
+                ],
+                [
+                  "6",
+                  21
+                ],
+                [
+                  "2",
+                  20
+                ],
+                [
+                  "3",
+                  19
+                ],
+                [
+                  "10",
+                  18
+                ],
+                [
+                  "2017",
+                  16
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2019-06-14-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907-\u6fc0\u5149\u4ea7\u4e1a\u94fe\u7cfb\u5217\u62a5\u544a\u4e4b\u4e03-\u6280\u672f\u6210\u719f\u4f18\u52bf\u6e10\u663e \u8d85\u5feb\u6fc0\u5149\u672a\u6765\u53ef\u671f.txt",
+          "chunk_count": 13,
+          "analysis": {
+            "size_statistics": {
+              "count": 13,
+              "mean": 1921.076923076923,
+              "median": 1777,
+              "std": 1318.0621167417503,
+              "min": 65,
+              "max": 4676,
+              "total": 24974
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 1.0,
+              "clean_breaks": 0,
+              "total_chunks": 13
+            },
+            "semantic_coherence": 0.08132803344035643,
+            "vocabulary_statistics": {
+              "total_vocabulary": 368,
+              "avg_chunk_vocabulary": 57.92307692307692,
+              "vocabulary_diversity": 0.2807017543859649,
+              "most_common_words": [
+                [
+                  "2019",
+                  41
+                ],
+                [
+                  "14",
+                  39
+                ],
+                [
+                  "06",
+                  35
+                ],
+                [
+                  "18818258031",
+                  31
+                ],
+                [
+                  "cpa",
+                  24
+                ],
+                [
+                  "20",
+                  21
+                ],
+                [
+                  "2018",
+                  19
+                ],
+                [
+                  "ekspla",
+                  19
+                ],
+                [
+                  "5",
+                  18
+                ],
+                [
+                  "10",
+                  18
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1.txt",
+          "chunk_count": 21,
+          "analysis": {
+            "size_statistics": {
+              "count": 21,
+              "mean": 1626.7142857142858,
+              "median": 1748,
+              "std": 768.1929538115501,
+              "min": 73,
+              "max": 4188,
+              "total": 34161
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 0.8571428571428571,
+              "clean_breaks": 0,
+              "total_chunks": 21
+            },
+            "semantic_coherence": 0.19758457525971976,
+            "vocabulary_statistics": {
+              "total_vocabulary": 506,
+              "avg_chunk_vocabulary": 60.57142857142857,
+              "vocabulary_diversity": 0.20419693301049233,
+              "most_common_words": [
+                [
+                  "0",
+                  198
+                ],
+                [
+                  "2",
+                  93
+                ],
+                [
+                  "1",
+                  92
+                ],
+                [
+                  "6",
+                  75
+                ],
+                [
+                  "5",
+                  68
+                ],
+                [
+                  "2026",
+                  66
+                ],
+                [
+                  "3",
+                  59
+                ],
+                [
+                  "7",
+                  52
+                ],
+                [
+                  "4",
+                  44
+                ],
+                [
+                  "9",
+                  42
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "path": "D:\\AlphaMind\\\u6570\u636e\\\u6570\u636e\u5e93\\Documents\\2026-06-09-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907\u884c\u4e1a\u8d85\u5feb\u6fc0\u5149\uff1a\u5c01\u88c5\u6750\u6599\u9769\u547d\u7684\u201c\u624b\u672f\u5200\u201d.txt",
+          "chunk_count": 10,
+          "analysis": {
+            "size_statistics": {
+              "count": 10,
+              "mean": 1578.3,
+              "median": 1752.0,
+              "std": 306.3734286418745,
+              "min": 842,
+              "max": 1797,
+              "total": 15783
+            },
+            "boundary_quality": {
+              "sentence_boundary_ratio": 0.0,
+              "word_boundary_ratio": 0.8,
+              "clean_breaks": 0,
+              "total_chunks": 10
+            },
+            "semantic_coherence": 0.1558194328705853,
+            "vocabulary_statistics": {
+              "total_vocabulary": 521,
+              "avg_chunk_vocabulary": 85.6,
+              "vocabulary_diversity": 0.31652490886998785,
+              "most_common_words": [
+                [
+                  "pcb",
+                  63
+                ],
+                [
+                  "1",
+                  57
+                ],
+                [
+                  "2",
+                  45
+                ],
+                [
+                  "3",
+                  32
+                ],
+                [
+                  "tgv",
+                  31
+                ],
+                [
+                  "18818258031",
+                  30
+                ],
+                [
+                  "m9",
+                  30
+                ],
+                [
+                  "20",
+                  30
+                ],
+                [
+                  "000",
+                  25
+                ],
+                [
+                  "300",
+                  23
+                ]
+              ]
+            }
+          }
+        }
+      ],
+      "performance_score": 0.3800110893840493
+    }
+  },
+  "recommendation": {
+    "best_strategy": "fixed_size_char",
+    "best_score": 0.531667535546012,
+    "all_scores": {
+      "fixed_size_char": 0.531667535546012,
+      "sentence_based": 0.401092727745655,
+      "paragraph_based": 0.3701759115598985,
+      "semantic_heading": 0.3800110893840493
+    },
+    "reasoning": "Recommended 'fixed_size_char' because:\n- Average chunk size: 1471 characters\n- Size consistency: 144 std deviation\n- Boundary quality: 18.60% clean sentence breaks\n- Semantic coherence: 0.165\n"
+  },
+  "sample_chunks": [
+    {
+      "id": 0,
+      "text": "        18818258031\n\n\n\n                                                     \n                                   2019  04  24 \n  \n\n\n  \n\n                                   \n\n                                    \n                                          10-12 \n  10%   300                               \n                                          \n  0%                                      \n                                          \n  -10%\n                                    \n  -20%                                    \n                                          2017 \n  -30%                                     9  2020  25 2017 \n                                           13.5  RMB 2020  50  RMB\n  -40%\n\n  Mar-18 Jun-18 Sep-18 Dec-18\n\n  \n\n  **                                \n\n                                   NKT\n\n  2019-02-28                       \n  \n  \n   2018-03-20                      \n                                    80%\n\n                                   \n   2018-06-01                  ",
+      "start": 0,
+      "end": 1000,
+      "size": 1000
+    },
+    {
+      "id": 1,
+      "text": "                            80%\n\n                                   \n   2018-06-01                      \n  \n  \n   2018-06-20\n                                    \n  \n                                    3 1\n\n   2018-09-28                       3C  3C\n                                   2\n  ,,                               \n   2018-11-27                      3\n                                   \n\n  \n\n   \n\n        S1060518090003              \n\n        021-38643531                3-5 \n\n        HUXIAOYU298@PINGAN.COM.CN  \n\n                                   \n                                   1\n\n                                   \n        S1060117080013             \n        021-20667267               \n        WUWENCHENG128@PINGAN.COM   2\n        .CN\n\n                                   \n                                   \n\n  \n\n  \n\n  \n\f         18818258031\n\n                                                                                                                      \n\n                \n  ",
+      "start": 900,
+      "end": 1900,
+      "size": 1000
+    },
+    {
+      "id": 2,
+      "text": "                                                                               \n\n                \n                3\n                \n\n          1\n                \n                2\n                \n                3\n                \n\n                                   EPS                          P/E          \n         2019-04-23         2019E 2020E                 2019E 2020E\n                     2018A               2021E  2018A    23.71 15.18  2021E\n                                                 25.18   37.00 28.35\n 002008  40.54       1.61   1.71  2.67   2.83    43.79   36.62 28.48  14.33 \n                                                 54.93\n 300747  148.01      3.38   4.00  5.22   6.60                         22.43 \n\n 000988  15.38       0.28   0.42  0.54   0.66                         23.30 \n\n 2019 -2021  EPS  wind \n\n                                                                             2 / 26\n\f  18818258031\n\n               \n\n  \n\n    .....................................",
+      "start": 1800,
+      "end": 2800,
+      "size": 1000
+    }
+  ]
+}

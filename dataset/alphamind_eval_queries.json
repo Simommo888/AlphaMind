@@ -1,0 +1,53 @@
+{
+  "description": "AlphaMind 股票投研 RAG 第一批评测问题模板。正式评测前请把 query_id 对应的相关 doc_id/chunk_id 写入 ground_truth。",
+  "queries": [
+    {
+      "id": "q001_company_view_recent",
+      "text": "最近三个月券商对贵州茅台的核心分歧是什么？请给出券商、报告日期和引用。",
+      "type": "company_view",
+      "expected_filters": {"company": "贵州茅台", "date_range": "recent_3_months"}
+    },
+    {
+      "id": "q002_metric_eps",
+      "text": "宁德时代 2025E EPS 预测是多少？不同券商的预测是否一致？",
+      "type": "financial_metric",
+      "expected_filters": {"company": "宁德时代", "metric": "EPS", "period": "2025E"}
+    },
+    {
+      "id": "q003_target_price_change",
+      "text": "最近有哪些研报上调了宁德时代目标价？上调理由是什么？",
+      "type": "target_price_event",
+      "expected_filters": {"company": "宁德时代", "metric": "target_price"}
+    },
+    {
+      "id": "q004_industry_demand",
+      "text": "光伏设备行业 2026 年需求驱动因素有哪些？请区分国内和海外因素。",
+      "type": "industry_summary",
+      "expected_filters": {"industry": "光伏设备", "period": "2026"}
+    },
+    {
+      "id": "q005_broker_compare",
+      "text": "中信证券和华泰证券对比亚迪毛利率假设有什么不同？",
+      "type": "broker_comparison",
+      "expected_filters": {"company": "比亚迪", "metric": "毛利率", "brokers": ["中信证券", "华泰证券"]}
+    },
+    {
+      "id": "q006_risk_factors",
+      "text": "最近关于半导体设备国产替代的主要风险因素有哪些？",
+      "type": "risk_factors",
+      "expected_filters": {"industry": "半导体设备", "topic": "国产替代"}
+    },
+    {
+      "id": "q007_table_cagr",
+      "text": "如果研报给出了某公司 2024A 到 2026E 的收入预测，请计算 CAGR 并引用来源。",
+      "type": "table_calculation",
+      "expected_filters": {"metric": "revenue", "periods": ["2024A", "2026E"]}
+    },
+    {
+      "id": "q008_consensus",
+      "text": "多篇研报对同一家公司盈利预测不一致时，差异主要来自哪些假设？",
+      "type": "multi_doc_reasoning",
+      "expected_filters": {"requires_multi_doc": true}
+    }
+  ]
+}

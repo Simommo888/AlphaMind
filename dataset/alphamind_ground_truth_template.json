@@ -1,0 +1,25 @@
+{
+  "description": "AlphaMind 投研 RAG ground truth 模板。将每个 query_id 映射到人工确认相关的 doc_id/chunk_id。",
+  "ground_truth": {
+    "q001_company_view_recent": [
+      {
+        "doc_id": "TODO",
+        "chunk_ids": ["TODO"],
+        "must_contain": ["券商", "报告日期", "核心分歧"]
+      }
+    ],
+    "q002_metric_eps": [],
+    "q003_target_price_change": [],
+    "q004_industry_demand": [],
+    "q005_broker_compare": [],
+    "q006_risk_factors": [],
+    "q007_table_cagr": [],
+    "q008_consensus": []
+  },
+  "metrics": {
+    "precision_at_5_target": 0.75,
+    "recall_at_10_target": 0.85,
+    "citation_accuracy_target": 0.9,
+    "hallucination_rate_max": 0.05
+  }
+}

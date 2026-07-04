@@ -1,0 +1,251 @@
+{
+  "chunking": {
+    "name": "adaptive_chunking",
+    "type": "chunking",
+    "config": {
+      "strategies": [
+        "paragraph",
+        "sentence",
+        "fixed"
+      ],
+      "auto_select": true
+    },
+    "rationale": "Mixed document types require adaptive strategy selection",
+    "pros": [
+      "Handles mixed content",
+      "Optimizes per document",
+      "Best quality"
+    ],
+    "cons": [
+      "High complexity",
+      "Slower processing",
+      "Harder to debug"
+    ],
+    "cost_monthly": 0.0
+  },
+  "embedding": {
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "type": "embedding",
+    "config": {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "dimensions": 384,
+      "batch_size": 100,
+      "cache_embeddings": true
+    },
+    "rationale": "Selected for {'tables', 'mixed', 'financial_reports', 'broker_research_reports'} with accuracy priority 0.85",
+    "pros": [
+      "Fast processing",
+      "Small size",
+      "Good for real-time"
+    ],
+    "cons": [
+      "Self-hosting required",
+      "Model updates needed",
+      "GPU beneficial"
+    ],
+    "cost_monthly": 0.0
+  },
+  "vector_db": {
+    "name": "qdrant",
+    "type": "vector_database",
+    "config": {
+      "collection_name": "rag_documents",
+      "distance_metric": "cosine",
+      "index_type": "hnsw",
+      "memory_mapping": true,
+      "quantization": false,
+      "replication_factor": 1
+    },
+    "rationale": "High performance self-hosted option with good scaling",
+    "pros": [
+      "High performance",
+      "Rust-based",
+      "Good scaling"
+    ],
+    "cons": [
+      "Self-managed",
+      "Smaller community",
+      "Setup complexity"
+    ],
+    "cost_monthly": 100.0
+  },
+  "retrieval": {
+    "name": "hybrid",
+    "type": "retrieval",
+    "config": {
+      "strategy": "hybrid",
+      "dense_weight": 0.7,
+      "sparse_weight": 0.3,
+      "top_k": 20,
+      "similarity_threshold": 0.7
+    },
+    "rationale": "Hybrid retrieval for maximum accuracy combining dense and sparse methods",
+    "pros": [
+      "Best of both",
+      "High accuracy",
+      "Robust"
+    ],
+    "cons": [
+      "More complex",
+      "Tuning required",
+      "Higher latency"
+    ],
+    "cost_monthly": 0.0
+  },
+  "reranking": {
+    "name": "cross_encoder_reranking",
+    "type": "reranking",
+    "config": {
+      "model": "cross-encoder/ms-marco-MiniLM-L-12-v2",
+      "rerank_top_k": 20,
+      "return_top_k": 5,
+      "batch_size": 16
+    },
+    "rationale": "Reranking improves precision for high-accuracy requirements",
+    "pros": [
+      "Higher precision",
+      "Better ranking quality",
+      "Handles complex queries"
+    ],
+    "cons": [
+      "Additional latency",
+      "Higher cost",
+      "More complexity"
+    ],
+    "cost_monthly": 18.0
+  },
+  "evaluation": {
+    "name": "comprehensive_evaluation",
+    "type": "evaluation",
+    "config": {
+      "metrics": [
+        "precision@k",
+        "recall@k",
+        "mrr",
+        "ndcg"
+      ],
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "faithfulness_check": true,
+      "relevance_scoring": true,
+      "evaluation_frequency": "monthly",
+      "sample_size": 1000
+    },
+    "rationale": "Comprehensive evaluation essential for production RAG systems",
+    "pros": [
+      "Quality monitoring",
+      "Performance tracking",
+      "Issue detection"
+    ],
+    "cons": [
+      "Additional overhead",
+      "Requires ground truth data"
+    ],
+    "cost_monthly": 20.0
+  },
+  "total_cost": 138.0,
+  "architecture_diagram": "```mermaid\ngraph TB\n    %% Document Processing Pipeline\n    A[Document Corpus] --> B[Document Chunking]\n    B --> C[Embedding Generation]\n    C --> D[Vector Database Storage]\n    \n    %% Query Processing Pipeline  \n    E[User Query] --> F[Query Processing]\n    F --> G[Vector Search]\n    D --> G\n    G --> H[Retrieved Chunks]\n    H --> I[Reranking]\n    I --> J[Final Results]\n    \n    %% Evaluation Pipeline\n    J --> K[Response Generation]\n    K --> L[Evaluation Metrics]\n    \n    %% Component Details\n    B -.-> B1[Strategy: adaptive_chunking]\n    C -.-> C1[Model: sentence-transformers/all-MiniLM-L6-v2]\n    D -.-> D1[Database: qdrant]\n    G -.-> G1[Method: hybrid]\n    I -.-> I1[Model: cross_encoder_reranking]\n    L -.-> L1[Framework: comprehensive_evaluation]\n```",
+  "config_templates": {
+    "chunking": {
+      "component": "adaptive_chunking",
+      "config": {
+        "strategies": [
+          "paragraph",
+          "sentence",
+          "fixed"
+        ],
+        "auto_select": true
+      },
+      "rationale": "Mixed document types require adaptive strategy selection"
+    },
+    "embedding": {
+      "component": "sentence-transformers/all-MiniLM-L6-v2",
+      "config": {
+        "model": "sentence-transformers/all-MiniLM-L6-v2",
+        "dimensions": 384,
+        "batch_size": 100,
+        "cache_embeddings": true
+      },
+      "rationale": "Selected for {'tables', 'mixed', 'financial_reports', 'broker_research_reports'} with accuracy priority 0.85"
+    },
+    "vector_database": {
+      "component": "qdrant",
+      "config": {
+        "collection_name": "rag_documents",
+        "distance_metric": "cosine",
+        "index_type": "hnsw",
+        "memory_mapping": true,
+        "quantization": false,
+        "replication_factor": 1
+      },
+      "rationale": "High performance self-hosted option with good scaling"
+    },
+    "retrieval": {
+      "component": "hybrid",
+      "config": {
+        "strategy": "hybrid",
+        "dense_weight": 0.7,
+        "sparse_weight": 0.3,
+        "top_k": 20,
+        "similarity_threshold": 0.7
+      },
+      "rationale": "Hybrid retrieval for maximum accuracy combining dense and sparse methods"
+    },
+    "reranking": {
+      "component": "cross_encoder_reranking",
+      "config": {
+        "model": "cross-encoder/ms-marco-MiniLM-L-12-v2",
+        "rerank_top_k": 20,
+        "return_top_k": 5,
+        "batch_size": 16
+      },
+      "rationale": "Reranking improves precision for high-accuracy requirements"
+    },
+    "evaluation": {
+      "component": "comprehensive_evaluation",
+      "config": {
+        "metrics": [
+          "precision@k",
+          "recall@k",
+          "mrr",
+          "ndcg"
+        ],
+        "k_values": [
+          1,
+          3,
+          5,
+          10
+        ],
+        "faithfulness_check": true,
+        "relevance_scoring": true,
+        "evaluation_frequency": "monthly",
+        "sample_size": 1000
+      },
+      "rationale": "Comprehensive evaluation essential for production RAG systems"
+    },
+    "deployment": {
+      "infrastructure": "hybrid",
+      "scaling": {
+        "auto_scaling": true,
+        "min_replicas": 1,
+        "max_replicas": 10
+      },
+      "monitoring": {
+        "metrics": [
+          "latency",
+          "throughput",
+          "accuracy"
+        ],
+        "alerts": [
+          "high_latency",
+          "low_accuracy",
+          "service_down"
+        ]
+      }
+    }
+  }
+}

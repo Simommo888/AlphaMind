@@ -1,0 +1,154 @@
+{
+  "aggregate_metrics": {
+    "mean_precision@1": 0.3333333333333333,
+    "mean_recall@1": 0.16666666666666666,
+    "mean_ndcg@1": 0.3333333333333333,
+    "mean_precision@3": 0.611111111111111,
+    "mean_recall@3": 1.0,
+    "mean_ndcg@3": 0.7539531690476383,
+    "mean_precision@5": 0.611111111111111,
+    "mean_recall@5": 1.0,
+    "mean_ndcg@5": 0.7539531690476383,
+    "mean_precision@10": 0.611111111111111,
+    "mean_recall@10": 1.0,
+    "mean_ndcg@10": 0.7539531690476383,
+    "mean_reciprocal_rank": 0.6666666666666666
+  },
+  "query_results": [
+    {
+      "query_id": "q_baseline_delong_eps",
+      "query": "\u5fb7\u9f99\u6fc0\u5149 2026E EPS \u9884\u6d4b\u662f\u591a\u5c11",
+      "relevant_count": 1,
+      "retrieved_count": 2,
+      "metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.5,
+        "recall@3": 1.0,
+        "precision@5": 0.5,
+        "recall@5": 1.0,
+        "precision@10": 0.5,
+        "recall@10": 1.0,
+        "reciprocal_rank": 0.5,
+        "ndcg@1": 0.0,
+        "ndcg@3": 0.6309297535714575,
+        "ndcg@5": 0.6309297535714575,
+        "ndcg@10": 0.6309297535714575
+      },
+      "retrieved_docs": [
+        [
+          "2019-04-25-\u5e73\u5b89\u8bc1\u5238-\u667a\u80fd\u5236\u9020\u884c\u4e1a\u4e13\u9898\u62a5\u544a(\u516d)\uff1a\u8d85\u5feb\u6fc0\u5149 \u80fd\u91cf\u6fc0\u5149\u9886\u57df\u7684\u4e0b\u4e00\u4e2a\u5236\u9ad8\u70b9",
+          1.0
+        ],
+        [
+          "2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1",
+          0.9383431168171102
+        ]
+      ],
+      "relevant_docs": [
+        "2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1"
+      ]
+    },
+    {
+      "query_id": "q_baseline_ultrafast_pcb",
+      "query": "\u8d85\u5feb\u6fc0\u5149 PCB M9 TGV \u5c01\u88c5\u6750\u6599",
+      "relevant_count": 2,
+      "retrieved_count": 2,
+      "metrics": {
+        "precision@1": 1.0,
+        "recall@1": 0.5,
+        "precision@3": 1.0,
+        "recall@3": 1.0,
+        "precision@5": 1.0,
+        "recall@5": 1.0,
+        "precision@10": 1.0,
+        "recall@10": 1.0,
+        "reciprocal_rank": 1.0,
+        "ndcg@1": 1.0,
+        "ndcg@3": 1.0,
+        "ndcg@5": 1.0,
+        "ndcg@10": 1.0
+      },
+      "retrieved_docs": [
+        [
+          "2026-06-09-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907\u884c\u4e1a\u8d85\u5feb\u6fc0\u5149\uff1a\u5c01\u88c5\u6750\u6599\u9769\u547d\u7684\u201c\u624b\u672f\u5200\u201d",
+          0.9376198227219392
+        ],
+        [
+          "2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1",
+          0.8502433681919837
+        ]
+      ],
+      "relevant_docs": [
+        "2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1",
+        "2026-06-09-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907\u884c\u4e1a\u8d85\u5feb\u6fc0\u5149\uff1a\u5c01\u88c5\u6750\u6599\u9769\u547d\u7684\u201c\u624b\u672f\u5200\u201d"
+      ]
+    },
+    {
+      "query_id": "q_baseline_market_cagr",
+      "query": "\u8d85\u5feb\u6fc0\u5149 \u5e02\u573a\u89c4\u6a21 CAGR 2024 128",
+      "relevant_count": 1,
+      "retrieved_count": 3,
+      "metrics": {
+        "precision@1": 0.0,
+        "recall@1": 0.0,
+        "precision@3": 0.3333333333333333,
+        "recall@3": 1.0,
+        "precision@5": 0.3333333333333333,
+        "recall@5": 1.0,
+        "precision@10": 0.3333333333333333,
+        "recall@10": 1.0,
+        "reciprocal_rank": 0.5,
+        "ndcg@1": 0.0,
+        "ndcg@3": 0.6309297535714575,
+        "ndcg@5": 0.6309297535714575,
+        "ndcg@10": 0.6309297535714575
+      },
+      "retrieved_docs": [
+        [
+          "2026-06-09-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907\u884c\u4e1a\u8d85\u5feb\u6fc0\u5149\uff1a\u5c01\u88c5\u6750\u6599\u9769\u547d\u7684\u201c\u624b\u672f\u5200\u201d",
+          1.0
+        ],
+        [
+          "2019-06-14-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907-\u6fc0\u5149\u4ea7\u4e1a\u94fe\u7cfb\u5217\u62a5\u544a\u4e4b\u4e03-\u6280\u672f\u6210\u719f\u4f18\u52bf\u6e10\u663e \u8d85\u5feb\u6fc0\u5149\u672a\u6765\u53ef\u671f",
+          0.988796989379104
+        ],
+        [
+          "2026-05-31-\u56fd\u76db\u8bc1\u5238-\u5fb7\u9f99\u6fc0\u5149(688170.SH)\u8d85\u5feb\u6fc0\u5149\u5e73\u53f0\u578b\u5c0f\u5de8\u4eba\uff0c\u4e0b\u6e38\u5e94\u7528\u5168\u9762\u5f00\u82b1",
+          0.5165936920997579
+        ]
+      ],
+      "relevant_docs": [
+        "2019-06-14-\u534e\u6cf0\u8bc1\u5238-\u673a\u68b0\u8bbe\u5907-\u6fc0\u5149\u4ea7\u4e1a\u94fe\u7cfb\u5217\u62a5\u544a\u4e4b\u4e03-\u6280\u672f\u6210\u719f\u4f18\u52bf\u6e10\u663e \u8d85\u5feb\u6fc0\u5149\u672a\u6765\u53ef\u671f"
+      ]
+    }
+  ],
+  "failure_analysis": {
+    "poor_precision_count": 0,
+    "poor_recall_count": 0,
+    "zero_results_count": 0,
+    "poor_precision_examples": [],
+    "poor_recall_examples": [],
+    "query_length_analysis": {
+      "short_queries": {
+        "count": 0,
+        "avg_precision@5": 0.0
+      },
+      "medium_queries": {
+        "count": 3,
+        "avg_precision@5": 0.611111111111111
+      },
+      "long_queries": {
+        "count": 0,
+        "avg_precision@5": 0.0
+      }
+    },
+    "common_failure_patterns": [
+      "Vocabulary mismatch: 2 queries may have vocabulary mismatch issues"
+    ]
+  },
+  "evaluation_summary": "Evaluation Summary (3 queries):\n==================================================\nPrecision@1:  0.333 (33.3%)\nPrecision@5:  0.611 (61.1%)\nRecall@5:     1.000 (100.0%)\nMRR:          0.667\nNDCG@5:       0.754\n\nPerformance Assessment:\n\u2717 Poor precision - few queries return relevant results first\n\u2713 Excellent recall - finding most relevant documents\n",
+  "recommendations": [
+    "SHORT QUERY ISSUES: Brief queries perform poorly. Consider query completion or suggestion features."
+  ]
+}

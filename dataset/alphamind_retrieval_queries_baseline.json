@@ -1,0 +1,7 @@
+{
+  "queries": [
+    {"id": "q_baseline_delong_eps", "query": "德龙激光 2026E EPS 预测是多少"},
+    {"id": "q_baseline_ultrafast_pcb", "query": "超快激光 PCB M9 TGV 封装材料"},
+    {"id": "q_baseline_market_cagr", "query": "超快激光 市场规模 CAGR 2024 128"}
+  ]
+}
