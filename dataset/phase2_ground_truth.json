@@ -1,61 +1,178 @@
 {
-  "description": "AlphaMind 二阶段 ground truth 占位文件。固定真实验收样本后，将每个 query_id 对应的相关 doc_id、chunk_id、必须包含词和图谱期望补齐。",
+  "description": "AlphaMind 二阶段质量评测 ground truth。用于 scripts/alphamind_phase2_quality_eval.py 评估 retrieval、knowledge-chat references、answer citation 与 no-evidence guardrail。placeholder 条目可运行但不进入硬质量分母。",
+  "scope": "phase2_quality",
+  "version": 1,
   "sample_source_candidates": [
     "D:\\AlphaMind\\数据\\Documents(1)",
     "D:\\AlphaMind\\数据\\数据库\\Documents",
-    "D:\\AlphaMind\\dataset\\ingest_runs\\alphamind_smoke_manifest_20260702-023028.jsonl"
+    "D:\\AlphaMind\\dataset\\phase2_runs\\phase2_acceptance_*.json",
+    "D:\\AlphaMind\\dataset\\phase2_runs\\alphamind_ingest_*.csv"
   ],
+  "metrics": {
+    "recall_at_10_target": 0.8,
+    "citation_doc_recall_target": 0.8,
+    "chat_reference_rate_target": 0.9,
+    "answer_must_contain_rate_target": 0.8,
+    "no_evidence_refusal_rate_target": 1.0,
+    "hallucination_violation_rate_max": 0.0
+  },
   "graph_expectations": {
-    "required_node_labels": ["Company", "Report", "Broker"],
+    "advisory_node_labels": ["Company", "Report", "Broker"],
     "required_relation_types": ["COVERS", "PUBLISHED_BY"],
     "optional_node_labels": ["FinancialMetric", "InvestmentView", "RiskFactor", "Event", "Product", "Industry"],
-    "cross_document_min_distinct_doc_ids": 2
+    "cross_document_min_distinct_doc_ids": 2,
+    "notes": "WeKnora 当前使用 KB-specific ENTITY labels；Phase2 quality evaluator 不硬要求 Company/Report/Broker label 非零，图谱 smoke 仍由 alphamind_phase2_acceptance.py 验收。"
   },
-  "queries": [
-    {
-      "id": "p2_q001_company_report_fact",
+  "ground_truth": {
+    "p2_q001_company_report_fact": {
+      "gt_status": "placeholder",
+      "expected_behavior": "evidence_required",
       "relevant_doc_ids": [],
-      "must_contain": ["信捷电气", "券商", "报告日期"],
-      "notes": "固定信捷电气样本后填入华泰证券、国金证券、银河证券等报告 doc_id。"
+      "reference_must_include_doc_ids": [],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": ["信捷电气", "券商", "报告日期"],
+      "answer_must_not_contain": [],
+      "answer_must_not_match": [],
+      "evidence": [],
+      "notes": "当前 Phase2 acceptance / ingest 映射中未固定信捷电气样本；待补齐华泰证券、国金证券、银河证券等信捷电气报告 doc_id 后改为 complete。"
     },
-    {
-      "id": "p2_q002_pdf_financial_metric",
-      "relevant_doc_ids": [],
-      "must_contain": ["德龙激光", "期间", "单位", "引用"],
-      "notes": "填入德龙激光研报中真实出现的收入/利润/EPS/目标价字段。"
+    "p2_q002_pdf_financial_metric": {
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_b22476eeb0dd"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_b22476eeb0dd"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": ["德龙激光", "2026", "EPS", "引用"],
+      "answer_must_not_contain": [],
+      "answer_must_not_match": [],
+      "evidence": [
+        {
+          "doc_id": "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_b22476eeb0dd",
+          "chunk_ids": [],
+          "must_contain": ["德龙激光", "2026E", "EPS", "国盛证券"]
+        }
+      ],
+      "notes": "来自 2026-05-31 国盛证券德龙激光研报；精确收入/利润字段仍可在 chunk_id 导出后进一步细化。"
     },
-    {
-      "id": "p2_q003_risk_factor",
-      "relevant_doc_ids": [],
-      "must_contain": ["福赛科技", "风险"],
-      "notes": "填入福赛科技研报风险提示所在 chunk。"
+    "p2_q003_risk_factor": {
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_2024_03_14_华创证券_福赛科技_301529_SZ_深度研究报告_蓄势起航_赛_赢未来_1_pdf_4007f0480639"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_2024_03_14_华创证券_福赛科技_301529_SZ_深度研究报告_蓄势起航_赛_赢未来_1_pdf_4007f0480639"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": ["福赛科技", "风险", "引用"],
+      "answer_must_not_contain": [],
+      "answer_must_not_match": [],
+      "evidence": [
+        {
+          "doc_id": "alphamind_2024_03_14_华创证券_福赛科技_301529_SZ_深度研究报告_蓄势起航_赛_赢未来_1_pdf_4007f0480639",
+          "chunk_ids": [],
+          "must_contain": ["福赛科技", "风险"]
+        }
+      ],
+      "notes": "来自 Phase2 acceptance 小批量样本。"
     },
-    {
-      "id": "p2_q004_cross_doc_view",
+    "p2_q004_cross_doc_view": {
+      "gt_status": "placeholder",
+      "expected_behavior": "cross_document",
       "relevant_doc_ids": [],
-      "must_contain": ["PLC", "具身智能"],
+      "reference_must_include_doc_ids": [],
       "min_distinct_doc_ids": 2,
-      "notes": "至少两篇信捷电气报告。"
+      "requires_references": true,
+      "answer_must_contain": ["PLC", "具身智能", "报告"],
+      "answer_must_not_contain": [],
+      "answer_must_not_match": [],
+      "evidence": [],
+      "notes": "当前 Phase2 acceptance / ingest 映射中未固定两篇以上信捷电气报告；待补样本后进入硬计分。"
     },
-    {
-      "id": "p2_q005_industry_link",
-      "relevant_doc_ids": [],
-      "must_contain": ["超快激光", "应用"],
+    "p2_q005_industry_link": {
+      "gt_status": "complete",
+      "expected_behavior": "cross_document",
+      "relevant_doc_ids": [
+        "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_b22476eeb0dd",
+        "alphamind_2026_06_09_华泰证券_机械设备行业超快激光_封装材料革命的_手术刀_pdf_9130e7af33b1",
+        "alphamind_2019_06_14_华泰证券_机械设备_激光产业链系列报告之七_技术成熟优势渐显_超快激光未来可期_pdf_fdcad0daf529"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_b22476eeb0dd",
+        "alphamind_2026_06_09_华泰证券_机械设备行业超快激光_封装材料革命的_手术刀_pdf_9130e7af33b1"
+      ],
       "min_distinct_doc_ids": 2,
-      "notes": "一篇行业报告 + 一篇德龙激光公司报告。"
+      "requires_references": true,
+      "answer_must_contain": ["超快激光", "应用", "德龙激光", "引用"],
+      "answer_must_not_contain": [],
+      "answer_must_not_match": [],
+      "evidence": [
+        {
+          "doc_id": "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_b22476eeb0dd",
+          "chunk_ids": [],
+          "must_contain": ["德龙激光", "超快激光", "应用"]
+        },
+        {
+          "doc_id": "alphamind_2026_06_09_华泰证券_机械设备行业超快激光_封装材料革命的_手术刀_pdf_9130e7af33b1",
+          "chunk_ids": [],
+          "must_contain": ["超快激光", "封装", "应用"]
+        }
+      ],
+      "notes": "跨公司报告与行业报告，要求至少两个来源文档引用。"
     },
-    {
-      "id": "p2_q006_table_simple",
-      "relevant_doc_ids": [],
-      "must_contain": [],
-      "notes": "固定 CSV/XLSX 样本后补齐字段名和值。"
+    "p2_q006_table_simple": {
+      "gt_status": "partial",
+      "expected_behavior": "table_required",
+      "relevant_doc_ids": [
+        "alphamind_华创证券华创金工机构服务系统_csv_e2e46f66cbc3"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_华创证券华创金工机构服务系统_csv_e2e46f66cbc3"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": ["华创证券华创金工机构服务系统", "来源"],
+      "answer_must_not_contain": [],
+      "answer_must_not_match": [],
+      "evidence": [
+        {
+          "doc_id": "alphamind_华创证券华创金工机构服务系统_csv_e2e46f66cbc3",
+          "chunk_ids": [],
+          "must_contain": ["乔尔格林布拉特", "Sharp"]
+        }
+      ],
+      "notes": "CSV 样本已固定，但 query 表述仍偏宽泛；后续补字段名和值后可改为 complete。"
     },
-    {
-      "id": "p2_q007_no_evidence_guardrail",
+    "p2_q007_no_evidence_guardrail": {
+      "gt_status": "no_evidence",
+      "expected_behavior": "no_evidence",
       "relevant_doc_ids": [],
-      "must_contain": ["未检索到足够证据"],
-      "must_not_contain_fabricated_numbers": true,
-      "notes": "用于防幻觉验收。"
+      "reference_must_include_doc_ids": [],
+      "min_distinct_doc_ids": 0,
+      "requires_references": false,
+      "answer_must_contain": [],
+      "answer_must_contain_any": [
+        "未检索到足够证据",
+        "没有足够证据",
+        "知识库中未找到",
+        "无法根据现有资料",
+        "不能编造"
+      ],
+      "answer_must_not_contain": ["我预测", "可以确定"],
+      "answer_must_not_match": [
+        "目标价[^。\\n]{0,30}\\d+(?:\\.\\d+)?\\s*元",
+        "EPS[^。\\n]{0,30}\\d+(?:\\.\\d+)?",
+        "每股收益[^。\\n]{0,30}\\d+(?:\\.\\d+)?"
+      ],
+      "evidence": [],
+      "notes": "必须拒答或说明证据不足；不得编造未来三年精确目标价、EPS 或评级。"
     }
-  ]
+  }
 }

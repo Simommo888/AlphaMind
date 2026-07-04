@@ -170,3 +170,71 @@ python scripts\alphamind_online_retrieval_eval.py `
   - suspected cause:
 - Decision: keep / revert / try next variable
 ```
+
+## 8. Phase2 Quality Evaluator
+
+Phase2 系统验收通过后，用独立质量评测脚本量化最终答案质量，而不是只看 hybrid-search 是否返回结果。
+
+- 脚本：`scripts/alphamind_phase2_quality_eval.py`
+- Query：`dataset/phase2_eval_queries.json`
+- Ground truth：`dataset/phase2_ground_truth.json`
+- 默认输出：`dataset/phase2_runs/phase2_quality_eval_latest.json`
+
+职责边界：
+
+- `scripts/alphamind_phase2_acceptance.py`：验证 WeKnora、Qdrant、MinIO、Neo4j、上传、解析、chunks、chat smoke 和 graph smoke 是否可用。
+- `scripts/alphamind_phase2_quality_eval.py`：验证 retrieval recall、knowledge-chat references、citation doc coverage、answer must/must-not checks，以及 no-evidence 防幻觉。
+
+只做 schema 验证，不调用在线服务，也不写报告：
+
+```powershell
+python scripts\alphamind_phase2_quality_eval.py `
+  --queries dataset\phase2_eval_queries.json `
+  --ground-truth dataset\phase2_ground_truth.json `
+  --validate-only `
+  --json
+```
+
+只跑 retrieval 质量评测：
+
+```powershell
+python scripts\alphamind_phase2_quality_eval.py `
+  --mode retrieval `
+  --queries dataset\phase2_eval_queries.json `
+  --ground-truth dataset\phase2_ground_truth.json `
+  --retrieval-config dataset\alphamind_retrieval_config_phase2_advanced.json `
+  --out dataset\phase2_runs\phase2_retrieval_eval_latest.json `
+  --json
+```
+
+只跑 knowledge-chat / references 质量评测：
+
+```powershell
+python scripts\alphamind_phase2_quality_eval.py `
+  --mode chat `
+  --queries dataset\phase2_eval_queries.json `
+  --ground-truth dataset\phase2_ground_truth.json `
+  --out dataset\phase2_runs\phase2_chat_eval_latest.json `
+  --json
+```
+
+完整 Phase2 quality 评测：
+
+```powershell
+python scripts\alphamind_phase2_quality_eval.py `
+  --queries dataset\phase2_eval_queries.json `
+  --ground-truth dataset\phase2_ground_truth.json `
+  --retrieval-config dataset\alphamind_retrieval_config_phase2_advanced.json `
+  --out dataset\phase2_runs\phase2_quality_eval_latest.json `
+  --json
+```
+
+指标口径：
+
+- Retrieval：文档级 `Recall@10`、MRR、NDCG；tiny corpus 下 `Precision@5` 只作趋势指标，不作 smoke 硬阻断。
+- Chat references：`chat_reference_rate`、`mean_distinct_reference_doc_ids`。
+- Citation：`citation_doc_recall`、`citation_doc_precision`、`min_distinct_doc_ids_pass_rate`。
+- Answer checks：`answer_must_contain_pass_rate`、`answer_must_not_violation_rate`。
+- No-evidence：`no_evidence_refusal_rate`、`no_evidence_fabrication_violation_rate`。
+
+`dataset/phase2_ground_truth.json` 支持 `complete` / `partial` / `placeholder` / `no_evidence` 状态。placeholder query 可运行但不进入硬质量分母；`--strict` 下 placeholder/partial 会让 quality status fail。当前信捷电气相关 query 因 Phase2 KB 尚未固定对应样本，保持 placeholder，避免用未验证 doc_id 造数。
