@@ -25,17 +25,41 @@
   },
   "ground_truth": {
     "p2_q001_company_report_fact": {
-      "gt_status": "placeholder",
+      "gt_status": "complete",
       "expected_behavior": "evidence_required",
-      "relevant_doc_ids": [],
-      "reference_must_include_doc_ids": [],
-      "min_distinct_doc_ids": 1,
+      "relevant_doc_ids": [
+        "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_a51e9c0f4fa1",
+        "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_e536152e95ec",
+        "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_b2c1aedc210b"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_a51e9c0f4fa1",
+        "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_e536152e95ec",
+        "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_b2c1aedc210b"
+      ],
+      "min_distinct_doc_ids": 3,
       "requires_references": true,
-      "answer_must_contain": ["信捷电气", "券商", "报告日期"],
+      "answer_must_contain": ["信捷电气", "券商", "报告日期", "华泰证券", "国金证券", "银河证券"],
       "answer_must_not_contain": [],
       "answer_must_not_match": [],
-      "evidence": [],
-      "notes": "当前 Phase2 acceptance / ingest 映射中未固定信捷电气样本；待补齐华泰证券、国金证券、银河证券等信捷电气报告 doc_id 后改为 complete。"
+      "evidence": [
+        {
+          "doc_id": "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_a51e9c0f4fa1",
+          "chunk_ids": [],
+          "must_contain": ["信捷电气", "华泰证券", "2025-07-02", "PLC", "目标价"]
+        },
+        {
+          "doc_id": "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_e536152e95ec",
+          "chunk_ids": [],
+          "must_contain": ["信捷电气", "国金证券", "2025-08-05", "小型PLC", "机器人"]
+        },
+        {
+          "doc_id": "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_b2c1aedc210b",
+          "chunk_ids": [],
+          "must_contain": ["信捷电气", "银河证券", "2026-02-27", "具身智能"]
+        }
+      ],
+      "notes": "信捷电气三篇 Phase2 样本已补入 KB：2025-07-02 华泰证券、2025-08-05 国金证券、2026-02-27 银河证券。"
     },
     "p2_q002_pdf_financial_metric": {
       "gt_status": "complete",
@@ -48,7 +72,7 @@
       ],
       "min_distinct_doc_ids": 1,
       "requires_references": true,
-      "answer_must_contain": ["德龙激光", "2026", "EPS", "引用"],
+      "answer_must_contain": ["德龙激光", "2026", "EPS", "来源"],
       "answer_must_not_contain": [],
       "answer_must_not_match": [],
       "evidence": [
@@ -71,7 +95,7 @@
       ],
       "min_distinct_doc_ids": 1,
       "requires_references": true,
-      "answer_must_contain": ["福赛科技", "风险", "引用"],
+      "answer_must_contain": ["福赛科技", "风险", "来源"],
       "answer_must_not_contain": [],
       "answer_must_not_match": [],
       "evidence": [
@@ -84,17 +108,41 @@
       "notes": "来自 Phase2 acceptance 小批量样本。"
     },
     "p2_q004_cross_doc_view": {
-      "gt_status": "placeholder",
+      "gt_status": "complete",
       "expected_behavior": "cross_document",
-      "relevant_doc_ids": [],
-      "reference_must_include_doc_ids": [],
-      "min_distinct_doc_ids": 2,
+      "relevant_doc_ids": [
+        "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_a51e9c0f4fa1",
+        "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_e536152e95ec",
+        "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_b2c1aedc210b"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_a51e9c0f4fa1",
+        "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_e536152e95ec",
+        "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_b2c1aedc210b"
+      ],
+      "min_distinct_doc_ids": 3,
       "requires_references": true,
-      "answer_must_contain": ["PLC", "具身智能", "报告"],
+      "answer_must_contain": ["PLC", "具身智能", "报告", "华泰证券", "国金证券", "银河证券"],
       "answer_must_not_contain": [],
       "answer_must_not_match": [],
-      "evidence": [],
-      "notes": "当前 Phase2 acceptance / ingest 映射中未固定两篇以上信捷电气报告；待补样本后进入硬计分。"
+      "evidence": [
+        {
+          "doc_id": "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_a51e9c0f4fa1",
+          "chunk_ids": [],
+          "must_contain": ["小型PLC", "伺服", "人形机器人", "空心杯", "无框力矩电机"]
+        },
+        {
+          "doc_id": "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_e536152e95ec",
+          "chunk_ids": [],
+          "must_contain": ["小型 PLC", "伺服系统", "人形机器人", "中大型 PLC", "变频器"]
+        },
+        {
+          "doc_id": "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_b2c1aedc210b",
+          "chunk_ids": [],
+          "must_contain": ["信捷电气", "工控基本盘", "具身智能"]
+        }
+      ],
+      "notes": "跨文档对比固定三篇信捷电气研报：华泰证券侧重 PLC/伺服基本盘与人形布局，国金证券侧重小型 PLC、伺服、新品类及机器人多级驱动，银河证券侧重工控基本盘与具身智能。"
     },
     "p2_q005_industry_link": {
       "gt_status": "complete",
@@ -110,7 +158,7 @@
       ],
       "min_distinct_doc_ids": 2,
       "requires_references": true,
-      "answer_must_contain": ["超快激光", "应用", "德龙激光", "引用"],
+      "answer_must_contain": ["超快激光", "应用", "德龙激光", "来源"],
       "answer_must_not_contain": [],
       "answer_must_not_match": [],
       "evidence": [
@@ -128,7 +176,7 @@
       "notes": "跨公司报告与行业报告，要求至少两个来源文档引用。"
     },
     "p2_q006_table_simple": {
-      "gt_status": "partial",
+      "gt_status": "complete",
       "expected_behavior": "table_required",
       "relevant_doc_ids": [
         "alphamind_华创证券华创金工机构服务系统_csv_e2e46f66cbc3"
@@ -138,17 +186,17 @@
       ],
       "min_distinct_doc_ids": 1,
       "requires_references": true,
-      "answer_must_contain": ["华创证券华创金工机构服务系统", "来源"],
+      "answer_must_contain": ["华创证券华创金工机构服务系统", "来源", "策略名称", "今日涨跌幅", "Sharp比率", "福斯特佛莱斯", "麦克劳尔"],
       "answer_must_not_contain": [],
       "answer_must_not_match": [],
       "evidence": [
         {
           "doc_id": "alphamind_华创证券华创金工机构服务系统_csv_e2e46f66cbc3",
           "chunk_ids": [],
-          "must_contain": ["乔尔格林布拉特", "Sharp"]
+          "must_contain": ["策略名称", "今日涨跌幅", "5日涨跌幅", "本月涨跌幅", "Sharp比率", "福斯特佛莱斯积极成长选股策略", "麦克劳尔集中价值选股法则", "麦克贝利222选股法则"]
         }
       ],
-      "notes": "CSV 样本已固定，但 query 表述仍偏宽泛；后续补字段名和值后可改为 complete。"
+      "notes": "CSV 样本已固定并补充字段和值级检查；包含策略名称、涨跌幅字段与 Sharp 比率。"
     },
     "p2_q007_no_evidence_guardrail": {
       "gt_status": "no_evidence",
