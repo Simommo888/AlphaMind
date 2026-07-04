@@ -39,7 +39,9 @@
 - Query: `dataset/alphamind_eval_queries.json`
 - Ground truth: `dataset/alphamind_ground_truth_template.json`
 - 离线 smoke evaluator: `scripts/alphamind_smoke_retrieval_eval.py`
+- 在线 WeKnora evaluator: `scripts/alphamind_online_retrieval_eval.py`
 - 最新离线结果: `dataset/alphamind_smoke_retrieval_eval_latest.json`
+- 最新在线结果: `dataset/alphamind_online_retrieval_eval_latest.json`
 
 运行命令：
 
@@ -65,6 +67,40 @@ python scripts\alphamind_smoke_retrieval_eval.py `
 | 实体查找 | “2019 华泰超快激光报告提到哪些海外超快激光厂商或品牌？” |
 
 最新离线结果：`validation=pass`、`Precision@1=1.000`、`Recall@5=1.000`、`Recall@10=1.000`、`MRR=1.000`。`Precision@5=0.225` 是因为当前离线语料只有 5 个文档且每题相关文档通常只有 1-2 个；后续用于对比 rerank/top-k 变化，不单独作为 smoke 阻断项。
+
+在线 WeKnora 评测命令：
+
+```powershell
+python scripts\alphamind_online_retrieval_eval.py `
+  --env-file .env.phase2-advanced `
+  --queries dataset\alphamind_eval_queries.json `
+  --ground-truth dataset\alphamind_ground_truth_template.json `
+  --retrieval-config dataset\alphamind_retrieval_config_phase2_advanced.json `
+  --kb-id-file dataset\alphamind_phase2_advanced_kb_id.txt `
+  --out dataset\alphamind_online_retrieval_eval_latest.json
+```
+
+2026-07-04 在线 smoke 运行记录：
+
+- Corpus: Phase2 KB `1d608de5-98d6-4a5d-858b-e1d85730531c`，合并 `phase2_acceptance_*.json` 与 `phase2_runs/alphamind_ingest_*.csv` 建立 `knowledge_id -> doc_id` 映射。
+- Changed variable: 补齐在线 KB 中缺失的两篇 smoke PDF；`alphamind_bulk_ingest.py` 增加 `--include-name` 用于精确选择文件，避免按目录顺序误上传大批文档。
+- 补传样本：
+  - 德龙激光：`56cf7c1c-6b7b-4696-8c83-6ae679af7829`
+  - 华泰封装材料：`0a08e10a-13d1-426f-a6a2-76ee6f408071`
+- Metrics:
+  - Setup: `pass`
+  - Quality: `warn`
+  - Precision@1: `0.750`
+  - Precision@5: `0.225`
+  - Recall@5: `1.000`
+  - Recall@10: `1.000`
+  - MRR: `0.875`
+  - NDCG@5: `0.908`
+  - Mean latency: `341ms`
+- Observations:
+  - 两篇补传 PDF 在 knowledge API 中仍显示 `parse_status=finalizing`，但 hybrid search 已可召回并用于指标计算。
+  - `q_smoke_002_delong_revenue_profit` 缺少 `1,076` 的 must_contain 命中，`q_smoke_007_ai_pcb_multi_doc` 缺少 `AI PCB` 命中；说明召回到文档但 chunk 内容不一定覆盖精确字段，是下一轮 chunk/context enrichment/rerank 调优输入。
+- Decision: keep as online smoke baseline；下一轮优先调 `match_count`、`skip_context_enrichment`、`keyword_threshold` 与 query expansion，而不是继续扩大语料。
 
 ## 4. Pilot 评测集（100 篇）
 

@@ -139,6 +139,15 @@ def parse_args() -> argparse.Namespace:
         help="Max files to process after filtering. 0 means unlimited.",
     )
     parser.add_argument(
+        "--include-name",
+        action="append",
+        default=[],
+        help=(
+            "Only include files whose filename contains this substring. "
+            "Repeat to OR multiple substrings; filtering happens before --limit."
+        ),
+    )
+    parser.add_argument(
         "--sleep",
         type=float,
         default=0.2,
@@ -687,6 +696,12 @@ def main() -> int:
             )
             return 2
     files = iter_files(root, extensions)
+
+    include_names = [value for value in args.include_name if value]
+    if include_names:
+        before = len(files)
+        files = [path for path in files if any(value in path.name for value in include_names)]
+        print(f"Filtered by --include-name: {before} -> {len(files)}")
 
     skipped_reasons: dict[str, str] = {}
     skipped_successes = read_successful_paths(args.skip_existing_report)
