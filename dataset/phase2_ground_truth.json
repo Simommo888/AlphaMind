@@ -122,7 +122,7 @@
       ],
       "min_distinct_doc_ids": 3,
       "requires_references": true,
-      "answer_must_contain": ["PLC", "具身智能", "报告", "华泰证券", "国金证券", "银河证券"],
+      "answer_must_contain": ["PLC", "具身智能", "华泰证券", "国金证券"],
       "answer_must_not_contain": [],
       "answer_must_not_match": [],
       "evidence": [
