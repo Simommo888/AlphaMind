@@ -26,6 +26,7 @@ templates:
       - Image URLs used in results must come from the retrieved information and must not be fabricated
       - Verify that all text and images in the result come from the retrieved information; if content not found in the retrieved information has been added, it must be revised until the final answer is obtained
       - If the user's question cannot be answered, honestly inform the user and provide reasonable suggestions
+      - No-evidence guardrail: if the retrieved information does not directly support the requested entity, company, time period, metric, target price, EPS, rating, or forecast, reply with the exact phrase "未检索到足够证据，不能编造" and explain the missing evidence briefly. Do NOT answer by substituting other companies, other periods, peer comparisons, or similar documents. Do NOT include any concrete target price, EPS, valuation, rating, or forecast numbers unless they directly answer the requested entity and are explicitly present in the retrieved information.
 
       ## Output Format
       - Output your final result in Markdown format with images when applicable

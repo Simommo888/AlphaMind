@@ -12,12 +12,20 @@ services:
   app:
     env_file: !override
       - ${PHASE2_ENV_FILE:-.env.phase2-advanced}
+    # Windows Docker Desktop may inherit a host DNS server that cannot resolve
+    # DashScope endpoints from containers. Pin public DNS for Phase2 online
+    # model calls while keeping Docker's embedded resolver for service names.
+    dns:
+      - ${ALPHAMIND_DOCKER_DNS_PRIMARY:-223.5.5.5}
+      - ${ALPHAMIND_DOCKER_DNS_SECONDARY:-119.29.29.29}
     volumes:
       - data-files:/data/files
       - docreader-tmp:/tmp/docreader:ro
       - ./config/config.yaml:/app/config/config.yaml
       - ./skills/preloaded:/app/skills/preloaded
       - ./config/builtin_models.phase2-advanced.yaml:/app/config/builtin_models.yaml:ro
+      # Mount the Phase2 no-evidence guardrail prompt without rebuilding the app image.
+      - ./config/prompt_templates/system_prompt.yaml:/app/config/prompt_templates/system_prompt.yaml:ro
     environment:
       - BUILTIN_MODELS_CONFIG=/app/config/builtin_models.yaml
       - STORAGE_TYPE=minio
