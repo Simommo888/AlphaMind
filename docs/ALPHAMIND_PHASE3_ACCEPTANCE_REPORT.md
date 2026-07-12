@@ -123,7 +123,9 @@ python scripts/alphamind_phase3_quality_gate.py \
 - 参数化 Neo4j Transaction API
 - 未知 intent、空公司、缺少指标/期间均 fail-closed
 
-真实 Neo4j HTTP 执行成功。早期样本图谱抽取曾被外部 DashScope `Arrearage` 阻断；Phase3 私有配置现已切换到本机 Ollama 回退。已有样本如需补建实体关系，应在本地模型配置生效后执行一次 reparse。该限制不影响当前 PDF、向量检索与引用答案 PASS，但会影响该旧样本的图谱节点完整度。
+真实 Neo4j HTTP 执行成功。早期样本图谱抽取曾被外部 DashScope `Arrearage` 和 WeKnora SSRF 防护阻断；加入仅针对 `host.docker.internal` 的管理员白名单并切换本地 Ollama 后，样本 reparse 已完成，状态 `completed`、错误为空。按该知识 ID 的动态图标签统计，生成 120 个节点和 26 条关系。
+
+当前 `qwen3:0.6b` 适合在 8GB 单 GPU 上完成可复现功能验收，但部分实体会偏 Schema 化；公司级多跳语义质量建议在资源和网络允许时用 `qwen3:4b` 或更强模型重新抽取。参数化 Cypher、安全执行和证据字段门禁已通过，模型抽取质量不被伪装成更高等级结论。
 
 ## 7. 模型与资源策略
 
