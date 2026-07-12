@@ -3,6 +3,7 @@
 # 但不忽略特定隐藏文件和目录
 !.env.example
 !.env.phase2-advanced.example
+!.env.phase3-precision.example
 !.gitignore
 !.github/
 
@@ -61,6 +62,7 @@ fix-docker.sh
 /dataset/ingest_runs/
 /dataset/phase1_runs/
 /dataset/phase2_runs/
+/dataset/phase3_runs/
 /dataset/cleanup_backups/
 /dataset/cleanup_plans/
 /dataset/*kb_id*.txt

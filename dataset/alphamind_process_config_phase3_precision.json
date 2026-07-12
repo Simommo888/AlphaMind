@@ -1,0 +1,61 @@
+{
+  "schema_version": "alphamind.phase3.process.v1",
+  "chunking_config": {
+    "strategy": "auto",
+    "chunk_size": 1200,
+    "chunk_overlap": 160,
+    "separators": ["\n# ", "\n## ", "\n### ", "\n\n", "\n", "。", "；"],
+    "token_limit": 0,
+    "languages": ["zh"],
+    "enable_parent_child": true,
+    "parent_chunk_size": 6144,
+    "child_chunk_size": 640,
+    "preserve_markdown_tables": true,
+    "preserve_lineage_comments": true,
+    "parser_engine_rules": [
+      {"file_types": [".md"], "engine": "builtin"},
+      {"file_types": [".pdf"], "engine": "builtin"},
+      {"file_types": [".csv", ".xls", ".xlsx", ".json"], "engine": "builtin"}
+    ]
+  },
+  "enable_multimodel": false,
+  "graph_enabled": true,
+  "extract_config": {
+    "enabled": true,
+    "text": "你是金融证据图谱抽取器。只抽取原文明确出现且可追溯到 source_doc_id/source_chunk_id/page 的事实。公司以 ticker 优先归一；机构、高管、客户、供应商、竞争对手使用全称与 aliases；前五大客户/供应商必须保留排名、金额、占比、报告期和匿名标识，匿名客户不得猜测真实名称；财务指标必须保留 period/value/unit/currency；所有关系必须带证据来源和 confidence。重点支持公司-客户-供应商交叉、机构-高管任职/提名、公司-指标-报告跨期比较。严禁从常识补全未披露关系。",
+    "tags": ["COVERS", "PUBLISHED_BY", "HAS_METRIC", "ABOUT_COMPANY", "HAS_CUSTOMER", "HAS_SUPPLIER", "HAS_EXECUTIVE", "AFFILIATED_WITH", "COMPETES_WITH", "INVESTS_IN", "HAS_PRODUCT", "HAS_RISK", "MENTIONS", "SUPPORTED_BY"],
+    "nodes": [
+      {"name": "Company", "attributes": ["id", "name", "full_name", "ticker", "exchange", "aliases", "source_doc_ids"]},
+      {"name": "Organization", "attributes": ["id", "name", "aliases", "anonymous", "normalized_name"]},
+      {"name": "Institution", "attributes": ["id", "name", "type", "aliases"]},
+      {"name": "Executive", "attributes": ["id", "name", "title", "term_start", "term_end"]},
+      {"name": "Report", "attributes": ["doc_id", "title", "broker", "publish_date", "report_type", "file_path"]},
+      {"name": "FinancialMetric", "attributes": ["id", "name", "period", "value", "unit", "currency", "source_doc_id", "source_chunk_id", "page"]},
+      {"name": "Evidence", "attributes": ["id", "source_doc_id", "source_chunk_id", "page", "table_id", "footnote_id", "quote", "confidence"]},
+      {"name": "Industry", "attributes": ["id", "name", "level", "taxonomy_source"]},
+      {"name": "Product", "attributes": ["id", "name", "category", "aliases"]},
+      {"name": "RiskFactor", "attributes": ["id", "name", "description", "severity"]},
+      {"name": "Event", "attributes": ["id", "type", "event_date", "description"]}
+    ],
+    "relations": [
+      {"node1": "Report", "type": "COVERS", "node2": "Company"},
+      {"node1": "Report", "type": "PUBLISHED_BY", "node2": "Institution"},
+      {"node1": "Report", "type": "HAS_METRIC", "node2": "FinancialMetric"},
+      {"node1": "FinancialMetric", "type": "ABOUT_COMPANY", "node2": "Company"},
+      {"node1": "Company", "type": "HAS_CUSTOMER", "node2": "Organization"},
+      {"node1": "Company", "type": "HAS_SUPPLIER", "node2": "Organization"},
+      {"node1": "Company", "type": "HAS_EXECUTIVE", "node2": "Executive"},
+      {"node1": "Institution", "type": "AFFILIATED_WITH", "node2": "Executive"},
+      {"node1": "Institution", "type": "INVESTS_IN", "node2": "Company"},
+      {"node1": "Company", "type": "COMPETES_WITH", "node2": "Company"},
+      {"node1": "Company", "type": "HAS_PRODUCT", "node2": "Product"},
+      {"node1": "Report", "type": "HAS_RISK", "node2": "RiskFactor"},
+      {"node1": "Report", "type": "MENTIONS", "node2": "Event"},
+      {"node1": "Evidence", "type": "SUPPORTED_BY", "node2": "Organization"},
+      {"node1": "Evidence", "type": "SUPPORTED_BY", "node2": "Executive"},
+      {"node1": "Evidence", "type": "SUPPORTED_BY", "node2": "FinancialMetric"}
+    ]
+  },
+  "question_generation_config": {"enabled": true, "question_count": 5},
+  "parser_engine_overrides": {"pdf_force_scanned": "false", "prefer_phase3_markdown": "true"}
+}

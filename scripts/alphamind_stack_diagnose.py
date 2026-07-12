@@ -125,6 +125,58 @@ def run_command(command: list[str], cwd: Path, timeout: int = 30) -> tuple[int, 
         return 124, str(stdout).strip(), str(stderr).strip() or f"timeout after {timeout}s"
 
 
+def parse_env_file(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {}
+    values: dict[str, str] = {}
+    with path.open("r", encoding="utf-8", errors="ignore") as handle:
+        for raw_line in handle:
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key:
+                values[key] = value
+    return values
+
+
+def apply_env_defaults(values: dict[str, str]) -> None:
+    # Docker Compose interpolation reads the process environment, not service
+    # env_file contents. Loading the phase env into this process lets diagnose
+    # render the same ports/config that the documented --env-file start command
+    # will use, without printing secrets.
+    for key, value in values.items():
+        os.environ.setdefault(key, value)
+
+
+def int_env(values: dict[str, str], key: str, default: int) -> int:
+    raw = os.environ.get(key) or values.get(key) or ""
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def resolve_ports(ports: list[tuple[str, str, int]], values: dict[str, str]) -> list[tuple[str, str, int]]:
+    env_by_name = {
+        "frontend": "FRONTEND_PORT",
+        "app": "APP_PORT",
+        "qdrant_rest": "QDRANT_REST_PORT",
+        "neo4j_http": "NEO4J_HTTP_PORT",
+        "neo4j_bolt": "NEO4J_BOLT_PORT",
+        "minio_s3": "MINIO_PORT",
+        "minio_console": "MINIO_CONSOLE_PORT",
+        "langfuse": "LANGFUSE_PORT",
+    }
+    resolved = []
+    for name, host, port in ports:
+        key = env_by_name.get(name)
+        resolved.append((name, host, int_env(values, key, port) if key else port))
+    return resolved
+
+
 def phase_settings(phase: str) -> tuple[list[str], list[str], list[str], list[tuple[str, str, int]]]:
     if phase == "phase1-basic":
         return PHASE1_COMPOSE_FILES, PHASE1_PROFILES, PHASE1_KEY_SERVICES, PHASE1_PORTS
@@ -277,6 +329,7 @@ def main() -> int:
     args = parse_args()
     project_dir = Path(args.project_dir).resolve()
     compose_files, profiles, key_services, ports = phase_settings(args.phase)
+    env_values: dict[str, str] = {}
     results: list[DiagnosticResult] = []
 
     results.append(DiagnosticResult("project_dir", "pass" if project_dir.exists() else "fail", str(project_dir)))
@@ -287,10 +340,13 @@ def main() -> int:
         env_path = project_dir / ".env.phase1-basic"
         example_path = project_dir / ".env.phase1-basic.example"
         if env_path.exists():
+            os.environ.setdefault("PHASE1_ENV_FILE", ".env.phase1-basic")
+            env_values = parse_env_file(env_path)
             results.append(DiagnosticResult("file_.env.phase1-basic", "pass", str(env_path)))
         elif example_path.exists():
             # Let compose config render before the user has copied the real env file.
             os.environ.setdefault("PHASE1_ENV_FILE", ".env.phase1-basic.example")
+            env_values = parse_env_file(example_path)
             results.append(DiagnosticResult("file_.env.phase1-basic", "warn", f"missing {env_path}; using {example_path} for config validation"))
         else:
             results.append(DiagnosticResult("file_.env.phase1-basic", "fail", f"missing {env_path} and {example_path}"))
@@ -298,13 +354,21 @@ def main() -> int:
         env_path = project_dir / ".env.phase2-advanced"
         example_path = project_dir / ".env.phase2-advanced.example"
         if env_path.exists():
+            os.environ.setdefault("PHASE2_ENV_FILE", ".env.phase2-advanced")
+            env_values = parse_env_file(env_path)
             results.append(DiagnosticResult("file_.env.phase2-advanced", "pass", str(env_path)))
         elif example_path.exists():
             # Let compose config render before the user has copied the real env file.
             os.environ.setdefault("PHASE2_ENV_FILE", ".env.phase2-advanced.example")
+            env_values = parse_env_file(example_path)
             results.append(DiagnosticResult("file_.env.phase2-advanced", "warn", f"missing {env_path}; using {example_path} for config validation"))
         else:
             results.append(DiagnosticResult("file_.env.phase2-advanced", "fail", f"missing {env_path} and {example_path}"))
+    else:
+        env_values = parse_env_file(project_dir / ".env")
+
+    apply_env_defaults(env_values)
+    ports = resolve_ports(ports, env_values)
 
     results.append(check_command("docker_version", ["docker", "--version"], project_dir, timeout=10))
     results.append(check_command("docker_daemon", ["docker", "info", "--format", "{{.ServerVersion}}"], project_dir, timeout=10))

@@ -1,0 +1,25 @@
+{
+  "schema_version": "alphamind.financial-lexicon.v1",
+  "entries": [
+    {"canonical": "revenue", "terms": ["营业收入", "营收", "收入", "revenue"], "category": "financial_metric"},
+    {"canonical": "net_profit_attributable", "terms": ["归母净利润", "归属于母公司股东的净利润", "净利润"], "category": "financial_metric"},
+    {"canonical": "net_profit_attributable_excl_non_recurring", "terms": ["扣非净利润", "扣除非经常性损益后的净利润", "扣非归母净利润"], "category": "financial_metric"},
+    {"canonical": "gross_margin", "terms": ["毛利率", "gross margin"], "category": "financial_metric"},
+    {"canonical": "ROE", "terms": ["ROE", "净资产收益率", "加权平均净资产收益率"], "category": "financial_metric"},
+    {"canonical": "EPS", "terms": ["EPS", "每股收益", "基本每股收益", "稀释每股收益"], "category": "financial_metric"},
+    {"canonical": "PE", "terms": ["PE", "P/E", "市盈率"], "category": "valuation"},
+    {"canonical": "PB", "terms": ["PB", "P/B", "市净率"], "category": "valuation"},
+    {"canonical": "operating_cash_flow", "terms": ["经营活动现金流", "经营性现金流", "经营活动产生的现金流量净额"], "category": "financial_metric"},
+    {"canonical": "accounts_receivable", "terms": ["应收账款", "应收款项"], "category": "balance_sheet"},
+    {"canonical": "contract_liabilities", "terms": ["合同负债", "预收款项"], "category": "balance_sheet"},
+    {"canonical": "private_placement_discount", "terms": ["定增倒挂", "定向增发价格倒挂", "增发价倒挂"], "category": "capital_market"},
+    {"canonical": "pledge_ratio", "terms": ["股权质押率", "股份质押比例", "质押比例"], "category": "risk"},
+    {"canonical": "top_five_customers", "terms": ["前五大客户", "五大客户", "主要客户"], "category": "supply_chain"},
+    {"canonical": "top_five_suppliers", "terms": ["前五大供应商", "五大供应商", "主要供应商"], "category": "supply_chain"},
+    {"canonical": "related_party_transaction", "terms": ["关联交易", "关联方交易"], "category": "governance"},
+    {"canonical": "impairment_loss", "terms": ["资产减值损失", "信用减值损失", "减值计提"], "category": "risk"},
+    {"canonical": "non_recurring_gain_loss", "terms": ["非经常性损益", "非经常损益"], "category": "financial_metric"},
+    {"canonical": "order_backlog", "terms": ["在手订单", "订单储备", "未交付订单"], "category": "operations"},
+    {"canonical": "capacity_utilization", "terms": ["产能利用率", "稼动率"], "category": "operations"}
+  ]
+}

@@ -1,0 +1,231 @@
+{
+  "chunking_config": {
+    "strategy": "auto",
+    "chunk_size": 900,
+    "chunk_overlap": 180,
+    "separators": [
+      "\n\n",
+      "\n",
+      "。",
+      "！",
+      "？",
+      ";",
+      "；"
+    ],
+    "token_limit": 0,
+    "languages": [
+      "zh"
+    ],
+    "enable_parent_child": true,
+    "parent_chunk_size": 4096,
+    "child_chunk_size": 512,
+    "parser_engine_rules": [
+      {
+        "file_types": [
+          ".pdf",
+          ".docx",
+          ".doc",
+          ".ppt",
+          ".pptx"
+        ],
+        "engine": "builtin"
+      },
+      {
+        "file_types": [
+          ".md",
+          ".txt",
+          ".html",
+          ".csv",
+          ".xls",
+          ".xlsx",
+          ".json"
+        ],
+        "engine": "builtin"
+      }
+    ]
+  },
+  "enable_multimodel": false,
+  "graph_enabled": false,
+  "extract_config": {
+    "enabled": false,
+    "text": "抽取股票投研领域实体与关系。重点识别公司、股票代码、行业、券商、分析师、报告、财务指标、预测期、目标价、评级、投资逻辑、风险因素、产品、产业链上下游和关键事件。实体名称必须规范化：公司优先保留股票代码和简称，报告保留 doc_id，财务指标保留 period/value/unit/source_doc_id。不要抽取没有原文证据的关系；无法从原文确认的指标、评级、目标价不得编造。",
+    "tags": [
+      "COVERS",
+      "PUBLISHED_BY",
+      "WRITTEN_BY",
+      "BELONGS_TO",
+      "HAS_METRIC",
+      "ABOUT_COMPANY",
+      "HAS_VIEW",
+      "HAS_RISK",
+      "MENTIONS",
+      "AFFECTS",
+      "HAS_PRODUCT",
+      "COMPETES_WITH",
+      "SUPPLIES_TO"
+    ],
+    "nodes": [
+      {
+        "name": "Company",
+        "attributes": [
+          "name",
+          "ticker",
+          "exchange",
+          "aliases"
+        ]
+      },
+      {
+        "name": "Industry",
+        "attributes": [
+          "name",
+          "level",
+          "taxonomy_source"
+        ]
+      },
+      {
+        "name": "Report",
+        "attributes": [
+          "doc_id",
+          "title",
+          "broker",
+          "publish_date",
+          "report_type"
+        ]
+      },
+      {
+        "name": "Broker",
+        "attributes": [
+          "name"
+        ]
+      },
+      {
+        "name": "Analyst",
+        "attributes": [
+          "name",
+          "broker"
+        ]
+      },
+      {
+        "name": "FinancialMetric",
+        "attributes": [
+          "name",
+          "period",
+          "value",
+          "unit",
+          "source_doc_id"
+        ]
+      },
+      {
+        "name": "InvestmentView",
+        "attributes": [
+          "thesis",
+          "rating",
+          "target_price",
+          "direction"
+        ]
+      },
+      {
+        "name": "RiskFactor",
+        "attributes": [
+          "name",
+          "description"
+        ]
+      },
+      {
+        "name": "Event",
+        "attributes": [
+          "type",
+          "event_date",
+          "description"
+        ]
+      },
+      {
+        "name": "Product",
+        "attributes": [
+          "name",
+          "category"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "node1": "Report",
+        "type": "COVERS",
+        "node2": "Company"
+      },
+      {
+        "node1": "Report",
+        "type": "PUBLISHED_BY",
+        "node2": "Broker"
+      },
+      {
+        "node1": "Report",
+        "type": "WRITTEN_BY",
+        "node2": "Analyst"
+      },
+      {
+        "node1": "Company",
+        "type": "BELONGS_TO",
+        "node2": "Industry"
+      },
+      {
+        "node1": "Report",
+        "type": "HAS_METRIC",
+        "node2": "FinancialMetric"
+      },
+      {
+        "node1": "FinancialMetric",
+        "type": "ABOUT_COMPANY",
+        "node2": "Company"
+      },
+      {
+        "node1": "Report",
+        "type": "HAS_VIEW",
+        "node2": "InvestmentView"
+      },
+      {
+        "node1": "InvestmentView",
+        "type": "ABOUT_COMPANY",
+        "node2": "Company"
+      },
+      {
+        "node1": "Report",
+        "type": "HAS_RISK",
+        "node2": "RiskFactor"
+      },
+      {
+        "node1": "Report",
+        "type": "MENTIONS",
+        "node2": "Event"
+      },
+      {
+        "node1": "Event",
+        "type": "AFFECTS",
+        "node2": "Company"
+      },
+      {
+        "node1": "Company",
+        "type": "HAS_PRODUCT",
+        "node2": "Product"
+      },
+      {
+        "node1": "Company",
+        "type": "COMPETES_WITH",
+        "node2": "Company"
+      },
+      {
+        "node1": "Company",
+        "type": "SUPPLIES_TO",
+        "node2": "Company"
+      }
+    ]
+  },
+  "question_generation_config": {
+    "enabled": false,
+    "question_count": 0
+  },
+  "parser_engine_overrides": {
+    "pdf_force_scanned": "false"
+  },
+  "reindex_note": "Local Qwen3 embedding reindex only: graph extraction and question generation disabled to avoid remote LLM Arrearage during index rebuild."
+}

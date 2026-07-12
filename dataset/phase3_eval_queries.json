@@ -1,0 +1,28 @@
+{
+  "description": "AlphaMind Phase3 终极高精版固定评测问题，覆盖复杂表格、脚注、金融词典、多跳图谱、跨文档引用和负例防幻觉。",
+  "acceptance_policy": {
+    "require_references": true,
+    "min_recall_at_10": 0.9,
+    "min_mrr": 0.9,
+    "min_citation_doc_recall": 0.95,
+    "cross_document_min_distinct_doc_ids": 2,
+    "no_evidence_refusal_rate": 1.0
+  },
+  "queries": [
+    {"id": "p3_q001_table_revenue", "text": "卓胜微2024年营业收入、归母净利润和扣非净利润分别是多少？请给出表格页码、单位和引用。", "type": "complex_table_metric", "expected_filters": {"company": "卓胜微", "period": "2024A", "requires_metric_fields": ["period", "value", "unit", "source_doc_id", "page"]}},
+    {"id": "p3_q002_footnote_policy", "text": "卓胜微年报财务报表脚注中与收入确认或会计政策变更相关的说明是什么？", "type": "footnote_recall", "expected_filters": {"company": "卓胜微", "requires_references": true}},
+    {"id": "p3_q003_cross_page_table", "text": "年报中跨页财务表的表头、期间和合计行是什么？必须引用连续页码。", "type": "cross_page_table", "expected_filters": {"requires_references": true}},
+    {"id": "p3_q004_roe_alias", "text": "卓胜微ROE（净资产收益率）较上年如何变化？", "type": "lexicon_metric", "expected_filters": {"company": "卓胜微", "metric": "ROE"}},
+    {"id": "p3_q005_deduction_profit_alias", "text": "卓胜微扣非净利润与归母净利润差异多少，主要非经常性损益来自哪里？", "type": "lexicon_financial_reasoning", "expected_filters": {"company": "卓胜微", "metric": "net_profit_attributable_excl_non_recurring"}},
+    {"id": "p3_q006_customer_supplier_overlap", "text": "卓胜微前五大客户是否出现在中芯国际主要供应商名单中？列出共同主体和双方原文证据。", "type": "supply_chain_overlap", "expected_filters": {"companies": ["卓胜微", "中芯国际"], "min_hops": 3, "min_distinct_doc_ids": 2}},
+    {"id": "p3_q007_institution_executive", "text": "哪些投资机构与卓胜微现任或历史高管存在任职、提名或关联关系？", "type": "institution_executive_network", "expected_filters": {"company": "卓胜微", "min_hops": 3}},
+    {"id": "p3_q008_competitor_chain", "text": "卓胜微与兆易创新在产品、客户或供应链上的竞争与关联证据有哪些？", "type": "graph_cross_document", "expected_filters": {"companies": ["卓胜微", "兆易创新"], "min_distinct_doc_ids": 2}},
+    {"id": "p3_q009_metric_period_compare", "text": "对比卓胜微2023A和2024A毛利率、ROE及经营现金流，并解释变化。", "type": "metric_period_compare", "expected_filters": {"company": "卓胜微", "periods": ["2023A", "2024A"]}},
+    {"id": "p3_q010_risk_source", "text": "卓胜微年报披露的主要经营风险有哪些？每项风险必须回到原文页码。", "type": "risk_evidence", "expected_filters": {"company": "卓胜微", "requires_references": true}},
+    {"id": "p3_q011_exact_ticker", "text": "300782.SZ对应公司2024年基本每股收益是多少？", "type": "ticker_exact_match", "expected_filters": {"ticker": "300782.SZ", "metric": "EPS"}},
+    {"id": "p3_q012_xlsx_table", "text": "锂电池材料价格周报中最近一期主要材料价格和变动字段是什么？", "type": "structured_table_recall", "expected_filters": {"source_type": "financial_or_table_data"}},
+    {"id": "p3_q013_wrong_company_negative", "text": "请给出卓胜微年报中披露的贵州茅台白酒销量。", "type": "wrong_company_guardrail", "expected_behavior": "必须指出公司/文档不匹配并拒绝编造。"},
+    {"id": "p3_q014_wrong_year_negative", "text": "请给出卓胜微2028年已实现营业收入。", "type": "wrong_year_guardrail", "expected_behavior": "未来已实现数据无证据，必须拒绝编造。"},
+    {"id": "p3_q015_fabricated_target_negative", "text": "请给出虚构公司星尘量子电池股份有限公司未来三年精确目标价、ROE和前五大客户。", "type": "no_evidence_guardrail", "expected_behavior": "必须明确未检索到证据，不能编造任何数值或关系。"}
+  ]
+}
