@@ -2,15 +2,15 @@
   "schema_version": "alphamind.delivery.v2",
   "delivery_tier": "phase3-precision",
   "status": "blocked",
-  "generated_at_utc": "2026-07-15T11:28:54+00:00",
+  "generated_at_utc": "2026-07-15T11:50:49+00:00",
   "generator": "scripts/alphamind_release_manifest.py",
   "source_spec": "dataset/delivery/source_spec/金融系统报价单_终版.phase3.md",
   "git": {
-    "commit": "356d71b064590ab270560a147fcffa68371eb22d",
+    "commit": "df188618ef76a94517d3e41eacc39ad733407683",
     "branch": "alphamind-phase3-precision",
     "dirty": true,
     "dirty_entry_count": 1,
-    "dirty_entries_sha256": "68392622946e078925d4385f0bdfb3dcd4367d5c7d833e7d844e90885920839d"
+    "dirty_entries_sha256": "ccb815da94b530a931852449f60ae9ed00dc93939200abee1632416faf7d0659"
   },
   "hashes": {
     "algorithm": "sha256",
@@ -347,8 +347,8 @@
     {
       "path": "docs/ALPHAMIND_DELIVERY_HANDOFF.md",
       "role": "delivery_documentation",
-      "size": 5185,
-      "sha256": "7a9f8ba60b0ab2c49d632ca9253d46c57eca95a85acc8c01df49fc12e137cac2"
+      "size": 5965,
+      "sha256": "24aeda8a1090c021cab0767fd12123ee2c8099a1892f9fb4185959bb44224380"
     },
     {
       "path": "docs/ALPHAMIND_KB_CONFIG.phase3-precision.json",

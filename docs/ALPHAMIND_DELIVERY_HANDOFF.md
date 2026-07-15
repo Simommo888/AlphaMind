@@ -121,23 +121,27 @@ python scripts/alphamind_phase3_pdf.py <input.pdf> \
 
 ## 7. 当前真实验收
 
-2026-07-12 最新在线门禁：
+当前公开交付包的最终发布 manifest 状态为 `blocked`，原因是客户目标机 vLLM `qwen3-14b` 尚未实机复跑固定在线评测与质量门禁。不得把 2026-07-12 的旧 Windows/Ollama 基线表述为当前 qwen3-14b 终验 PASS。
 
-- config validation：PASS；
-- Phase3 单测：PASS；
-- 30 页真实年报解析：PASS；
-- WeKnora/Qdrant/Neo4j/MinIO 健康：PASS；
-- 真实 hybrid search：PASS；
-- 引用答案：PASS；
-- 健康端点 40 请求、并发 8：PASS；
-- 真实 hybrid-search POST 40 请求、并发 4：PASS，错误率 0%，P95 2388.579 ms；
-- 总质量门禁：PASS。
+已保留的历史基线证据：
 
-报告：
+- config validation：历史 PASS；
+- Phase3 单测：历史 PASS；
+- 30 页真实年报解析：历史 PASS；
+- WeKnora/Qdrant/Neo4j/MinIO 健康：历史 PASS；
+- 真实 hybrid search：历史 PASS；
+- 引用答案：历史 PASS；
+- 真实 hybrid-search POST 40 请求、并发 4：历史 PASS，错误率 0%，P95 2388.579 ms。
 
-- `dataset/phase3_runs/phase3_quality_gate_latest.json`
-- `dataset/phase3_runs/phase3_acceptance_latest.json`
-- `dataset/alphamind_relation_graph_report.json`
+当前交付状态以以下机器可读报告为准：
+
+- `delivery/manifest.json`：`blocked`；
+- `dataset/phase3_runs/phase3_quality_gate_latest.json`：`fail`（固定在线评测未通过当前目标机要求）；
+- `dataset/phase3_runs/phase3_online_eval_latest.json`：`fail`（不是客户 vLLM qwen3-14b 终验证据）；
+- `dataset/phase3_runs/phase3_acceptance_latest.json`：历史端到端样本 PASS；
+- `dataset/alphamind_relation_graph_report.json`：关系图构建/导入证据。
+
+客户机完成 vLLM `qwen3-14b` 启动后，必须重新运行 `docs/ALPHAMIND_QWEN3_14B_VLLM.md` 中的冒烟验证、`alphamind_phase3_online_eval.py` 和质量门禁，并重新生成 `delivery/manifest.json`。
 
 ## 8. 备份恢复
 
