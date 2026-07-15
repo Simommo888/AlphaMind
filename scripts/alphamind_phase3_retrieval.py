@@ -100,6 +100,104 @@ def weighted_rrf(
     return sorted(result, key=lambda item: (-float(item["fusion_score"]), str(item[id_key])))
 
 
+def _normalize_items(items: list[dict[str, Any]], id_key: str) -> list[dict[str, Any]]:
+    normalized: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for raw in items:
+        if not isinstance(raw, dict):
+            continue
+        item = dict(raw)
+        identifier = str(item.get(id_key) or item.get("id") or item.get("chunk_id") or "").strip()
+        if not identifier or identifier in seen:
+            continue
+        seen.add(identifier)
+        item[id_key] = identifier
+        item.setdefault("id", identifier)
+        item.setdefault("chunk_id", identifier)
+        normalized.append(item)
+    return normalized
+
+
+def financial_rerank(
+    query: str,
+    candidates: list[dict[str, Any]],
+    top_k: int,
+    *,
+    exact_terms: list[str],
+    exact_boost: float,
+    graph_boost: float,
+) -> list[dict[str, Any]]:
+    if top_k <= 0:
+        raise ValueError("top_k must be positive")
+    terms = [str(term).casefold() for term in exact_terms if str(term).strip()]
+    ranked: list[dict[str, Any]] = []
+    for candidate in candidates:
+        item = dict(candidate)
+        content = str(item.get("content") or "").casefold()
+        term_hits = sum(1 for term in terms if term in content)
+        score = float(item.get("fusion_score") or 0.0)
+        score += float(exact_boost) * term_hits
+        if "graph" in item.get("fusion_channels", []):
+            score += float(graph_boost)
+        item["rerank_score"] = score
+        item["rerank_mode"] = "financial_exact_graph"
+        ranked.append(item)
+    return sorted(ranked, key=lambda item: (-float(item["rerank_score"]), str(item.get("id") or item.get("chunk_id") or "")))[:top_k]
+
+
+def execute_retrieval(
+    query: str,
+    config: dict[str, Any],
+    lexicon: list[dict[str, Any]],
+    search_channel,
+    graph_ranker,
+    reranker,
+) -> list[dict[str, Any]]:
+    """Execute expansion, distinct dense/sparse retrieval, graph ranking, weighted RRF and rerank."""
+    expansion_cfg = config.get("query_expansion", {})
+    expanded = (
+        expand_query(query, lexicon, int(expansion_cfg.get("max_expansions", 8)))
+        if expansion_cfg.get("enabled", False)
+        else [str(query).strip()]
+    )
+    fusion = config.get("fusion", {})
+    weights = {str(key): float(value) for key, value in fusion.get("weights", {}).items()}
+    if set(weights) != {"dense", "sparse", "graph"}:
+        raise ValueError("retrieval requires dense, sparse and graph fusion weights")
+    id_key = str(fusion.get("deduplicate_by") or "chunk_id")
+    dense = _normalize_items(search_channel(query, "dense"), id_key)
+    sparse_raw: list[dict[str, Any]] = []
+    for expanded_query in expanded:
+        sparse_raw.extend(search_channel(expanded_query, "sparse"))
+    sparse = _normalize_items(sparse_raw, id_key)
+    preliminary = weighted_rrf(
+        {"dense": dense, "sparse": sparse},
+        {"dense": weights["dense"], "sparse": weights["sparse"]},
+        k=int(fusion.get("rrf_k", 60)),
+        id_key=id_key,
+    )
+    if weights["graph"] > 0 and graph_ranker is None:
+        raise ValueError("graph fusion weight is positive but graph_ranker is unavailable")
+    graph = _normalize_items(graph_ranker(expanded, preliminary) if graph_ranker else [], id_key)
+    fused = weighted_rrf(
+        {"dense": dense, "sparse": sparse, "graph": graph},
+        weights,
+        k=int(fusion.get("rrf_k", 60)),
+        id_key=id_key,
+    )
+    rerank_cfg = config.get("rerank", {})
+    if rerank_cfg.get("require_source_lineage"):
+        fused = [
+            item for item in fused
+            if isinstance(item.get("metadata"), dict) and item["metadata"].get("doc_id")
+        ]
+    if rerank_cfg.get("enabled"):
+        if reranker is None:
+            raise ValueError("rerank is enabled but reranker is unavailable")
+        fused = reranker(query, fused, int(rerank_cfg.get("top_k") or config.get("rerank_top_k") or 30))
+    return fused[: int(rerank_cfg.get("top_k") or config.get("rerank_top_k") or len(fused) or 1)]
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Expand a financial query using the AlphaMind Phase3 lexicon.")
     parser.add_argument("query")

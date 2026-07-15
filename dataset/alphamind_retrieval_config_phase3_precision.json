@@ -24,15 +24,26 @@
   },
   "rerank": {
     "enabled": true,
+    "mode": "model_api",
+    "model_enabled": true,
     "top_k": 30,
     "require_source_lineage": true,
     "boost_exact_financial_terms": 0.2,
-    "boost_graph_doc_ids": 0.15
+    "boost_graph_doc_ids": 0.15,
+    "provider": "qwen3-shared-service",
+    "endpoint_env": "RERANK_BASE_URL"
   },
   "answer_policy": {
     "require_references": true,
     "no_evidence_response": "未在知识库中检索到足够且可追溯的证据，不能编造财务数据、客户供应商关系、目标价或评级。",
-    "financial_metric_fields": ["period", "value", "unit", "source_doc_id", "source_chunk_id", "page"],
+    "financial_metric_fields": [
+      "period",
+      "value",
+      "unit",
+      "source_doc_id",
+      "source_chunk_id",
+      "page"
+    ],
     "cross_document_min_distinct_doc_ids": 2,
     "graph_is_retrieval_hint_only": true
   },

@@ -16,6 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROCESS = PROJECT_ROOT / "dataset" / "alphamind_process_config_phase3_precision.json"
 DEFAULT_RETRIEVAL = PROJECT_ROOT / "dataset" / "alphamind_retrieval_config_phase3_precision.json"
 DEFAULT_LEXICON = PROJECT_ROOT / "dataset" / "alphamind_financial_lexicon_phase3.json"
+DEFAULT_EVAL_QUERIES = PROJECT_ROOT / "dataset" / "phase3_eval_queries.json"
 DEFAULT_OUT_DIR = PROJECT_ROOT / "dataset" / "phase3_runs"
 DEFAULT_REPORT = DEFAULT_OUT_DIR / "phase3_quality_gate_latest.json"
 
@@ -92,6 +93,52 @@ def validate_bundle(process_path: Path, retrieval_path: Path, lexicon_path: Path
     return issues
 
 
+def validate_eval_suite(path: Path) -> list[str]:
+    if not path.is_file():
+        return [f"missing Phase3 eval suite: {path}"]
+    try:
+        payload = _load_json(path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"invalid Phase3 eval suite: {exc}"]
+    queries = payload.get("queries", []) if isinstance(payload, dict) else []
+    live_gate = payload.get("live_gate", {}) if isinstance(payload, dict) else {}
+    issues: list[str] = []
+    if len(queries) < 15:
+        issues.append("Phase3 eval suite must contain at least 15 fixed queries")
+    if not live_gate.get("text") or not live_gate.get("answer_must_contain"):
+        issues.append("Phase3 eval suite live_gate requires text and answer_must_contain")
+    ids = [str(item.get("id") or "") for item in queries if isinstance(item, dict)]
+    if len(ids) != len(set(ids)) or any(not value for value in ids):
+        issues.append("Phase3 eval query IDs must be non-empty and unique")
+    unlabeled: list[str] = []
+    incomplete_no_evidence: list[str] = []
+    for item in queries:
+        if not isinstance(item, dict):
+            continue
+        query_id = str(item.get("id") or "<missing>")
+        is_no_evidence = str(item.get("gt_status") or "") == "no_evidence" or str(item.get("expected_behavior") or "") == "no_evidence"
+        relevant = item.get("relevant_doc_ids")
+        if is_no_evidence:
+            refusal_terms = item.get("answer_must_contain_any") or item.get("answer_must_contain")
+            if not isinstance(refusal_terms, list) or not refusal_terms:
+                incomplete_no_evidence.append(query_id)
+        elif not isinstance(relevant, list) or not relevant:
+            unlabeled.append(query_id)
+    if unlabeled:
+        issues.append(f"Phase3 eval ground truth missing relevant_doc_ids: {unlabeled}")
+    if incomplete_no_evidence:
+        issues.append(f"Phase3 no-evidence ground truth missing refusal terms: {incomplete_no_evidence}")
+    return issues
+
+
+def load_live_gate(path: Path) -> dict[str, Any]:
+    issues = validate_eval_suite(path)
+    if issues:
+        raise ValueError("; ".join(issues))
+    payload = _load_json(path)
+    return dict(payload["live_gate"])
+
+
 def parse_env_file(path: Path) -> dict[str, str]:
     values: dict[str, str] = {}
     if not path.is_file():
@@ -106,17 +153,100 @@ def parse_env_file(path: Path) -> dict[str, str]:
 
 def build_command_plan(args: argparse.Namespace) -> list[CommandSpec]:
     python = sys.executable
+    eval_path = Path(getattr(args, "eval_queries", DEFAULT_EVAL_QUERIES))
+    live_gate = load_live_gate(eval_path)
+    assertion_args = [
+        value
+        for term in live_gate.get("answer_must_contain", [])
+        for value in ("--answer-must-contain", str(term))
+    ]
     plan = [
-        CommandSpec("config_validation", [python, "scripts/alphamind_phase3_quality_gate.py", "--validate-only", "--process-config", str(args.process_config), "--retrieval-config", str(args.retrieval_config), "--lexicon", str(args.lexicon)]),
+        CommandSpec("config_validation", [python, "scripts/alphamind_phase3_quality_gate.py", "--validate-only", "--process-config", str(args.process_config), "--retrieval-config", str(args.retrieval_config), "--lexicon", str(args.lexicon), "--eval-queries", str(eval_path)]),
         CommandSpec("phase3_unit_tests", [python, "-m", "unittest", "discover", "-s", "tests", "-p", "test_alphamind_phase3*.py", "-v"]),
         CommandSpec("real_pdf_parse", [python, "scripts/alphamind_phase3_pdf.py", str(args.sample_pdf), "--out-dir", str(Path(args.out_dir) / "pdf"), "--max-pages", str(args.max_pages), "--strict", "--require-table", "--min-numeric-preservation", "0.98"], 1200),
     ]
     if args.live:
         plan.append(CommandSpec("healthcheck", [python, "scripts/alphamind_healthcheck.py", "--phase", "phase3-precision", "--env-file", str(args.env_file), "--require-qdrant", "--require-neo4j", "--require-minio"], 600))
+        plan.append(CommandSpec(
+            "phase3_retrieval_e2e",
+            [
+                python,
+                "scripts/alphamind_phase3_acceptance.py",
+                "--pdf",
+                str(args.sample_pdf),
+                "--env-file",
+                str(args.env_file),
+                "--process-config",
+                str(args.process_config),
+                "--retrieval-config",
+                str(args.retrieval_config),
+                "--max-pages",
+                str(args.max_pages),
+                "--query",
+                str(live_gate["text"]),
+                *assertion_args,
+            ],
+            1800,
+        ))
+        plan.append(CommandSpec(
+            "fixed_retrieval_eval",
+            [
+                python,
+                "scripts/alphamind_phase3_online_eval.py",
+                "--env-file",
+                str(args.env_file),
+                "--queries",
+                str(eval_path),
+                "--retrieval-config",
+                str(args.retrieval_config),
+                "--out",
+                str(Path(args.out_dir) / "phase3_online_eval_latest.json"),
+                "--rerank-batch-size",
+                "10",
+            ],
+            3600,
+        ))
         env = parse_env_file(Path(args.env_file))
         base_url = os.environ.get("WEKNORA_BASE_URL") or env.get("WEKNORA_BASE_URL") or "http://localhost:8080"
-        load_argv = [python, "scripts/alphamind_phase3_load_test.py", "--url", base_url.rstrip("/") + "/health", "--requests", str(args.requests), "--concurrency", str(args.concurrency), "--out", str(Path(args.out_dir) / "phase3_load_latest.json")]
-        plan.append(CommandSpec("load_test", load_argv, 600))
+        kb_id_file = Path(getattr(args, "kb_id_file", PROJECT_ROOT / "dataset" / "alphamind_phase3_precision_kb_id.txt"))
+        kb_id = kb_id_file.read_text(encoding="utf-8").strip() if kb_id_file.is_file() else ""
+        load_payload = json.dumps(
+            {
+                "query_text": str(live_gate["text"]),
+                "match_count": 10,
+                "vector_threshold": 0.1,
+                "keyword_threshold": 0.18,
+            },
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+        load_argv = [
+            python,
+            "scripts/alphamind_phase3_load_test.py",
+            "--url",
+            base_url.rstrip("/") + f"/api/v1/knowledge-bases/{kb_id}/hybrid-search",
+            "--method",
+            "POST",
+            "--payload",
+            load_payload,
+            "--env-file",
+            str(args.env_file),
+            "--expect-json-items",
+            "--requests",
+            str(args.requests),
+            "--warmup-requests",
+            "1",
+            "--concurrency",
+            str(args.concurrency),
+            "--out",
+            str(Path(args.out_dir) / "phase3_load_latest.json"),
+        ]
+        plan.append(CommandSpec("load_test", load_argv, 1800))
+        # Business POST load must run while the embedding service is resident.
+        # The fixed eval intentionally unloads it before local LLM chat on 8GB GPUs.
+        load_spec = plan.pop()
+        fixed_index = next(i for i, step in enumerate(plan) if step.name == "fixed_retrieval_eval")
+        plan.insert(fixed_index, load_spec)
     if getattr(args, "timeout", 0):
         for step in plan:
             step.timeout = int(args.timeout)
@@ -139,6 +269,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--process-config", default=str(DEFAULT_PROCESS))
     parser.add_argument("--retrieval-config", default=str(DEFAULT_RETRIEVAL))
     parser.add_argument("--lexicon", default=str(DEFAULT_LEXICON))
+    parser.add_argument("--eval-queries", default=str(DEFAULT_EVAL_QUERIES))
     parser.add_argument("--sample-pdf", default="")
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
     parser.add_argument("--report", default=str(DEFAULT_REPORT))
@@ -156,6 +287,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     issues = validate_bundle(Path(args.process_config), Path(args.retrieval_config), Path(args.lexicon))
+    issues.extend(validate_eval_suite(Path(args.eval_queries)))
     if args.validate_only:
         print(json.dumps({"status": "pass" if not issues else "fail", "issues": issues}, ensure_ascii=False, indent=2))
         return 0 if not issues else 1

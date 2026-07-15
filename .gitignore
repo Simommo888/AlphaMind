@@ -64,6 +64,7 @@ fix-docker.sh
 /dataset/phase2_runs/
 /dataset/phase3_runs/
 /dataset/cleanup_backups/
+/backups/
 /dataset/cleanup_plans/
 /dataset/*kb_id*.txt
 *.db

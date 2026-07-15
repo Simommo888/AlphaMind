@@ -43,6 +43,56 @@ class Phase3RetrievalTests(unittest.TestCase):
         self.assertEqual(set(fused[0]["fusion_channels"]), {"dense", "sparse", "graph"})
         self.assertGreater(fused[0]["fusion_score"], fused[1]["fusion_score"])
 
+    def test_financial_rerank_boosts_exact_terms_and_graph_hits(self):
+        candidates = [
+            {"id": "a", "content": "普通描述", "fusion_score": 0.1, "fusion_channels": ["dense"]},
+            {"id": "b", "content": "每10股派发现金红利1.02元", "fusion_score": 0.09, "fusion_channels": ["dense", "graph"]},
+        ]
+        ranked = retrieval.financial_rerank(
+            "现金红利是多少", candidates, 2,
+            exact_terms=["现金红利", "每10股"], exact_boost=0.2, graph_boost=0.15,
+        )
+        self.assertEqual([item["id"] for item in ranked], ["b", "a"])
+        self.assertGreater(ranked[0]["rerank_score"], ranked[1]["rerank_score"])
+
+    def test_execute_retrieval_runs_expansion_three_channels_and_rerank(self):
+        calls = []
+
+        def search(query, channel):
+            calls.append((query, channel))
+            if channel == "dense":
+                return [{"id": "a", "content": "dense"}, {"id": "b", "content": "shared"}]
+            return [{"id": "b", "content": "shared"}, {"id": "c", "content": "sparse"}]
+
+        def graph_rank(terms, candidates):
+            self.assertIn("ROE", terms)
+            return [next(item for item in candidates if item["id"] == "b")]
+
+        def rerank(query, candidates, top_k):
+            self.assertEqual(query, "ROE如何")
+            return list(reversed(candidates[:top_k]))
+
+        config = {
+            "query_expansion": {"enabled": True, "max_expansions": 4},
+            "fusion": {"weights": {"dense": 0.5, "sparse": 0.3, "graph": 0.2}, "rrf_k": 10, "deduplicate_by": "chunk_id"},
+            "rerank": {"enabled": True, "top_k": 3, "require_source_lineage": False},
+        }
+        results = retrieval.execute_retrieval("ROE如何", config, self.lexicon, search, graph_rank, rerank)
+        self.assertTrue(any(channel == "dense" for _, channel in calls))
+        self.assertTrue(any(channel == "sparse" for _, channel in calls))
+        self.assertEqual(set(next(item for item in results if item["id"] == "b")["fusion_channels"]), {"dense", "sparse", "graph"})
+        self.assertEqual(len(results), 3)
+
+    def test_execute_retrieval_fails_closed_without_required_graph_or_reranker(self):
+        config = {
+            "query_expansion": {"enabled": False},
+            "fusion": {"weights": {"dense": 0.5, "sparse": 0.3, "graph": 0.2}, "rrf_k": 10},
+            "rerank": {"enabled": True, "top_k": 3},
+        }
+        search = lambda query, channel: [{"id": "a", "content": "x"}]
+        with self.assertRaises(ValueError):
+            retrieval.execute_retrieval("q", config, self.lexicon, search, None, None)
+
     def test_rrf_rejects_negative_weights(self):
         with self.assertRaises(ValueError):
             retrieval.weighted_rrf({"dense": []}, {"dense": -1})

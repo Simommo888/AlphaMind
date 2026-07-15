@@ -99,6 +99,26 @@ def _required(value: str, name: str) -> str:
     return value
 
 
+def build_graph_chunk_rank_plan(knowledge_id: str, terms: list[str], *, limit: int = 200) -> QueryPlan:
+    knowledge_id = _required(knowledge_id, "knowledge_id")
+    clean_terms = [str(term).strip() for term in terms if str(term).strip()]
+    if not clean_terms:
+        raise ValueError("at least one graph ranking term is required")
+    if limit <= 0 or limit > 1000:
+        raise ValueError("limit must be between 1 and 1000")
+    cypher = """
+MATCH (n)
+WHERE n.kg = $knowledge_id AND size(coalesce(n.chunks, [])) > 0
+WITH n, size([term IN $terms WHERE toLower(coalesce(n.name, '')) CONTAINS toLower(term)]) AS term_hits
+UNWIND n.chunks AS chunk_id
+WITH chunk_id, max(term_hits) AS term_hits, count(*) AS graph_hits
+RETURN chunk_id, term_hits, graph_hits
+ORDER BY term_hits DESC, graph_hits DESC, chunk_id
+LIMIT $limit
+""".strip()
+    return QueryPlan("graph_chunk_rank", 1, cypher, {"knowledge_id": knowledge_id, "terms": clean_terms, "limit": limit}, ())
+
+
 def build_query_plan(
     intent: str,
     *,
@@ -113,27 +133,87 @@ def build_query_plan(
         raise ValueError("limit must be between 1 and 200")
     if intent == "supply_chain_overlap":
         company_b = _required(company_b, "company_b")
+        # Preserve the Phase3-native HAS_CUSTOMER/HAS_SUPPLIER model while
+        # bridging the deterministic AlphaMindEntity graph's canonical
+        # supplier -> customer direction (SUPPLIES_TO). Both branches expose
+        # the same evidence-bearing result contract.
         cypher = """
-MATCH (a:Company), (b:Company)
-WHERE (a.name = $company_a OR a.ticker = $company_a OR $company_a IN coalesce(a.aliases, []))
-  AND (b.name = $company_b OR b.ticker = $company_b OR $company_b IN coalesce(b.aliases, []))
-MATCH (a)-[ac:HAS_CUSTOMER]->(party:Organization)<-[bs:HAS_SUPPLIER]-(b)
-MATCH (e:Evidence)-[:SUPPORTED_BY]->(party)
-RETURN a.name AS company_a, b.name AS company_b, party.name AS shared_counterparty,
-       ac.rank AS customer_rank, bs.rank AS supplier_rank,
-       e.source_doc_id AS source_doc_id, e.source_chunk_id AS source_chunk_id, e.page AS page
-ORDER BY coalesce(ac.rank, 999), coalesce(bs.rank, 999)
+CALL {
+  MATCH (a:Company), (b:Company)
+  WHERE (a.name = $company_a OR a.ticker = $company_a OR $company_a IN coalesce(a.aliases, []))
+    AND (b.name = $company_b OR b.ticker = $company_b OR $company_b IN coalesce(b.aliases, []))
+  MATCH (a)-[ac:HAS_CUSTOMER]->(party:Organization)<-[bs:HAS_SUPPLIER]-(b)
+  WHERE ac.source_doc_id IS NOT NULL AND ac.source_chunk_id IS NOT NULL AND ac.page IS NOT NULL
+    AND bs.source_doc_id IS NOT NULL AND bs.source_chunk_id IS NOT NULL AND bs.page IS NOT NULL
+    AND coalesce(ac.evidence_quote, ac.quote, '') <> ''
+    AND coalesce(bs.evidence_quote, bs.quote, '') <> ''
+  RETURN a.name AS company_a, b.name AS company_b, party.name AS shared_counterparty,
+         ac.rank AS customer_rank, bs.rank AS supplier_rank,
+         ac.source_doc_id AS customer_source_doc_id,
+         ac.source_chunk_id AS customer_source_chunk_id,
+         ac.page AS customer_page,
+         coalesce(ac.evidence_quote, ac.quote) AS customer_evidence_quote,
+         bs.source_doc_id AS supplier_source_doc_id,
+         bs.source_chunk_id AS supplier_source_chunk_id,
+         bs.page AS supplier_page,
+         coalesce(bs.evidence_quote, bs.quote) AS supplier_evidence_quote,
+         'phase3_native' AS semantic_source
+  UNION
+  MATCH (a:AlphaMindEntity:Company), (b:AlphaMindEntity:Company)
+  WHERE (a.name = $company_a OR a.ticker = $company_a OR $company_a IN coalesce(a.aliases, []))
+    AND (b.name = $company_b OR b.ticker = $company_b OR $company_b IN coalesce(b.aliases, []))
+    AND a.graph_source = $relation_graph_source AND b.graph_source = $relation_graph_source
+  MATCH (a)-[ac:SUPPLIES_TO]->(party:AlphaMindEntity:Company)-[bs:SUPPLIES_TO]->(b)
+  WHERE party.graph_source = $relation_graph_source
+    AND ac.graph_source = $relation_graph_source AND bs.graph_source = $relation_graph_source
+    AND ac.source_doc_id IS NOT NULL AND ac.source_chunk_id IS NOT NULL AND ac.page IS NOT NULL
+    AND bs.source_doc_id IS NOT NULL AND bs.source_chunk_id IS NOT NULL AND bs.page IS NOT NULL
+    AND coalesce(ac.evidence_quote, '') <> '' AND coalesce(bs.evidence_quote, '') <> ''
+  RETURN a.name AS company_a, b.name AS company_b, party.name AS shared_counterparty,
+         null AS customer_rank, null AS supplier_rank,
+         ac.source_doc_id AS customer_source_doc_id,
+         ac.source_chunk_id AS customer_source_chunk_id,
+         ac.page AS customer_page,
+         ac.evidence_quote AS customer_evidence_quote,
+         bs.source_doc_id AS supplier_source_doc_id,
+         bs.source_chunk_id AS supplier_source_chunk_id,
+         bs.page AS supplier_page,
+         bs.evidence_quote AS supplier_evidence_quote,
+         'relation_graph_bridge' AS semantic_source
+}
+RETURN company_a, company_b, shared_counterparty,
+       customer_rank, supplier_rank,
+       customer_source_doc_id, customer_source_chunk_id, customer_page, customer_evidence_quote,
+       supplier_source_doc_id, supplier_source_chunk_id, supplier_page, supplier_evidence_quote,
+       semantic_source
+ORDER BY coalesce(customer_rank, 999), coalesce(supplier_rank, 999), shared_counterparty
 LIMIT $limit
 """.strip()
-        return QueryPlan(intent, 4, cypher, {"company_a": company_a, "company_b": company_b, "limit": limit})
+        return QueryPlan(
+            intent,
+            4,
+            cypher,
+            {
+                "company_a": company_a,
+                "company_b": company_b,
+                "relation_graph_source": "alphamind_relation_graph",
+                "limit": limit,
+            },
+        )
     if intent == "institution_executive_network":
         cypher = """
 MATCH (c:Company)
 WHERE c.name = $company_a OR c.ticker = $company_a OR $company_a IN coalesce(c.aliases, [])
-MATCH (c)-[:HAS_EXECUTIVE]->(person:Executive)<-[:APPOINTED|NOMINATED|AFFILIATED_WITH]-(institution:Institution)
-MATCH (e:Evidence)-[:SUPPORTED_BY]->(person)
+MATCH (c)-[ce:HAS_EXECUTIVE]->(person:Executive)<-[ie:APPOINTED|NOMINATED|AFFILIATED_WITH]-(institution:Institution)
+WHERE ce.source_doc_id IS NOT NULL AND ce.source_chunk_id IS NOT NULL AND ce.page IS NOT NULL
+  AND ie.source_doc_id IS NOT NULL AND ie.source_chunk_id IS NOT NULL AND ie.page IS NOT NULL
 RETURN c.name AS company, person.name AS executive, institution.name AS institution,
-       e.source_doc_id AS source_doc_id, e.source_chunk_id AS source_chunk_id, e.page AS page
+       ce.source_doc_id AS executive_source_doc_id,
+       ce.source_chunk_id AS executive_source_chunk_id,
+       ce.page AS executive_page,
+       ie.source_doc_id AS institution_source_doc_id,
+       ie.source_chunk_id AS institution_source_chunk_id,
+       ie.page AS institution_page
 LIMIT $limit
 """.strip()
         return QueryPlan(intent, 3, cypher, {"company_a": company_a, "limit": limit})

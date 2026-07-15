@@ -1,0 +1,23 @@
+[Unit]
+Description=AlphaMind shared Qwen3 embedding and reranker service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=alphamind
+Group=alphamind
+WorkingDirectory=/opt/alphamind/qwen3-service
+EnvironmentFile=/etc/alphamind/qwen3.env
+ExecStart=/opt/alphamind/qwen3-service/.venv/bin/python /opt/alphamind/qwen3-service/qwen3_shared_server.py --host ${QWEN3_HOST} --port ${QWEN3_PORT} --max-length ${QWEN3_MAX_LENGTH}
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=180
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/cache/alphamind /var/log/alphamind
+
+[Install]
+WantedBy=multi-user.target

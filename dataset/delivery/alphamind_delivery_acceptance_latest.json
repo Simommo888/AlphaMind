@@ -1,0 +1,87 @@
+{
+  "schema_version": "alphamind.delivery.acceptance.v1",
+  "status": "pass_with_conditions",
+  "generated_at": "2026-07-12",
+  "source_spec": {
+    "file": "C:/Users/59521/Desktop/金融系统报价单(终版).pdf",
+    "phase3_markdown": "dataset/delivery/source_spec/金融系统报价单_终版.phase3.md",
+    "pages": 4,
+    "tables": 2,
+    "numeric_preservation_ratio": 1.0,
+    "status": "pass"
+  },
+  "automated_tests": {
+    "pattern": "test_alphamind*.py",
+    "count": 96,
+    "status": "pass"
+  },
+  "quality_gate": {
+    "report": "dataset/phase3_runs/phase3_quality_gate_latest.json",
+    "status": "pass",
+    "mode": "live",
+    "elapsed_ms": 57544,
+    "steps": {
+      "config_validation": "pass",
+      "phase3_unit_tests": "pass",
+      "real_pdf_parse": "pass",
+      "healthcheck": "pass",
+      "phase3_retrieval_e2e": "pass",
+      "load_test": "pass"
+    }
+  },
+  "financial_pdf": {
+    "sample": "卓胜微_300782_2024年报.pdf",
+    "pages_in_latest_gate": 30,
+    "tables": 39,
+    "footnotes": 34,
+    "numeric_preservation_ratio": 1.0,
+    "status": "pass"
+  },
+  "retrieval": {
+    "recall_at_10": 1.0,
+    "mrr": 1.0,
+    "channels": [
+      "dense",
+      "sparse",
+      "graph"
+    ],
+    "citation_answer": "pass"
+  },
+  "load": {
+    "requests": 40,
+    "concurrency": 8,
+    "error_rate": 0.0,
+    "p95_ms": 197.111,
+    "throughput_rps": 182.64,
+    "status": "pass"
+  },
+  "relation_graph": {
+    "report": "dataset/alphamind_relation_graph_report.json",
+    "nodes": 1077,
+    "edges": 1743,
+    "companies": 862,
+    "neo4j_import": "pass"
+  },
+  "backup_restore": {
+    "backup_dir": "backups/alphamind-20260712T144654Z",
+    "artifacts": 5,
+    "sha256_verification": "pass",
+    "staging_restore": "pass",
+    "active_volumes_modified": false,
+    "staging_volumes_removed_after_verification": true
+  },
+  "conditions": [
+    "Ubuntu 24.04 target-host validation pending customer hardware",
+    "vLLM qwen3-14b target-host validation pending customer machine",
+    "Exact quoted embedding 8B / reranker 0.6 validation pending target hardware",
+    "scanned-PDF OCR validation pending MinerU/OpenDataLab-compatible endpoint",
+    "final private-corpus benchmark pending customer corpus"
+  ],
+  "model_update": {
+    "status": "configured_pending_target_host_validation",
+    "llm": "qwen3-14b",
+    "runtime": "vLLM OpenAI-compatible API",
+    "base_url": "http://host.docker.internal:8000/v1",
+    "direct_chat_url": "http://localhost:8000/v1"
+  }
+}

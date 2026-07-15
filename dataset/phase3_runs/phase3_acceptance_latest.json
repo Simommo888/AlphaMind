@@ -1,0 +1,51 @@
+{
+  "schema_version": "alphamind.phase3.acceptance.v1",
+  "status": "pass",
+  "source_pdf": "D:\\AlphaMind\\数据\\0710\\半导体券商研究报告\\产业链\\A股\\卓胜微_300782\\卓胜微_300782_2024年报.pdf",
+  "kb_id": "7d27d48d-457e-4b4b-a516-6488c2ab1bad",
+  "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+  "steps": [
+    {
+      "name": "complex_pdf",
+      "status": "pass",
+      "detail": "{\"numeric_preservation_ratio\": 1.0, \"pages_with_text\": 30, \"pages_processed\": 30, \"tables_detected\": 39, \"tables_after_stitching\": 39, \"cross_page_tables\": 0, \"footnotes_detected\": 34, \"table_detection_errors\": 0}",
+      "elapsed_ms": 0
+    },
+    {
+      "name": "kb_reuse",
+      "status": "pass",
+      "detail": "reuse stored KB 7d27d48d-457e-4b4b-a516-6488c2ab1bad (AlphaMind Phase3 Precision Financial Graph RAG)",
+      "elapsed_ms": 35
+    },
+    {
+      "name": "upload_or_reuse",
+      "status": "pass",
+      "detail": "reuse knowledge e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+      "elapsed_ms": 0
+    },
+    {
+      "name": "parse_completion",
+      "status": "pass",
+      "detail": "completed",
+      "elapsed_ms": 6
+    },
+    {
+      "name": "chunk_lineage",
+      "status": "pass",
+      "detail": "30 chunks returned",
+      "elapsed_ms": 12
+    },
+    {
+      "name": "hybrid_search",
+      "status": "pass",
+      "detail": "30 results; Recall@10=1.000 MRR=1.000; channels=['dense', 'graph', 'sparse']; top='因素，存在较大不确定性，敬请投资者注意投资风险。\\r\\n\\r\\n\\r\\n  公司在本年度报告中详细阐述了未来可能发生的有关风险因素，详见\\r\\n\\r\\n“第三节管理层讨论与分析”之“十一、公司未来发展的展望”中“面临的\\r\\n\\r\\n风险及应对措施”，描述了公司未来经'",
+      "elapsed_ms": 24729
+    },
+    {
+      "name": "citation_chat",
+      "status": "pass",
+      "detail": "mode=extractive sources=10 answer='数，向全体股东每10 股派发现金红利1.02 元（含税），送红股0 股（含税）， [S4]'",
+      "elapsed_ms": 0
+    }
+  ]
+}

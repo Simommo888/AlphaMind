@@ -9,6 +9,7 @@
 - `scripts/alphamind_phase3_pdf.py`：PDF 版面文本、表格、脚注提取；相邻页重复表头跨页拼接；Markdown 表格；文档/页/表/脚注 lineage；数值保留率。
 - `scripts/alphamind_phase3_retrieval.py`：金融词典扩展、最长金融短语优先、Dense/Sparse/Graph 加权 RRF 去重融合。
 - `scripts/alphamind_phase3_graph.py`：供应链交叉、机构-高管网络、指标跨期三类受控参数化多跳查询。
+- `scripts/alphamind_graph_online_acceptance.py`：对真实 Neo4j 执行供应链多跳，并以非空、双边证据完整和受控语义来源作为 fail-closed 验收条件。
 - `scripts/alphamind_phase3_acceptance.py`：真实 PDF → Phase3 KB → 解析 → chunk → hybrid search → 带引用 chat 的端到端验收。
 - `scripts/alphamind_phase3_quality_gate.py`：配置、单测、真实 PDF、live health/load 一键门禁。
 - `scripts/alphamind_phase3_load_test.py`：有界并发、p50/p95/p99、吞吐、错误率。
@@ -37,26 +38,28 @@ BATCH_EMBED_SIZE=1
 CONCURRENCY_POOL_SIZE=1
 ```
 
-共享 Qwen3 4B embedding/reranker 服务位于 `D:\AI-Models\qwen3-service`，启动并验证：
+共享 Qwen3 embedding/reranker 服务位于 `D:\AI-Models\qwen3-service`，启动并验证：
 
 ```powershell
-ollama pull qwen3:0.6b
+curl http://127.0.0.1:8000/v1/models
 D:\AI-Models\qwen3-service\start_qwen3_service.bat
 curl http://127.0.0.1:8010/health
 ```
 
-该服务在 8GB 显存机器上按请求互斥懒加载 embedding/reranker，不能同时常驻两个 4B 模型。当前可复现验收使用本机 Ollama `qwen3:0.6b`；资源与网络允许时可升级到 `qwen3:4b`。验收器先完成 hybrid search，再调用共享服务 `/unload` 释放显存，最后用检索到的真实 chunk 生成带 `[S1]` 来源编号的答案：
+聊天模型按客户说明切换为客户机 vLLM 暴露的 `qwen3-14b`。推荐 vLLM 启动时固定 `--served-model-name qwen3-14b`，详见 `ALPHAMIND_QWEN3_14B_VLLM.md`。Phase3 默认配置如下：
 
 ```env
-LLM_MODEL_NAME=qwen3:0.6b
-LLM_BASE_URL=http://host.docker.internal:11434/v1
+LLM_MODEL_NAME=qwen3-14b
+LLM_BASE_URL=http://host.docker.internal:8000/v1
 SSRF_WHITELIST=host.docker.internal
-PHASE3_DIRECT_CHAT_URL=http://localhost:11434/v1
-PHASE3_DIRECT_CHAT_MODEL=qwen3:0.6b
+PHASE3_DIRECT_CHAT_RUNTIME=vllm
+PHASE3_DISABLE_THINKING=true
+PHASE3_DIRECT_CHAT_URL=http://localhost:8000/v1
+PHASE3_DIRECT_CHAT_MODEL=qwen3-14b
 PHASE3_EMBEDDING_UNLOAD_URL=http://localhost:8010
 ```
 
-这一路径是 8GB 单 GPU 的资源编排，不降低引用门禁；无有效 `[S1..Sn]` 标记仍判定失败。
+容器内 WeKnora 访问 `host.docker.internal:8000/v1`，宿主验收脚本访问 `localhost:8000/v1`。若客户实际 `/v1/models` 返回的模型 id 不是 `qwen3-14b`，必须同步修改 `LLM_MODEL_NAME` 与 `PHASE3_DIRECT_CHAT_MODEL`。引用门禁不变：无有效 `[S1..Sn]` 标记仍判定失败。
 
 扫描件/视觉解析可选项：
 
@@ -68,6 +71,24 @@ DOCREADER_ODL_HYBRID_URL=<private MinerU/OpenDataLab compatible endpoint>
 ```
 
 ## 3. 启动
+
+交付环境优先使用统一控制器；它会先校验 Docker、Compose、环境文件和占位密钥：
+
+```powershell
+python scripts\alphamind_delivery.py preflight
+python scripts\alphamind_delivery.py start
+python scripts\alphamind_delivery.py status
+```
+
+Phase3 依赖两类模型端点：vLLM `qwen3-14b`（默认 `http://127.0.0.1:8000/v1`）与共享 embedding/reranker（默认 `http://127.0.0.1:8010`）。若任一端点不可达，WeKnora 的 `/health` 仍可能正常，但真实 hybrid search 或引用回答会失败：
+
+```powershell
+curl http://127.0.0.1:8000/v1/models
+D:\AI-Models\qwen3-service\start_qwen3_service.bat
+curl http://127.0.0.1:8010/health
+```
+
+底层 Compose 等价命令：
 
 ```powershell
 docker compose --env-file .env.phase3-precision `
@@ -171,9 +192,14 @@ python scripts\alphamind_phase3_graph.py institution_executive_network --company
 
 # 加 --execute 后读取 .env.phase3-precision 并通过 Neo4j transaction API 执行
 python scripts\alphamind_phase3_graph.py metric_period_compare --company-a 300782.SZ --metric ROE --period 2023A --period 2024A --execute
+
+# 在线 P1 验收：默认验证 中芯国际 -> 兆易创新 -> 乐鑫科技，并写入 JSON 报告
+python scripts\alphamind_graph_online_acceptance.py `
+  --env-file .env.phase3-precision `
+  --report dataset\alphamind_graph_online_acceptance.json
 ```
 
-脚本只允许执行三种固定意图的参数化 Cypher；用户值仅进入 `parameters`，不能注入任意语句。结果保留 `source_doc_id/source_chunk_id/page` 证据字段。
+`supply_chain_overlap` 保留原生 `HAS_CUSTOMER/HAS_SUPPLIER` 分支，并把独立 `AlphaMindEntity` 图层的 `SUPPLIES_TO` 供应商→客户方向桥接为相同返回契约；不会改写或删除任一现有图层。脚本只允许执行三种固定意图的参数化 Cypher；用户值和图层来源值仅进入 `parameters`，不能注入任意语句。结果保留两段关系各自的 `source_doc_id/source_chunk_id/page/evidence_quote` 与 `semantic_source`。
 
 ## 9. 验收文件
 
@@ -182,6 +208,7 @@ python scripts\alphamind_phase3_graph.py metric_period_compare --company-a 30078
 - `dataset/phase3_runs/phase3_load_latest.json`
 - `dataset/phase3_runs/pdf/*.phase3.manifest.json`
 - `dataset/phase3_eval_queries.json`
+- `dataset/alphamind_graph_online_acceptance.json`（真实 Neo4j 供应链多跳非空与双边证据报告）
 
 ## 10. 准生产阈值
 
@@ -192,3 +219,21 @@ python scripts\alphamind_phase3_graph.py metric_period_compare --company-a 30078
 - no-evidence refusal：1.00。
 - 健康探针 p95：<= 3000ms；错误率：<= 1%。
 - Graph 结论：100% 带 source doc/chunk/page 证据。
+
+## 11. 备份与恢复
+
+```powershell
+python scripts\alphamind_delivery.py backup
+python scripts\alphamind_delivery.py verify-backup ..\AlphaMind-backups\alphamind-<timestamp>
+```
+
+恢复前必须阅读 `docs/ALPHAMIND_BACKUP_RESTORE.md`。禁止使用 `docker compose down -v`，禁止未校验哈希就覆盖当前持久卷。
+
+## 12. 交付边界与客户手册
+
+- 报价单逐项验收矩阵：`docs/ALPHAMIND_DELIVERY_ACCEPTANCE_MATRIX.md`
+- 客户交付与运维：`docs/ALPHAMIND_DELIVERY_HANDOFF.md`
+- 最短入口：`delivery/README.md`
+- 板块产业链企业图：`docs/ALPHAMIND_RELATION_GRAPH_NEO4J.md`
+
+当前 Windows 历史验收不能替代客户 Ubuntu 24.04 + vLLM `qwen3-14b` 目标机终验；扫描件 OCR 也必须在配置视觉解析端点后单独验收。

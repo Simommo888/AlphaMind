@@ -1,0 +1,13 @@
+{
+  "schema_version": "alphamind.offline-delivery-report.v1",
+  "status": "pass",
+  "bundle_dir": "D:/AlphaMind-offline-images",
+  "images": 8,
+  "digest_pinned": true,
+  "archive": "images.tar",
+  "size_bytes": 3268902400,
+  "sha256": "556e4c339f23ac15783c294a0d961ac922e7e4140ad8faea3a07579066e0c8ee",
+  "verification": "pass",
+  "model_weights_included": false,
+  "model_weights_condition": "Shared Qwen model weights require a separate encrypted transfer and target-model acceptance."
+}

@@ -1,0 +1,36 @@
+{
+  "status": "pass",
+  "generated_at": "2026-07-12T16:38:57Z",
+  "intent": "supply_chain_overlap",
+  "query_parameters": {
+    "company_a": "中芯国际",
+    "company_b": "乐鑫科技"
+  },
+  "row_count": 1,
+  "checks": {
+    "result_shape_valid": true,
+    "required_columns_present": true,
+    "non_empty": true,
+    "all_rows_traceable": true,
+    "allowed_semantic_sources": true
+  },
+  "issues": [],
+  "evidence_rows": [
+    {
+      "company_a": "中芯国际",
+      "company_b": "乐鑫科技",
+      "shared_counterparty": "兆易创新",
+      "customer_rank": null,
+      "supplier_rank": null,
+      "customer_source_doc_id": "local-md:92de73d784e1bcd7dcf0",
+      "customer_source_chunk_id": "local-line:e64f9ac7060821968b65",
+      "customer_page": 0,
+      "customer_evidence_quote": "在产品供应方面，公司的供应链管理也采取了多元化策略，深化产能战略布局，与全球多家知名供应商如中芯国际、华虹、格芯、联电、台积电建立了长期良好的合作关系，采取多家晶圆厂、多家封测厂同时认证供货的方式。公司作为行业内龙头企业，有一定的规模和品牌优势，能集合多产线资源来应对半导体市场普遍缺货涨价的形势，为客户提供产能和供应链长期安全保障。",
+      "supplier_source_doc_id": "local-md:7719a5b878906d09817e",
+      "supplier_source_chunk_id": "local-line:54fee7da8f9cc385401e",
+      "supplier_page": 0,
+      "supplier_evidence_quote": "（6）公司采用Fabless模式，集中芯片与模组的设计与销售，直销占比在7成左右，公司产品大部分或最终销往海外。1）公司的生产方式采用Fabless模式，即无晶圆厂生产制造、仅从事集成电路设计的经营模式。公司的供应商主要以台积电为代表的晶圆厂和宇芯为代表的封测厂为主，兆易创新为其主要闪存供应商。2）公司采用直销为主、经销为辅的销售模式，直销客户多为物联网方案设计商、物联网模组组件制造商及终端物联网设备品牌商，经销客户为电子元器件经销商和贸易商及少量物联网方案设计商，2024H1公司的直销比例高达74.2%。3）2024H1公司下游终端需求或以海外为主，尽管公司直接境外销售占比为25.8%，公司境内客户的终端产品也存在大量出口的情况，预计公司大量产品最终销往海外。",
+      "semantic_source": "relation_graph_bridge"
+    }
+  ]
+}

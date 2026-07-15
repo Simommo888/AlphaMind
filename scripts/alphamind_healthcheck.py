@@ -55,9 +55,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--app-container", default="", help="Override WEKNORA_APP_CONTAINER from env file.")
     parser.add_argument("--qdrant-internal-url", default="", help="Override QDRANT_INTERNAL_URL from env file.")
     parser.add_argument("--neo4j-url", default="", help="Override NEO4J_HTTP_URL / NEO4J_HTTP_PORT from env file.")
-    parser.add_argument("--neo4j-user", default=os.environ.get("NEO4J_USERNAME"))
-    parser.add_argument("--neo4j-password", default=os.environ.get("NEO4J_PASSWORD"))
-    parser.add_argument("--neo4j-database", default=os.environ.get("NEO4J_DATABASE", "neo4j"))
+    parser.add_argument("--neo4j-user", default=None)
+    parser.add_argument("--neo4j-password", default=None)
+    parser.add_argument("--neo4j-database", default=None)
     parser.add_argument("--minio-url", default="", help="Override MINIO_PUBLIC_URL / MINIO_PORT from env file.")
     parser.add_argument("--langfuse-url", default="", help="Override LANGFUSE_PUBLIC_URL / LANGFUSE_PORT from env file.")
     parser.add_argument("--env-file", default="", help="Optional .env file for non-secret readiness checks.")
@@ -316,7 +316,7 @@ def env_presence_check(env_values: dict[str, str], key: str, required: bool = Fa
     return timed(f"env_{key}", required, run)
 
 
-def check_phase1_models(env_file: Path, *, timeout: float, required: bool) -> CheckResult:
+def check_local_model_apis(env_file: Path, *, phase: str, timeout: float, required: bool) -> CheckResult:
     def run() -> tuple[str, str]:
         command = [
             sys.executable,
@@ -340,7 +340,7 @@ def check_phase1_models(env_file: Path, *, timeout: float, required: bool) -> Ch
         detail = (completed.stdout or completed.stderr or f"exit {completed.returncode}")[:800]
         return ("fail" if required else "warn", detail)
 
-    return timed("phase1_model_apis", required, run)
+    return timed(f"{phase}_model_apis", required, run)
 
 
 def print_table(results: list[CheckResult]) -> None:
@@ -375,9 +375,10 @@ def main() -> int:
     qdrant_url = args.qdrant_url or env_get(env_values, "QDRANT_REST_URL") or localhost_url_from_port(env_values, "QDRANT_REST_PORT", "6333")
     app_container = args.app_container or env_get(env_values, "WEKNORA_APP_CONTAINER", "WeKnora-app")
     qdrant_internal_url = args.qdrant_internal_url or env_get(env_values, "QDRANT_INTERNAL_URL") or f"http://{env_get(env_values, 'QDRANT_HOST', 'qdrant')}:6333"
-    neo4j_url = args.neo4j_url or env_get(env_values, "NEO4J_HTTP_URL") or localhost_url_from_port(env_values, "NEO4J_HTTP_PORT", "7474")
-    neo4j_user = args.neo4j_user or env_get(env_values, "NEO4J_USERNAME", "neo4j")
-    neo4j_password = args.neo4j_password or env_get(env_values, "NEO4J_PASSWORD")
+    neo4j_url = args.neo4j_url or env_values.get("NEO4J_HTTP_URL") or os.environ.get("NEO4J_HTTP_URL") or localhost_url_from_port(env_values, "NEO4J_HTTP_PORT", "7474")
+    neo4j_user = args.neo4j_user or env_values.get("NEO4J_USERNAME") or os.environ.get("NEO4J_USERNAME") or "neo4j"
+    neo4j_password = args.neo4j_password or env_values.get("NEO4J_PASSWORD") or os.environ.get("NEO4J_PASSWORD")
+    neo4j_database = args.neo4j_database or env_values.get("NEO4J_DATABASE") or os.environ.get("NEO4J_DATABASE") or "neo4j"
     minio_url = args.minio_url or env_get(env_values, "MINIO_PUBLIC_URL") or localhost_url_from_port(env_values, "MINIO_PORT", "9000")
     langfuse_url = args.langfuse_url or env_get(env_values, "LANGFUSE_PUBLIC_URL") or localhost_url_from_port(env_values, "LANGFUSE_PORT", "3000")
 
@@ -472,12 +473,12 @@ def main() -> int:
         results.append(CheckResult("minio_live", "skip", False, "phase1-basic uses local storage"))
         results.append(CheckResult("langfuse_http", "skip", False, "phase1-basic does not require Langfuse"))
     else:
-        results.append(check_neo4j(neo4j_url, username=neo4j_user, password=neo4j_password, database=args.neo4j_database, required=require_neo4j, timeout=args.timeout))
+        results.append(check_neo4j(neo4j_url, username=neo4j_user, password=neo4j_password, database=neo4j_database, required=require_neo4j, timeout=args.timeout))
         results.append(check_minio(minio_url, required=require_minio, timeout=args.timeout))
         results.append(check_langfuse(langfuse_url, required=args.require_langfuse, timeout=args.timeout))
 
-    if phase1 and args.check_models:
-        results.append(check_phase1_models(env_file, timeout=args.timeout, required=True))
+    if (phase1 or phase2 or phase3) and args.check_models:
+        results.append(check_local_model_apis(env_file, phase=args.phase, timeout=args.timeout, required=True))
 
     if args.json:
         print(json.dumps([asdict(result) for result in results], ensure_ascii=False, indent=2))

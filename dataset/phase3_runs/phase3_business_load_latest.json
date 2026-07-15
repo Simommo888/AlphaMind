@@ -1,0 +1,16 @@
+{
+  "requests": 40,
+  "successes": 40,
+  "failures": 0,
+  "error_rate": 0.0,
+  "p50_ms": 2215.458,
+  "p95_ms": 2388.579,
+  "p99_ms": 2395.995,
+  "max_ms": 2395.995,
+  "throughput_rps": 1.805,
+  "url": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+  "method": "POST",
+  "concurrency": 4,
+  "failure_samples": [],
+  "status": "pass"
+}

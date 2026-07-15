@@ -1,0 +1,86 @@
+# AlphaMind customer-delivery hardening overlay.
+# Apply after docker-compose.phase3-precision.yml.
+x-delivery-logging: &delivery-logging
+  driver: json-file
+  options:
+    max-size: ${DELIVERY_LOG_MAX_SIZE:-20m}
+    max-file: ${DELIVERY_LOG_MAX_FILES:-5}
+
+services:
+  app:
+    image: wechatopenai/weknora-app@sha256:748097ccb5e9a66d46cfb94de9cd200de5a65dbd2ad7de917a5db0ffd4e56681
+    ports: !override
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${APP_CPU_LIMIT:-4.0}"
+          memory: ${APP_MEMORY_LIMIT:-8G}
+
+  frontend:
+    image: wechatopenai/weknora-ui@sha256:da9a3a0a939ddd1ed6f4b510b74a0562a21b898439f907cd6ee529a3680283d8
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${FRONTEND_CPU_LIMIT:-1.0}"
+          memory: ${FRONTEND_MEMORY_LIMIT:-1G}
+
+  docreader:
+    image: wechatopenai/weknora-docreader@sha256:7f09b7581150cec73a206460c859abfd3671ae13697450d6b533db5484c1276c
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${DOCREADER_CPU_LIMIT:-4.0}"
+          memory: ${DOCREADER_MEMORY_LIMIT:-8G}
+
+  postgres:
+    image: paradedb/paradedb@sha256:af585013f97f622715de01e48d00558f7edf17055d7b40deafc9f98ca8d99a56
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${POSTGRES_CPU_LIMIT:-2.0}"
+          memory: ${POSTGRES_MEMORY_LIMIT:-4G}
+
+  redis:
+    image: redis@sha256:c9d92d840fd011c908f040592857c724ae6d877f2aba5c40ad963276507386b2
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${REDIS_CPU_LIMIT:-1.0}"
+          memory: ${REDIS_MEMORY_LIMIT:-1G}
+
+  qdrant:
+    image: qdrant/qdrant@sha256:dab6de32f7b2cc599985a7c764db3e8b062f70508fb85ca074aa856f829bf335
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${QDRANT_CPU_LIMIT:-2.0}"
+          memory: ${QDRANT_MEMORY_LIMIT:-4G}
+
+  neo4j:
+    image: neo4j@sha256:155c8aad10d5c838bc3bbc476c0418779086547822acb214ec5e3d49ba336907
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${NEO4J_CPU_LIMIT:-2.0}"
+          memory: ${NEO4J_MEMORY_LIMIT:-4G}
+
+  minio:
+    image: minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e
+    logging: *delivery-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "${MINIO_CPU_LIMIT:-2.0}"
+          memory: ${MINIO_MEMORY_LIMIT:-4G}

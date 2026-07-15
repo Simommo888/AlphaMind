@@ -1,0 +1,31 @@
+{
+  "status": "pass",
+  "issues": [],
+  "stats": {
+    "source_markdown_files": 962,
+    "nodes": 1077,
+    "edges": 1743,
+    "sectors": 10,
+    "industries": 175,
+    "chain_stages": 30,
+    "companies": 862,
+    "relations": {
+      "BELONGS_TO": 960,
+      "COMPETES_WITH": 50,
+      "CONTROLS": 6,
+      "PARTNERS_WITH": 21,
+      "PART_OF_CHAIN": 175,
+      "PART_OF_SECTOR": 175,
+      "SUPPLIES_TO": 336,
+      "UPSTREAM_OF": 20
+    }
+  },
+  "graph_path": "D:\\AlphaMind\\dataset\\alphamind_relation_graph.json",
+  "neo4j_import": {
+    "status": "pass",
+    "endpoint": "http://localhost:17474/db/neo4j/tx/commit",
+    "nodes": 1077,
+    "edges": 1743,
+    "replace": true
+  }
+}

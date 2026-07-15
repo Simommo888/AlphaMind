@@ -1,0 +1,1971 @@
+{
+  "schema_version": "alphamind.phase3.online-eval.v1",
+  "generated_at": "2026-07-12T19:09:02.883226+00:00",
+  "status": "fail",
+  "weknora": {
+    "base_url": "http://localhost:18080",
+    "kb_id": "7d27d48d-457e-4b4b-a516-6488c2ab1bad",
+    "api_key_present": true
+  },
+  "inputs": {
+    "queries": "dataset\\phase3_eval_queries.json",
+    "retrieval_config": "dataset\\alphamind_retrieval_config_phase3_precision.json"
+  },
+  "settings": {
+    "match_count": 10,
+    "rerank_batch_size": 10
+  },
+  "gpu_model_orchestration": [
+    {
+      "status": "pass",
+      "model": "qwen3:4b",
+      "http_status": 200
+    },
+    {
+      "status": "pass",
+      "endpoint": "http://localhost:8010/unload",
+      "http_status": 200
+    },
+    {
+      "status": "pass",
+      "model": "qwen3:4b",
+      "http_status": 200
+    }
+  ],
+  "rerank_api_evidence": {
+    "endpoint": "http://localhost:8010/rerank",
+    "model": "qwen3-reranker-0.6b-local",
+    "provider": "generic",
+    "calls": 15,
+    "http_batches": 15,
+    "candidates": 146,
+    "returned": 146,
+    "elapsed_ms": 8502
+  },
+  "aggregate_metrics": {
+    "mean_precision@1": 1.0,
+    "mean_recall@1": 1.0,
+    "mean_precision@3": 0.3333333333333333,
+    "mean_recall@3": 1.0,
+    "mean_precision@5": 0.2,
+    "mean_recall@5": 1.0,
+    "mean_precision@10": 0.1,
+    "mean_recall@10": 1.0,
+    "mean_reciprocal_rank": 1.0,
+    "mean_ndcg@5": 1.0,
+    "mean_ndcg@10": 1.0,
+    "mean_retrieval_elapsed_ms": 566.9333333333333,
+    "chat_success_rate": 0.3333333333333333,
+    "chat_reference_rate": 0.36363636363636365,
+    "mean_distinct_reference_doc_ids": 0.0,
+    "mean_citation_doc_recall": 0.36363636363636365,
+    "mean_citation_doc_precision": 0.36363636363636365,
+    "min_distinct_doc_ids_pass_rate": 0.36363636363636365,
+    "answer_must_contain_pass_rate": 0.5333333333333333,
+    "answer_must_not_violation_rate": 0.6,
+    "no_evidence_refusal_rate": 1.0,
+    "no_evidence_fabrication_violation_rate": 0.0
+  },
+  "gate_assessment": {
+    "status": "fail",
+    "checks": {
+      "mean_recall@10": {
+        "actual": 1.0,
+        "minimum": 0.9,
+        "status": "pass"
+      },
+      "mean_reciprocal_rank": {
+        "actual": 1.0,
+        "minimum": 0.9,
+        "status": "pass"
+      },
+      "mean_citation_doc_recall": {
+        "actual": 0.36363636363636365,
+        "minimum": 0.95,
+        "status": "fail"
+      },
+      "no_evidence_refusal_rate": {
+        "actual": 1.0,
+        "minimum": 1.0,
+        "status": "pass"
+      },
+      "all_queries_executed": {
+        "actual": 15,
+        "expected": 15,
+        "status": "pass"
+      },
+      "real_rerank_api": {
+        "calls": 15,
+        "expected_minimum": 15,
+        "status": "pass"
+      },
+      "query_failures": {
+        "actual": 10,
+        "maximum": 0,
+        "status": "fail"
+      },
+      "ground_truth_complete": {
+        "actual": "complete",
+        "expected": "complete",
+        "status": "pass"
+      }
+    }
+  },
+  "ground_truth_validation": {
+    "status": "complete",
+    "missing_ground_truth": [],
+    "placeholder_queries": [],
+    "partial_queries": [],
+    "regex_errors": {},
+    "warnings": {},
+    "action_items": []
+  },
+  "query_results": [
+    {
+      "query_id": "p3_q001_table_revenue",
+      "query": "卓胜微2024年营业收入、归母净利润和扣非净利润分别是多少？请给出表格页码、单位和引用。",
+      "type": "complex_table_metric",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 2845,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 21227,
+          "payload_sha256": "15db7bd1fa4e5e29386f1f28650f3b9edb2b5dd96214bda60bb74f8efc73582d",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.013776276276276277,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0016384124755859375,
+          "score_max": 0.99951171875,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 41992,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 1,
+        "reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "distinct_reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_knowledge_ids": [
+          "e46a68f2-5c0d-4cda-b21f-87e2e399032d"
+        ],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "卓胜微2024年营业收入：4,486,931,811.79元（第9页）[S1]  \n卓胜微2024年归母净利润：401,826,648.58元（第9页）[S1]  \n卓胜微2024年扣非净利润：363,554,786.70元（第9页）[S1]  \n\n**说明**：  \n- 所有数据均严格引用自提供的[S1]证据（第9页），单位均为“元”。  \n- [S2]和[S3]证据中无2024年全年数据（[S2]仅含季度数据，[S3]页码未指定，且数据与[S1]一致但未提供明确页码），故未采用。  \n- 证据支持2024年全年指标（公司：卓胜微，年份：2024），无证据不足或编造。",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "pass",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "matched_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 1.0,
+        "citation_doc_precision": 1.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [
+          "营业收入"
+        ],
+        "missing_must_contain": [
+          "归属于",
+          "扣除非经常性损益"
+        ],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": false,
+        "must_contain_any_pass": true,
+        "must_not_pass": true
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q002_footnote_policy",
+      "query": "卓胜微年报财务报表脚注中与收入确认或会计政策变更相关的说明是什么？",
+      "type": "footnote_recall",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 425,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 198,
+          "payload_sha256": "864fac0f55a9ae8f67dfccf8aa2f03b81160f469ff3e4767599cf780c9d5eec6",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.011672278338945005,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0003542900085449219,
+          "score_max": 0.9130859375,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 17044,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "fail",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 0.0,
+        "citation_doc_precision": 0.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": false
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [],
+        "missing_must_contain": [
+          "收入确认"
+        ],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": false,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q003_cross_page_table",
+      "query": "年报中跨页财务表的表头、期间和合计行是什么？必须引用连续页码。",
+      "type": "cross_page_table",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 366,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 139,
+          "payload_sha256": "d872b170cf4a6e73a67f8a3665fb242ea0138d0770c6b10d0e50fe30af739637",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.014599483204134366,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.00037288665771484375,
+          "score_max": 0.1357421875,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 60660,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造\n\n**解释**：  \n- 您的查询要求描述“年报中跨页财务表的表头、期间和合计行”，但提供的证据仅包含第9页（S2）和第10页（S1）的片段，且这些片段未直接明确“跨页财务表”的细节。  \n  - 第9页（S2）显示“五、主要会计数据和财务指标”表格的表头为“本年比上年”，期间为“2024年”、“2023年”和“2022年”，但证据中没有关于该表格是否跨页的说明，也没有“合计行”的具体内容（如总行或合并数据）。  \n  - 第10页（S1）仅包含标题性文本“上述财务指标或其加总数是否与公司已披露季度报告、半年度报告相关财务指标存在重大差异”，这属于报告内部注释或问题陈述，而非跨页财务表的延续部分，因此无法确认跨页结构。  \n- 证据中缺少跨页财务表的完整上下文（例如后续页码的财务数据、合计行的格式等），且“合计行”在财务报表中通常指特定指标的汇总行（如“合计”或“总计”），但S2和S1的片段均未提供此类信息。  \n- 根据您的指令，若证据不直接支持查询中的公司、年份或指标（本例中“跨页财务表”的表头、期间和合计行），则必须以“未检索到足够证据，不能编造”回应",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "fail",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 0.0,
+        "citation_doc_precision": 0.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": false
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [
+          "2024",
+          "2023"
+        ],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q004_roe_alias",
+      "query": "卓胜微ROE（净资产收益率）较上年如何变化？",
+      "type": "lexicon_metric",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 417,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 155,
+          "payload_sha256": "9346cb8674e981bad17281376fdc2d020fea69d0184137c9522f5fea6105964a",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.015873015873015872,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0006418228149414062,
+          "score_max": 0.98876953125,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 22650,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 1,
+        "reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "distinct_reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_knowledge_ids": [
+          "e46a68f2-5c0d-4cda-b21f-87e2e399032d"
+        ],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "卓胜微加权平均净资产收益率（ROE）较上年下降8.13个百分点 [S2]",
+        "error": "",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "pass",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "matched_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 1.0,
+        "citation_doc_precision": 1.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "pass",
+        "matched_must_contain": [
+          "净资产收益率"
+        ],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": true
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "pass",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q005_deduction_profit_alias",
+      "query": "卓胜微扣非净利润与归母净利润差异多少，主要非经常性损益来自哪里？",
+      "type": "lexicon_financial_reasoning",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 422,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 127,
+          "payload_sha256": "2a53b0cd8aee9598c806ff946c85f25972ecccbbfced001c5608d5d359e43b84",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.013681159420289853,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0007100105285644531,
+          "score_max": 0.99560546875,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 73266,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 1,
+        "reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "distinct_reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_knowledge_ids": [
+          "e46a68f2-5c0d-4cda-b21f-87e2e399032d"
+        ],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "根据您提供的证据，我严格遵循“若证据不直接支持问题中的公司、年份或指标，必须回答‘未检索到足够证据，不能编造’”的原则进行分析。以下是针对查询的逐项回应：\n\n### 1. **扣非净利润与归母净利润的差异（2024年）**\n   - **问题支持情况**：证据 [S2]（公司：卓胜微；年份：2024；指标：归母净利润和扣非净利润）直接提供了2024年年度数据，且数据完整无缺失。\n   - **计算结果**：\n     - 2024年归母净利润（归属于母公司净利润）：401,826,648.58 元（来源：[S2]）\n     - 2024年扣非净利润（净利润扣除非经常性损益后）：363,554,786.70 元（来源：[S2]）\n     - 差异 = 归母净利润 - 扣非净利润 = 401,826,648.58 - 363,554,786.70 = **38,271,861.88 元**\n   - **结论**：2024年扣非净利润与归母净利润的差异为 **38,271,861.88 元**，该结果直接基于 [S2] 证据，符合要求。\n\n### 2. **主要非经常性损益来源（202",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "pass",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "matched_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 1.0,
+        "citation_doc_precision": 1.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [
+          "非经常性损益"
+        ],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q006_customer_supplier_overlap",
+      "query": "卓胜微2024年前五大客户销售额、占比及匿名披露情况是什么？请引用年报。",
+      "type": "customer_concentration",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 439,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 140,
+          "payload_sha256": "d7837a2aaaefe8eeaeb1e0271a3dafbd4adf3c76c9f62021406f651f4e78017e",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.015277777777777776,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.00012242794036865234,
+          "score_max": 0.923828125,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 13100,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "fail",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 0.0,
+        "citation_doc_precision": 0.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": false
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [],
+        "missing_must_contain": [
+          "前五名客户"
+        ],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": false,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q007_institution_executive",
+      "query": "卓胜微2024年年报披露的董事、监事和高级管理人员情况是什么？",
+      "type": "executive_evidence",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 431,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 127,
+          "payload_sha256": "e34e32a325083362af8f37b8b56e1938a5600d1296c25a4d5c252d08218e4880",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.012303630363036302,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.00023424625396728516,
+          "score_max": 0.9970703125,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 51714,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 1,
+        "reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "distinct_reference_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_knowledge_ids": [
+          "e46a68f2-5c0d-4cda-b21f-87e2e399032d"
+        ],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "根据您提供的检索证据，我对“卓胜微2024年年报披露的董事、监事和高级管理人员情况”进行了严格核查。核查结果如下：\n\n- **证据分析**：  \n  - 在[S1]中，仅提及“公司负责人许志翰、主管会计工作负责人朱华燕及会计机构负责人(会计主管人员)汪燕”，但未明确列出完整的董事、监事名单，且仅覆盖了部分高级管理人员角色（无监事信息）。  \n  - 在[S2]中，无相关信息，无法支持问题指标。  \n  - 在[S3]中，仅提供董事会秘书（刘丽琼）和证券事务代表（徐佳）的联系方式，但未涵盖所有董事、监事及高级管理人员（例如，无董事长、监事会成员等完整信息）。  \n\n- **关键问题**：  \n  您的问题要求明确“董事、监事和高级管理人员情况”，但检索证据中：  \n  1. 无任何部分提供完整的**监事**信息（问题中“监事”是核心组成部分，证据中完全缺失）；  \n  2. 仅部分高级管理人员信息（如公司负责人、主管会计工作负责人）被提及，但未形成完整、权威的“董事、监事和高级管理人员”清单；  \n  3. 证据不直接支持问题中“董事、监事和高级管理人员”作为整体指标的完整披露（规则要求",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "pass",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "matched_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 1.0,
+        "citation_doc_precision": 1.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [
+          "董事"
+        ],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q008_competitor_chain",
+      "query": "卓胜微主要产品、应用领域和市场竞争风险是什么？请引用年报原文。",
+      "type": "product_risk_evidence",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 417,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 143,
+          "payload_sha256": "23bd6818ab6947477888e6e2562a43382500b3f5f2c2e4a6cd10933a52662f8a",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.014068100358422939,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0003151893615722656,
+          "score_max": 0.99462890625,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 25865,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "fail",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 0.0,
+        "citation_doc_precision": 0.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": false
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [],
+        "missing_must_contain": [
+          "射频",
+          "风险"
+        ],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": false,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q009_metric_period_compare",
+      "query": "对比卓胜微2023A和2024A毛利率、ROE及经营现金流，并解释变化。",
+      "type": "metric_period_compare",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 440,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 136,
+          "payload_sha256": "5fa4a41672d3f4a9a721f89527c01a25c11c752ed6905fec24bd2f313bccea2e",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.014884500745156482,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0006775856018066406,
+          "score_max": 0.94677734375,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 36936,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "fail",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 0.0,
+        "citation_doc_precision": 0.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": false
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [],
+        "missing_must_contain": [
+          "2023",
+          "2024"
+        ],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": false,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q010_risk_source",
+      "query": "卓胜微年报披露的主要经营风险有哪些？每项风险必须回到原文页码。",
+      "type": "risk_evidence",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 420,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 116,
+          "payload_sha256": "58f4288d98bbcd4f6e259e9e2408e2ff8d2b01afd75d878f10f1c8512d527d81",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.0146668991977677,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0003516674041748047,
+          "score_max": 0.99658203125,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 22366,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "fail",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 0.0,
+        "citation_doc_precision": 0.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": false
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [],
+        "missing_must_contain": [
+          "风险"
+        ],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": false,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q011_exact_ticker",
+      "query": "300782.SZ对应公司2024年基本每股收益是多少？",
+      "type": "ticker_exact_match",
+      "ground_truth": {
+        "gt_status": "complete",
+        "is_no_evidence": false,
+        "relevant_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "reference_must_include_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "min_distinct_doc_ids": 1
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 441,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 120,
+          "payload_sha256": "d8d9a7e350bfec3a49f6d68073ad10949e6568897748ceff713ca8dc78113734",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "precision@10": 0.1,
+          "recall@10": 1.0,
+          "reciprocal_rank": 1.0,
+          "ndcg@5": 1.0,
+          "ndcg@10": 1.0
+        },
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.015552884615384614,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.00014543533325195312,
+          "score_max": 0.98046875,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "error",
+        "http_status": 200,
+        "elapsed_ms": 23767,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "positive query returned a no-evidence refusal",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "fail",
+        "required_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "extra_doc_ids": [],
+        "citation_doc_recall": 0.0,
+        "citation_doc_precision": 0.0,
+        "min_distinct_doc_ids": 1,
+        "min_distinct_doc_ids_pass": false
+      },
+      "answer_checks": {
+        "status": "fail",
+        "matched_must_contain": [],
+        "missing_must_contain": [
+          "每股收益",
+          "元"
+        ],
+        "matched_must_contain_any": [],
+        "must_contain_any_candidates": [],
+        "forbidden_term_violations": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": false,
+        "must_contain_any_pass": true,
+        "must_not_pass": false
+      },
+      "no_evidence_checks": {
+        "status": "skipped"
+      },
+      "status": "fail",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q012_xlsx_table",
+      "query": "锂电池材料价格周报中最近一期主要材料价格和变动字段是什么？",
+      "type": "structured_table_recall",
+      "ground_truth": {
+        "gt_status": "no_evidence",
+        "is_no_evidence": true,
+        "relevant_doc_ids": [],
+        "reference_must_include_doc_ids": [],
+        "min_distinct_doc_ids": 0
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 243,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 144,
+          "payload_sha256": "217ed74a21f35f7711157816770810c1c382f17e759043ae6189598a22d37505",
+          "raw_candidate_count": 8
+        },
+        "candidate_count": 8,
+        "reranked_count": 8,
+        "metrics": {},
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.01129032258064516,
+            "first_rank": 1,
+            "chunk_count": 8,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 2.568960189819336e-05,
+          "score_max": 0.01345062255859375,
+          "scored_candidates": 8
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 15862,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "skipped",
+        "required_doc_ids": [],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": null,
+        "citation_doc_precision": null,
+        "min_distinct_doc_ids": 0,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "pass",
+        "matched_must_contain": [],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "must_contain_any_candidates": [
+          "未检索到足够证据",
+          "没有足够证据",
+          "知识库中未找到",
+          "无法根据现有资料",
+          "不能编造",
+          "并未披露",
+          "未披露",
+          "没有公开",
+          "未有直接提及",
+          "未发现",
+          "当前信息未明确"
+        ],
+        "forbidden_term_violations": [],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": true
+      },
+      "no_evidence_checks": {
+        "status": "pass",
+        "refusal_pass": true,
+        "fabrication_violations": []
+      },
+      "status": "pass",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q013_wrong_company_negative",
+      "query": "请给出卓胜微年报中披露的贵州茅台白酒销量。",
+      "type": "wrong_company_guardrail",
+      "ground_truth": {
+        "gt_status": "no_evidence",
+        "is_no_evidence": true,
+        "relevant_doc_ids": [],
+        "reference_must_include_doc_ids": [],
+        "min_distinct_doc_ids": 0
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 435,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 121,
+          "payload_sha256": "acf83ed0d6fef8cdbeb555868c8a0d015c5713e9537aff9239a000161e898eb5",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {},
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.015767934520943667,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0001882314682006836,
+          "score_max": 0.435791015625,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 19180,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "skipped",
+        "required_doc_ids": [],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": null,
+        "citation_doc_precision": null,
+        "min_distinct_doc_ids": 0,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "pass",
+        "matched_must_contain": [],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "must_contain_any_candidates": [
+          "未检索到足够证据",
+          "没有足够证据",
+          "知识库中未找到",
+          "无法根据现有资料",
+          "不能编造",
+          "并未披露",
+          "未披露",
+          "没有公开",
+          "未有直接提及",
+          "未发现",
+          "当前信息未明确"
+        ],
+        "forbidden_term_violations": [],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": true
+      },
+      "no_evidence_checks": {
+        "status": "pass",
+        "refusal_pass": true,
+        "fabrication_violations": []
+      },
+      "status": "pass",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q014_wrong_year_negative",
+      "query": "请给出卓胜微2028年已实现营业收入。",
+      "type": "wrong_year_guardrail",
+      "ground_truth": {
+        "gt_status": "no_evidence",
+        "is_no_evidence": true,
+        "relevant_doc_ids": [],
+        "reference_must_include_doc_ids": [],
+        "min_distinct_doc_ids": 0
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 434,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 132,
+          "payload_sha256": "af47031982d19dd2ef8febeb12a8489764eb3af1a6da294cae4ce7a258a26d0f",
+          "raw_candidate_count": 10
+        },
+        "candidate_count": 10,
+        "reranked_count": 10,
+        "metrics": {},
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.013121234939759037,
+            "first_rank": 1,
+            "chunk_count": 10,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.00034618377685546875,
+          "score_max": 0.72802734375,
+          "scored_candidates": 10
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 17226,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "skipped",
+        "required_doc_ids": [],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": null,
+        "citation_doc_precision": null,
+        "min_distinct_doc_ids": 0,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "pass",
+        "matched_must_contain": [],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "must_contain_any_candidates": [
+          "未检索到足够证据",
+          "没有足够证据",
+          "知识库中未找到",
+          "无法根据现有资料",
+          "不能编造",
+          "并未披露",
+          "未披露",
+          "没有公开",
+          "未有直接提及",
+          "未发现",
+          "当前信息未明确"
+        ],
+        "forbidden_term_violations": [],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": true
+      },
+      "no_evidence_checks": {
+        "status": "pass",
+        "refusal_pass": true,
+        "fabrication_violations": []
+      },
+      "status": "pass",
+      "warnings": []
+    },
+    {
+      "query_id": "p3_q015_fabricated_target_negative",
+      "query": "请给出虚构公司星尘量子电池股份有限公司未来三年精确目标价、ROE和前五大客户。",
+      "type": "no_evidence_guardrail",
+      "ground_truth": {
+        "gt_status": "no_evidence",
+        "is_no_evidence": true,
+        "relevant_doc_ids": [],
+        "reference_must_include_doc_ids": [],
+        "min_distinct_doc_ids": 0
+      },
+      "retrieval": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 329,
+        "request_evidence": {
+          "endpoint": "http://localhost:18080/api/v1/knowledge-bases/7d27d48d-457e-4b4b-a516-6488c2ab1bad/hybrid-search",
+          "method": "POST",
+          "http_status": 200,
+          "elapsed_ms": 128,
+          "payload_sha256": "3177e5cb8653f297acb87a33231c0fc07f916cba9f222f9bf2859c5e10e23452",
+          "raw_candidate_count": 8
+        },
+        "candidate_count": 8,
+        "reranked_count": 8,
+        "metrics": {},
+        "retrieved_docs": [
+          {
+            "doc_id": "alphamind_phase3_卓胜微_300782_2024年报_34891318985c",
+            "knowledge_id": "e46a68f2-5c0d-4cda-b21f-87e2e399032d",
+            "score": 0.01553113553113553,
+            "first_rank": 1,
+            "chunk_count": 8,
+            "title": "卓胜微_300782_2024年报.phase3.md"
+          }
+        ],
+        "evidence_coverage": {},
+        "rerank": {
+          "mode": "model_api",
+          "status": "pass",
+          "models": [
+            "qwen3-reranker-0.6b-local"
+          ],
+          "score_min": 0.0003952980041503906,
+          "score_max": 0.00502777099609375,
+          "scored_candidates": 8
+        },
+        "error": ""
+      },
+      "chat": {
+        "status": "pass",
+        "http_status": 200,
+        "elapsed_ms": 12819,
+        "event_count": 1,
+        "event_type_summary": {
+          "direct_chat": 1
+        },
+        "reference_count": 0,
+        "reference_doc_ids": [],
+        "distinct_reference_doc_ids": [],
+        "reference_knowledge_ids": [],
+        "raw_reference_doc_candidates": [
+          "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+        ],
+        "answer_preview": "未检索到足够证据，不能编造",
+        "error": "",
+        "mode": "direct_rag_chat"
+      },
+      "citation_checks": {
+        "status": "skipped",
+        "required_doc_ids": [],
+        "cited_doc_ids": [],
+        "matched_doc_ids": [],
+        "missing_doc_ids": [],
+        "extra_doc_ids": [],
+        "citation_doc_recall": null,
+        "citation_doc_precision": null,
+        "min_distinct_doc_ids": 0,
+        "min_distinct_doc_ids_pass": true
+      },
+      "answer_checks": {
+        "status": "pass",
+        "matched_must_contain": [],
+        "missing_must_contain": [],
+        "matched_must_contain_any": [
+          "未检索到足够证据",
+          "不能编造"
+        ],
+        "must_contain_any_candidates": [
+          "未检索到足够证据",
+          "没有足够证据",
+          "知识库中未找到",
+          "无法根据现有资料",
+          "不能编造",
+          "并未披露",
+          "未披露",
+          "没有公开",
+          "未有直接提及",
+          "未发现",
+          "当前信息未明确"
+        ],
+        "forbidden_term_violations": [],
+        "forbidden_pattern_violations": [],
+        "must_contain_pass": true,
+        "must_contain_any_pass": true,
+        "must_not_pass": true
+      },
+      "no_evidence_checks": {
+        "status": "pass",
+        "refusal_pass": true,
+        "fabrication_violations": []
+      },
+      "status": "pass",
+      "warnings": []
+    }
+  ]
+}

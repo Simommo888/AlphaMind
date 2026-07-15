@@ -1,0 +1,72 @@
+# Non-destructive application-level validation for staging restore volumes.
+# Requires RESTORE_BACKUP_NAME=alphamind-<UTC timestamp> and previously executed
+# `alphamind_delivery.py restore ... --execute-staging`.
+services:
+  app:
+    container_name: AlphaMind-restore-app
+    ports: !override
+      - "127.0.0.1:${RESTORE_APP_PORT:-28080}:8080"
+    volumes: !override
+      - restore-data-files:/data/files
+      - restore-docreader-tmp:/tmp/docreader:ro
+      - ./config/config.yaml:/app/config/config.yaml
+      - ./skills/preloaded:/app/skills/preloaded
+      - ./config/builtin_models.phase3-precision.yaml:/app/config/builtin_models.yaml:ro
+      - ./config/prompt_templates/system_prompt.yaml:/app/config/prompt_templates/system_prompt.yaml:ro
+
+  frontend:
+    container_name: AlphaMind-restore-frontend
+    ports: !override
+      - "127.0.0.1:${RESTORE_FRONTEND_PORT:-28088}:80"
+
+  docreader:
+    container_name: AlphaMind-restore-docreader
+    volumes: !override
+      - restore-docreader-tmp:/tmp/docreader
+
+  postgres:
+    container_name: AlphaMind-restore-postgres
+    volumes: !override
+      - restore-postgres:/var/lib/postgresql/data
+
+  redis:
+    container_name: AlphaMind-restore-redis
+    volumes: !override
+      - restore-redis:/data
+
+  qdrant:
+    container_name: AlphaMind-restore-qdrant
+    ports: !override []
+    volumes: !override
+      - restore-qdrant:/qdrant/storage
+
+  neo4j:
+    container_name: AlphaMind-restore-neo4j
+    ports: !override []
+    volumes: !override
+      - restore-neo4j:/data
+
+  minio:
+    container_name: AlphaMind-restore-minio
+    ports: !override []
+    volumes: !override
+      - restore-minio:/data
+
+volumes:
+  restore-postgres:
+    external: true
+    name: alphamind-restore-${RESTORE_BACKUP_NAME:?RESTORE_BACKUP_NAME is required}-postgres
+  restore-qdrant:
+    external: true
+    name: alphamind-restore-${RESTORE_BACKUP_NAME:?RESTORE_BACKUP_NAME is required}-qdrant
+  restore-neo4j:
+    external: true
+    name: alphamind-restore-${RESTORE_BACKUP_NAME:?RESTORE_BACKUP_NAME is required}-neo4j
+  restore-minio:
+    external: true
+    name: alphamind-restore-${RESTORE_BACKUP_NAME:?RESTORE_BACKUP_NAME is required}-minio
+  restore-data-files:
+    external: true
+    name: alphamind-restore-${RESTORE_BACKUP_NAME:?RESTORE_BACKUP_NAME is required}-data-files
+  restore-docreader-tmp:
+  restore-redis:
