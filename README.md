@@ -1,3 +1,30 @@
+# AlphaMind 金融 Graph RAG 交付说明
+
+本仓库是基于 Tencent WeKnora 的 AlphaMind 金融垂直 Graph RAG 交付分支，目标对应 `C:/Users/59521/Desktop/金融系统报价单(终版).pdf` 中的方案三“终极高精版”。
+
+当前 Phase3 默认聊天模型已按客户说明切换为客户机 vLLM 暴露的 `qwen3-14b`：
+
+- 配置模板：`.env.phase3-precision.example`
+- vLLM 运行说明：`docs/ALPHAMIND_QWEN3_14B_VLLM.md`
+- 交付入口：`delivery/README.md`
+- 验收矩阵：`docs/ALPHAMIND_DELIVERY_ACCEPTANCE_MATRIX.md`
+- 运维移交：`docs/ALPHAMIND_DELIVERY_HANDOFF.md`
+
+最短复现路径：
+
+```bash
+cp .env.phase3-precision.example .env.phase3-precision
+# 修改 .env.phase3-precision 中的密码、AES/JWT、API key、vLLM 地址和模型服务地址
+python scripts/alphamind_delivery.py preflight
+python scripts/alphamind_delivery.py start
+python scripts/alphamind_delivery.py status
+python scripts/alphamind_delivery.py acceptance
+```
+
+注意：原始报价单 PDF 不提交到公开 Git；仓库只保留其文本化验收依据、SHA-256 清单和逐项验收矩阵。
+
+---
+
 <p align="center">
   <picture>
     <img src="./docs/images/logo.png" alt="WeKnora Logo" height="120"/>

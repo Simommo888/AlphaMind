@@ -34,6 +34,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ENV_FILE = PROJECT_ROOT / ".env"
 PHASE1_ENV_FILE = PROJECT_ROOT / ".env.phase1-basic"
 PHASE2_ENV_FILE = PROJECT_ROOT / ".env.phase2-advanced"
+PHASE3_ENV_FILE = PROJECT_ROOT / ".env.phase3-precision"
 
 
 @dataclass
@@ -47,18 +48,18 @@ class CheckResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Check AlphaMind/WeKnora services before ingestion.")
-    parser.add_argument("--phase", choices=("alphamind", "phase1-basic", "phase2-advanced"), default="alphamind", help="Select dependency profile.")
-    parser.add_argument("--base-url", default=os.environ.get("WEKNORA_BASE_URL", "http://localhost:8080"))
+    parser.add_argument("--phase", choices=("alphamind", "phase1-basic", "phase2-advanced", "phase3-precision"), default="alphamind", help="Select dependency profile.")
+    parser.add_argument("--base-url", default="", help="Override WEKNORA_BASE_URL from env file.")
     parser.add_argument("--api-key", default=os.environ.get("WEKNORA_API_KEY"))
-    parser.add_argument("--qdrant-url", default=os.environ.get("QDRANT_REST_URL", "http://localhost:6333"))
-    parser.add_argument("--app-container", default=os.environ.get("WEKNORA_APP_CONTAINER", "WeKnora-app"))
-    parser.add_argument("--qdrant-internal-url", default=os.environ.get("QDRANT_INTERNAL_URL", "http://qdrant:6333"))
-    parser.add_argument("--neo4j-url", default=os.environ.get("NEO4J_HTTP_URL", "http://localhost:7474"))
-    parser.add_argument("--neo4j-user", default=os.environ.get("NEO4J_USERNAME"))
-    parser.add_argument("--neo4j-password", default=os.environ.get("NEO4J_PASSWORD"))
-    parser.add_argument("--neo4j-database", default=os.environ.get("NEO4J_DATABASE", "neo4j"))
-    parser.add_argument("--minio-url", default=os.environ.get("MINIO_PUBLIC_URL", "http://localhost:9000"))
-    parser.add_argument("--langfuse-url", default=os.environ.get("LANGFUSE_PUBLIC_URL", "http://localhost:3000"))
+    parser.add_argument("--qdrant-url", default="", help="Override QDRANT_REST_URL / QDRANT_REST_PORT from env file.")
+    parser.add_argument("--app-container", default="", help="Override WEKNORA_APP_CONTAINER from env file.")
+    parser.add_argument("--qdrant-internal-url", default="", help="Override QDRANT_INTERNAL_URL from env file.")
+    parser.add_argument("--neo4j-url", default="", help="Override NEO4J_HTTP_URL / NEO4J_HTTP_PORT from env file.")
+    parser.add_argument("--neo4j-user", default=None)
+    parser.add_argument("--neo4j-password", default=None)
+    parser.add_argument("--neo4j-database", default=None)
+    parser.add_argument("--minio-url", default="", help="Override MINIO_PUBLIC_URL / MINIO_PORT from env file.")
+    parser.add_argument("--langfuse-url", default="", help="Override LANGFUSE_PUBLIC_URL / LANGFUSE_PORT from env file.")
     parser.add_argument("--env-file", default="", help="Optional .env file for non-secret readiness checks.")
     parser.add_argument("--timeout", type=float, default=5.0)
     parser.add_argument("--require-qdrant", action="store_true", help="Fail if Qdrant is unreachable.")
@@ -89,6 +90,10 @@ def parse_env_file(path: Path) -> dict[str, str]:
 
 def env_get(env_file_values: dict[str, str], key: str, default: str = "") -> str:
     return os.environ.get(key) or env_file_values.get(key) or default
+
+
+def localhost_url_from_port(env_file_values: dict[str, str], port_key: str, default_port: str) -> str:
+    return f"http://localhost:{env_get(env_file_values, port_key, default_port)}"
 
 
 def bool_env(value: str) -> bool:
@@ -311,7 +316,7 @@ def env_presence_check(env_values: dict[str, str], key: str, required: bool = Fa
     return timed(f"env_{key}", required, run)
 
 
-def check_phase1_models(env_file: Path, *, timeout: float, required: bool) -> CheckResult:
+def check_local_model_apis(env_file: Path, *, phase: str, timeout: float, required: bool) -> CheckResult:
     def run() -> tuple[str, str]:
         command = [
             sys.executable,
@@ -335,7 +340,7 @@ def check_phase1_models(env_file: Path, *, timeout: float, required: bool) -> Ch
         detail = (completed.stdout or completed.stderr or f"exit {completed.returncode}")[:800]
         return ("fail" if required else "warn", detail)
 
-    return timed("phase1_model_apis", required, run)
+    return timed(f"{phase}_model_apis", required, run)
 
 
 def print_table(results: list[CheckResult]) -> None:
@@ -359,26 +364,37 @@ def main() -> int:
         env_file = PHASE1_ENV_FILE
     elif args.phase == "phase2-advanced":
         env_file = PHASE2_ENV_FILE
+    elif args.phase == "phase3-precision":
+        env_file = PHASE3_ENV_FILE
     else:
         env_file = DEFAULT_ENV_FILE
     env_values = parse_env_file(env_file)
 
     api_key = args.api_key or env_get(env_values, "WEKNORA_API_KEY")
-    neo4j_user = args.neo4j_user or env_get(env_values, "NEO4J_USERNAME", "neo4j")
-    neo4j_password = args.neo4j_password or env_get(env_values, "NEO4J_PASSWORD")
+    base_url = args.base_url or env_get(env_values, "WEKNORA_BASE_URL", "http://localhost:8080")
+    qdrant_url = args.qdrant_url or env_get(env_values, "QDRANT_REST_URL") or localhost_url_from_port(env_values, "QDRANT_REST_PORT", "6333")
+    app_container = args.app_container or env_get(env_values, "WEKNORA_APP_CONTAINER", "WeKnora-app")
+    qdrant_internal_url = args.qdrant_internal_url or env_get(env_values, "QDRANT_INTERNAL_URL") or f"http://{env_get(env_values, 'QDRANT_HOST', 'qdrant')}:6333"
+    neo4j_url = args.neo4j_url or env_values.get("NEO4J_HTTP_URL") or os.environ.get("NEO4J_HTTP_URL") or localhost_url_from_port(env_values, "NEO4J_HTTP_PORT", "7474")
+    neo4j_user = args.neo4j_user or env_values.get("NEO4J_USERNAME") or os.environ.get("NEO4J_USERNAME") or "neo4j"
+    neo4j_password = args.neo4j_password or env_values.get("NEO4J_PASSWORD") or os.environ.get("NEO4J_PASSWORD")
+    neo4j_database = args.neo4j_database or env_values.get("NEO4J_DATABASE") or os.environ.get("NEO4J_DATABASE") or "neo4j"
+    minio_url = args.minio_url or env_get(env_values, "MINIO_PUBLIC_URL") or localhost_url_from_port(env_values, "MINIO_PORT", "9000")
+    langfuse_url = args.langfuse_url or env_get(env_values, "LANGFUSE_PUBLIC_URL") or localhost_url_from_port(env_values, "LANGFUSE_PORT", "3000")
 
     retrieve_driver = env_get(env_values, "RETRIEVE_DRIVER", "")
     storage_type = env_get(env_values, "STORAGE_TYPE", "")
     neo4j_enabled = bool_env(env_get(env_values, "NEO4J_ENABLE", "")) or bool_env(env_get(env_values, "ENABLE_GRAPH_RAG", ""))
     phase1 = args.phase == "phase1-basic"
     phase2 = args.phase == "phase2-advanced"
+    phase3 = args.phase == "phase3-precision"
 
-    require_qdrant = args.require_qdrant or retrieve_driver == "qdrant" or phase2
-    require_minio = False if phase1 else (args.require_minio or storage_type == "minio" or phase2)
-    require_neo4j = False if phase1 else (args.require_neo4j or neo4j_enabled or phase2)
+    require_qdrant = args.require_qdrant or retrieve_driver == "qdrant" or phase2 or phase3
+    require_minio = False if phase1 else (args.require_minio or storage_type == "minio" or phase2 or phase3)
+    require_neo4j = False if phase1 else (args.require_neo4j or neo4j_enabled or phase2 or phase3)
 
     results: list[CheckResult] = []
-    results.append(file_check(env_file, "env_file", required=phase1 or phase2))
+    results.append(file_check(env_file, "env_file", required=phase1 or phase2 or phase3))
     if phase1:
         results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_process_config_phase1_basic.json", "phase1_process_config"))
         results.append(file_check(PROJECT_ROOT / "docs" / "ALPHAMIND_KB_CONFIG.phase1-basic.json", "phase1_kb_config"))
@@ -392,6 +408,17 @@ def main() -> int:
         results.append(file_check(PROJECT_ROOT / "config" / "builtin_models.phase2-advanced.yaml", "phase2_builtin_models"))
         results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_bulk_ingest.py", "bulk_ingest_script"))
         results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_phase2_acceptance.py", "phase2_acceptance_script", required=False))
+    elif phase3:
+        results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_process_config_phase3_precision.json", "phase3_process_config"))
+        results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_retrieval_config_phase3_precision.json", "phase3_retrieval_config"))
+        results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_financial_lexicon_phase3.json", "phase3_financial_lexicon"))
+        results.append(file_check(PROJECT_ROOT / "docs" / "ALPHAMIND_KB_CONFIG.phase3-precision.json", "phase3_kb_config"))
+        results.append(file_check(PROJECT_ROOT / "docker-compose.phase3-precision.yml", "phase3_compose_overlay"))
+        results.append(file_check(PROJECT_ROOT / "config" / "builtin_models.phase3-precision.yaml", "phase3_builtin_models"))
+        results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_bulk_ingest.py", "bulk_ingest_script"))
+        results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_phase3_pdf.py", "phase3_pdf_pipeline"))
+        results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_phase3_acceptance.py", "phase3_acceptance_script"))
+        results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_phase3_quality_gate.py", "phase3_quality_gate"))
     else:
         results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_process_config_research_report.json", "process_config"))
         results.append(file_check(PROJECT_ROOT / "dataset" / "alphamind_retrieval_config_recommended.json", "retrieval_config"))
@@ -399,14 +426,14 @@ def main() -> int:
         results.append(file_check(PROJECT_ROOT / "scripts" / "alphamind_bulk_ingest.py", "bulk_ingest_script"))
 
     results.append(env_presence_check(env_values, "WEKNORA_API_KEY", required=False))
-    results.append(env_presence_check(env_values, "LLM_MODEL_NAME", required=phase1 or phase2))
-    results.append(env_presence_check(env_values, "EMBEDDING_MODEL_NAME", required=phase1 or phase2))
-    results.append(env_presence_check(env_values, "RERANK_MODEL_NAME", required=phase1 or phase2))
+    results.append(env_presence_check(env_values, "LLM_MODEL_NAME", required=phase1 or phase2 or phase3))
+    results.append(env_presence_check(env_values, "EMBEDDING_MODEL_NAME", required=phase1 or phase2 or phase3))
+    results.append(env_presence_check(env_values, "RERANK_MODEL_NAME", required=phase1 or phase2 or phase3))
 
     results.append(
         json_http_check(
             "weknora_health",
-            urljoin(args.base_url.rstrip("/") + "/", "health"),
+            urljoin(base_url.rstrip("/") + "/", "health"),
             required=True,
             timeout=args.timeout,
         )
@@ -414,7 +441,7 @@ def main() -> int:
     results.append(
         check_auth_api(
             "weknora_system_info",
-            urljoin(args.base_url.rstrip("/") + "/", "api/v1/system/info"),
+            urljoin(base_url.rstrip("/") + "/", "api/v1/system/info"),
             api_key=api_key,
             timeout=args.timeout,
             detail_keys=["version", "vector_store_engine", "graph_database_engine", "minio_enabled"],
@@ -423,7 +450,7 @@ def main() -> int:
     results.append(
         check_auth_api(
             "weknora_parser_engines",
-            urljoin(args.base_url.rstrip("/") + "/", "api/v1/system/parser-engines"),
+            urljoin(base_url.rstrip("/") + "/", "api/v1/system/parser-engines"),
             api_key=api_key,
             timeout=args.timeout,
         )
@@ -431,27 +458,27 @@ def main() -> int:
     results.append(
         check_auth_api(
             "weknora_storage_status",
-            urljoin(args.base_url.rstrip("/") + "/", "api/v1/system/storage-engine-status"),
+            urljoin(base_url.rstrip("/") + "/", "api/v1/system/storage-engine-status"),
             api_key=api_key,
             timeout=args.timeout,
         )
     )
 
-    qdrant_host_check = check_qdrant(args.qdrant_url, required=False, timeout=args.timeout)
+    qdrant_host_check = check_qdrant(qdrant_url, required=False, timeout=args.timeout)
     results.append(qdrant_host_check)
     # If Qdrant is intentionally not published to the host, validate it from the app container over the compose network.
-    results.append(check_qdrant_internal(args.app_container, args.qdrant_internal_url, required=require_qdrant, timeout=args.timeout))
+    results.append(check_qdrant_internal(app_container, qdrant_internal_url, required=require_qdrant, timeout=args.timeout))
     if phase1:
         results.append(CheckResult("neo4j_http", "skip", False, "phase1-basic does not require Neo4j/GraphRAG"))
         results.append(CheckResult("minio_live", "skip", False, "phase1-basic uses local storage"))
         results.append(CheckResult("langfuse_http", "skip", False, "phase1-basic does not require Langfuse"))
     else:
-        results.append(check_neo4j(args.neo4j_url, username=neo4j_user, password=neo4j_password, database=args.neo4j_database, required=require_neo4j, timeout=args.timeout))
-        results.append(check_minio(args.minio_url, required=require_minio, timeout=args.timeout))
-        results.append(check_langfuse(args.langfuse_url, required=args.require_langfuse, timeout=args.timeout))
+        results.append(check_neo4j(neo4j_url, username=neo4j_user, password=neo4j_password, database=neo4j_database, required=require_neo4j, timeout=args.timeout))
+        results.append(check_minio(minio_url, required=require_minio, timeout=args.timeout))
+        results.append(check_langfuse(langfuse_url, required=args.require_langfuse, timeout=args.timeout))
 
-    if phase1 and args.check_models:
-        results.append(check_phase1_models(env_file, timeout=args.timeout, required=True))
+    if (phase1 or phase2 or phase3) and args.check_models:
+        results.append(check_local_model_apis(env_file, phase=args.phase, timeout=args.timeout, required=True))
 
     if args.json:
         print(json.dumps([asdict(result) for result in results], ensure_ascii=False, indent=2))

@@ -5,3 +5,14 @@
 # acceptance/contract envelope tests.
 *.go text eol=lf
 cli/acceptance/testdata/**/*.json text eol=lf
+
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.example text eol=lf
+.gitattributes text eol=lf
+*.service text eol=lf
+delivery/requirements-phase3.txt text eol=lf
+deploy/systemd/*.service text eol=lf

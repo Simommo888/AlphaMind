@@ -52,6 +52,8 @@ DEFAULT_EXTENSIONS = (
 PHASE1_EXTENSIONS = (".md", ".markdown", ".txt", ".html", ".mhtml")
 PHASE1_PROCESS_CONFIG = "alphamind_process_config_phase1_basic.json"
 PHASE2_PROCESS_CONFIG = "alphamind_process_config_phase2_advanced.json"
+PHASE3_EXTENSIONS = (".md", ".markdown", ".csv", ".xls", ".xlsx")
+PHASE3_PROCESS_CONFIG = "alphamind_process_config_phase3_precision.json"
 
 ORIGINAL_DOCUMENT_EXTENSIONS = {".pdf", ".doc", ".docx", ".ppt", ".pptx"}
 DERIVED_TEXT_EXTENSIONS = {".txt", ".md", ".markdown", ".html", ".htm"}
@@ -85,11 +87,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--phase",
-        choices=("research-report", "phase1-basic", "phase2-advanced"),
+        choices=("research-report", "phase1-basic", "phase2-advanced", "phase3-precision"),
         default="research-report",
         help=(
             "Use phase-specific safe defaults. phase1-basic only allows Markdown/TXT/HTML/MHTML "
-            "samples; phase2-advanced targets PDF/Office/table research corpora with GraphRAG process config."
+            "samples; phase2-advanced targets PDF/Office/table research corpora; phase3-precision "
+            "ingests lineage-rich Markdown produced by alphamind_phase3_pdf.py plus structured tables."
         ),
     )
     parser.add_argument(
@@ -679,6 +682,16 @@ def main() -> int:
         if args.channel == "alphamind-bulk-ingest":
             args.channel = "alphamind-phase2-advanced-ingest"
         args.prefer_originals = True
+    elif args.phase == "phase3-precision":
+        if str(Path(args.process_config)) == default_research_process_config:
+            args.process_config = str(PROJECT_ROOT / "dataset" / PHASE3_PROCESS_CONFIG)
+        if tuple(args.extensions) == DEFAULT_EXTENSIONS:
+            args.extensions = list(PHASE3_EXTENSIONS)
+        if args.channel == "alphamind-bulk-ingest":
+            args.channel = "alphamind-phase3-precision-ingest"
+        # Phase3 PDF inputs are preprocessed into lineage-rich Markdown. Do not
+        # suppress those Markdown files even if a source PDF is beside them.
+        args.prefer_originals = False
 
     if not args.dry_run and not args.api_key:
         print("Missing --api-key or WEKNORA_API_KEY for non-dry-run upload.", file=sys.stderr)

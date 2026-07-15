@@ -1,0 +1,451 @@
+{
+  "description": "AlphaMind Phase3 终极高精版固定评测问题，覆盖复杂表格、脚注、金融词典、多跳图谱、跨文档引用和负例防幻觉。",
+  "acceptance_policy": {
+    "require_references": true,
+    "min_recall_at_10": 0.9,
+    "min_mrr": 0.9,
+    "min_citation_doc_recall": 0.95,
+    "cross_document_min_distinct_doc_ids": 2,
+    "no_evidence_refusal_rate": 1.0
+  },
+  "live_gate": {
+    "query_id": "p3_live_dividend",
+    "text": "卓胜微2024年利润分配预案中，每10股派发多少现金红利？请仅根据年报原文回答并引用来源。",
+    "answer_must_contain": [
+      "1.02",
+      "现金红利"
+    ],
+    "metrics": [
+      "recall_at_10",
+      "reciprocal_rank",
+      "citation_doc_recall"
+    ]
+  },
+  "queries": [
+    {
+      "id": "p3_q001_table_revenue",
+      "text": "卓胜微2024年营业收入、归母净利润和扣非净利润分别是多少？请给出表格页码、单位和引用。",
+      "type": "complex_table_metric",
+      "expected_filters": {
+        "company": "卓胜微",
+        "period": "2024A",
+        "requires_metric_fields": [
+          "period",
+          "value",
+          "unit",
+          "source_doc_id",
+          "page"
+        ]
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "营业收入",
+        "归属于",
+        "扣除非经常性损益"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q002_footnote_policy",
+      "text": "卓胜微年报财务报表脚注中与收入确认或会计政策变更相关的说明是什么？",
+      "type": "footnote_recall",
+      "expected_filters": {
+        "company": "卓胜微",
+        "requires_references": true
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "收入确认"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q003_cross_page_table",
+      "text": "年报中跨页财务表的表头、期间和合计行是什么？必须引用连续页码。",
+      "type": "cross_page_table",
+      "expected_filters": {
+        "requires_references": true
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "2024",
+        "2023"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q004_roe_alias",
+      "text": "卓胜微ROE（净资产收益率）较上年如何变化？",
+      "type": "lexicon_metric",
+      "expected_filters": {
+        "company": "卓胜微",
+        "metric": "ROE"
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "净资产收益率"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q005_deduction_profit_alias",
+      "text": "卓胜微扣非净利润与归母净利润差异多少，主要非经常性损益来自哪里？",
+      "type": "lexicon_financial_reasoning",
+      "expected_filters": {
+        "company": "卓胜微",
+        "metric": "net_profit_attributable_excl_non_recurring"
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "非经常性损益"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q006_customer_supplier_overlap",
+      "text": "卓胜微2024年前五大客户销售额、占比及匿名披露情况是什么？请引用年报。",
+      "type": "customer_concentration",
+      "expected_filters": {
+        "companies": [
+          "卓胜微",
+          "中芯国际"
+        ],
+        "min_hops": 3,
+        "min_distinct_doc_ids": 2
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "前五名客户"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q007_institution_executive",
+      "text": "卓胜微2024年年报披露的董事、监事和高级管理人员情况是什么？",
+      "type": "executive_evidence",
+      "expected_filters": {
+        "company": "卓胜微",
+        "min_hops": 3
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "董事"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q008_competitor_chain",
+      "text": "卓胜微主要产品、应用领域和市场竞争风险是什么？请引用年报原文。",
+      "type": "product_risk_evidence",
+      "expected_filters": {
+        "companies": [
+          "卓胜微",
+          "兆易创新"
+        ],
+        "min_distinct_doc_ids": 2
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "射频",
+        "风险"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q009_metric_period_compare",
+      "text": "对比卓胜微2023A和2024A毛利率、ROE及经营现金流，并解释变化。",
+      "type": "metric_period_compare",
+      "expected_filters": {
+        "company": "卓胜微",
+        "periods": [
+          "2023A",
+          "2024A"
+        ]
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "2023",
+        "2024"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q010_risk_source",
+      "text": "卓胜微年报披露的主要经营风险有哪些？每项风险必须回到原文页码。",
+      "type": "risk_evidence",
+      "expected_filters": {
+        "company": "卓胜微",
+        "requires_references": true
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "风险"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q011_exact_ticker",
+      "text": "300782.SZ对应公司2024年基本每股收益是多少？",
+      "type": "ticker_exact_match",
+      "expected_filters": {
+        "ticker": "300782.SZ",
+        "metric": "EPS"
+      },
+      "gt_status": "complete",
+      "expected_behavior": "evidence_required",
+      "relevant_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "reference_must_include_doc_ids": [
+        "alphamind_phase3_卓胜微_300782_2024年报_34891318985c"
+      ],
+      "min_distinct_doc_ids": 1,
+      "requires_references": true,
+      "answer_must_contain": [
+        "每股收益",
+        "元"
+      ],
+      "answer_must_not_contain": [
+        "未检索到足够证据",
+        "不能编造"
+      ]
+    },
+    {
+      "id": "p3_q012_xlsx_table",
+      "text": "锂电池材料价格周报中最近一期主要材料价格和变动字段是什么？",
+      "type": "structured_table_recall",
+      "expected_filters": {
+        "source_type": "financial_or_table_data"
+      },
+      "gt_status": "no_evidence",
+      "expected_behavior": "no_evidence",
+      "relevant_doc_ids": [],
+      "reference_must_include_doc_ids": [],
+      "min_distinct_doc_ids": 0,
+      "requires_references": false,
+      "answer_must_contain_any": [
+        "未检索到足够证据",
+        "没有足够证据",
+        "知识库中未找到",
+        "无法根据现有资料",
+        "不能编造",
+        "并未披露",
+        "未披露",
+        "没有公开",
+        "未有直接提及",
+        "未发现",
+        "当前信息未明确"
+      ],
+      "answer_must_not_contain": [
+        "我预测",
+        "可以确定"
+      ]
+    },
+    {
+      "id": "p3_q013_wrong_company_negative",
+      "text": "请给出卓胜微年报中披露的贵州茅台白酒销量。",
+      "type": "wrong_company_guardrail",
+      "expected_behavior": "no_evidence",
+      "gt_status": "no_evidence",
+      "relevant_doc_ids": [],
+      "reference_must_include_doc_ids": [],
+      "min_distinct_doc_ids": 0,
+      "requires_references": false,
+      "answer_must_contain_any": [
+        "未检索到足够证据",
+        "没有足够证据",
+        "知识库中未找到",
+        "无法根据现有资料",
+        "不能编造",
+        "并未披露",
+        "未披露",
+        "没有公开",
+        "未有直接提及",
+        "未发现",
+        "当前信息未明确"
+      ],
+      "answer_must_not_contain": [
+        "我预测",
+        "可以确定"
+      ]
+    },
+    {
+      "id": "p3_q014_wrong_year_negative",
+      "text": "请给出卓胜微2028年已实现营业收入。",
+      "type": "wrong_year_guardrail",
+      "expected_behavior": "no_evidence",
+      "gt_status": "no_evidence",
+      "relevant_doc_ids": [],
+      "reference_must_include_doc_ids": [],
+      "min_distinct_doc_ids": 0,
+      "requires_references": false,
+      "answer_must_contain_any": [
+        "未检索到足够证据",
+        "没有足够证据",
+        "知识库中未找到",
+        "无法根据现有资料",
+        "不能编造",
+        "并未披露",
+        "未披露",
+        "没有公开",
+        "未有直接提及",
+        "未发现",
+        "当前信息未明确"
+      ],
+      "answer_must_not_contain": [
+        "我预测",
+        "可以确定"
+      ]
+    },
+    {
+      "id": "p3_q015_fabricated_target_negative",
+      "text": "请给出虚构公司星尘量子电池股份有限公司未来三年精确目标价、ROE和前五大客户。",
+      "type": "no_evidence_guardrail",
+      "expected_behavior": "no_evidence",
+      "gt_status": "no_evidence",
+      "relevant_doc_ids": [],
+      "reference_must_include_doc_ids": [],
+      "min_distinct_doc_ids": 0,
+      "requires_references": false,
+      "answer_must_contain_any": [
+        "未检索到足够证据",
+        "没有足够证据",
+        "知识库中未找到",
+        "无法根据现有资料",
+        "不能编造",
+        "并未披露",
+        "未披露",
+        "没有公开",
+        "未有直接提及",
+        "未发现",
+        "当前信息未明确"
+      ],
+      "answer_must_not_contain": [
+        "我预测",
+        "可以确定"
+      ]
+    }
+  ],
+  "version": 2,
+  "ground_truth_scope": "Phase3 Precision KB retrieval evaluation. Cross-document graph semantics are validated separately by dataset/alphamind_graph_online_acceptance.json."
+}

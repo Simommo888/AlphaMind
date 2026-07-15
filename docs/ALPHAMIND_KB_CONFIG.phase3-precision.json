@@ -1,0 +1,55 @@
+{
+  "name": "AlphaMind Phase3 Precision Financial Graph RAG",
+  "description": "终极高精版：复杂金融 PDF 结构化 Markdown、证据图谱、多跳查询、金融词典混合检索与严格引用问答。",
+  "type": "document",
+  "is_temporary": false,
+  "embedding_model_id": "alphamind-embedding-default",
+  "summary_model_id": "alphamind-llm-default",
+  "chunking_config": {
+    "chunk_size": 1200,
+    "chunk_overlap": 160,
+    "separators": ["\n# ", "\n## ", "\n### ", "\n\n", "\n", "。", "；"],
+    "strategy": "auto",
+    "token_limit": 0,
+    "languages": ["zh"],
+    "enable_parent_child": true,
+    "parent_chunk_size": 6144,
+    "child_chunk_size": 640,
+    "parser_engine_rules": [
+      {"file_types": [".md"], "engine": "builtin"},
+      {"file_types": [".pdf", ".doc", ".docx", ".ppt", ".pptx"], "engine": "builtin"},
+      {"file_types": [".csv", ".xls", ".xlsx", ".json"], "engine": "builtin"}
+    ]
+  },
+  "storage_provider_config": {"provider": "minio"},
+  "indexing_strategy": {"vector_enabled": true, "keyword_enabled": true, "wiki_enabled": false, "graph_enabled": true},
+  "extract_config": {
+    "enabled": true,
+    "text": "只抽取有 source_doc_id/source_chunk_id/page 证据的金融实体关系。公司优先 ticker 归一；客户、供应商、投资机构、高管、竞争对手保留 aliases；匿名客户供应商不得猜名；财务指标必须保留 period/value/unit/currency；关系必须保留 confidence 和证据。支持供应链交叉、机构高管网络和指标跨期多跳问答。",
+    "tags": ["COVERS", "HAS_METRIC", "ABOUT_COMPANY", "HAS_CUSTOMER", "HAS_SUPPLIER", "HAS_EXECUTIVE", "AFFILIATED_WITH", "INVESTS_IN", "COMPETES_WITH", "SUPPORTED_BY"],
+    "nodes": [
+      {"name": "Company", "attributes": ["id", "name", "full_name", "ticker", "exchange", "aliases"]},
+      {"name": "Organization", "attributes": ["id", "name", "aliases", "anonymous", "normalized_name"]},
+      {"name": "Institution", "attributes": ["id", "name", "type", "aliases"]},
+      {"name": "Executive", "attributes": ["id", "name", "title", "term_start", "term_end"]},
+      {"name": "Report", "attributes": ["doc_id", "title", "publish_date", "report_type", "file_path"]},
+      {"name": "FinancialMetric", "attributes": ["id", "name", "period", "value", "unit", "currency", "source_doc_id", "source_chunk_id", "page"]},
+      {"name": "Evidence", "attributes": ["id", "source_doc_id", "source_chunk_id", "page", "table_id", "footnote_id", "quote", "confidence"]}
+    ],
+    "relations": [
+      {"node1": "Report", "type": "COVERS", "node2": "Company"},
+      {"node1": "Report", "type": "HAS_METRIC", "node2": "FinancialMetric"},
+      {"node1": "FinancialMetric", "type": "ABOUT_COMPANY", "node2": "Company"},
+      {"node1": "Company", "type": "HAS_CUSTOMER", "node2": "Organization"},
+      {"node1": "Company", "type": "HAS_SUPPLIER", "node2": "Organization"},
+      {"node1": "Company", "type": "HAS_EXECUTIVE", "node2": "Executive"},
+      {"node1": "Institution", "type": "AFFILIATED_WITH", "node2": "Executive"},
+      {"node1": "Institution", "type": "INVESTS_IN", "node2": "Company"},
+      {"node1": "Company", "type": "COMPETES_WITH", "node2": "Company"},
+      {"node1": "Evidence", "type": "SUPPORTED_BY", "node2": "Organization"},
+      {"node1": "Evidence", "type": "SUPPORTED_BY", "node2": "Executive"},
+      {"node1": "Evidence", "type": "SUPPORTED_BY", "node2": "FinancialMetric"}
+    ]
+  },
+  "question_generation_config": {"enabled": true, "question_count": 5}
+}

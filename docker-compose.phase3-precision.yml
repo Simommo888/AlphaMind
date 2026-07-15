@@ -1,0 +1,45 @@
+# AlphaMind Phase3 overlay. Apply after docker-compose.phase2-advanced.yml.
+services:
+  app:
+    env_file: !override
+      - ${PHASE3_ENV_FILE:-.env.phase3-precision}
+    volumes:
+      - data-files:/data/files
+      - docreader-tmp:/tmp/docreader:ro
+      - ./config/config.yaml:/app/config/config.yaml
+      - ./skills/preloaded:/app/skills/preloaded
+      - ./config/builtin_models.phase3-precision.yaml:/app/config/builtin_models.yaml:ro
+      - ./config/prompt_templates/system_prompt.yaml:/app/config/prompt_templates/system_prompt.yaml:ro
+    environment:
+      - BUILTIN_MODELS_CONFIG=/app/config/builtin_models.yaml
+      - STORAGE_TYPE=minio
+      - RETRIEVE_DRIVER=qdrant
+      - ENABLE_GRAPH_RAG=true
+      - NEO4J_ENABLE=true
+      - CONCURRENCY_POOL_SIZE=${CONCURRENCY_POOL_SIZE:-4}
+      - WEKNORA_ASYNQ_CONCURRENCY=${WEKNORA_ASYNQ_CONCURRENCY:-8}
+
+  docreader:
+    env_file: !override
+      - ${PHASE3_ENV_FILE:-.env.phase3-precision}
+    environment:
+      - DOCREADER_IMAGE_OUTPUT_DIR=/tmp/docreader
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-500}
+      - DOCREADER_PDF_FORCE_SCANNED=${DOCREADER_PDF_FORCE_SCANNED:-false}
+      - DOCREADER_ODL_HYBRID=${DOCREADER_ODL_HYBRID:-on}
+      - DOCREADER_ODL_HYBRID_MODE=${DOCREADER_ODL_HYBRID_MODE:-auto}
+      - DOCREADER_ODL_HYBRID_FALLBACK=${DOCREADER_ODL_HYBRID_FALLBACK:-true}
+      - DOCREADER_ODL_HYBRID_URL=${DOCREADER_ODL_HYBRID_URL:-}
+      - DOCREADER_PDF_RENDER_PARALLELISM=${DOCREADER_PDF_RENDER_PARALLELISM:-4}
+      - DOCREADER_PDF_RENDER_DPI=${DOCREADER_PDF_RENDER_DPI:-240}
+      - DOCREADER_PDF_RENDER_MAX_EDGE=${DOCREADER_PDF_RENDER_MAX_EDGE:-2600}
+
+  frontend:
+    env_file: !override
+      - ${PHASE3_ENV_FILE:-.env.phase3-precision}
+  postgres:
+    env_file: !override
+      - ${PHASE3_ENV_FILE:-.env.phase3-precision}
+  redis:
+    env_file: !override
+      - ${PHASE3_ENV_FILE:-.env.phase3-precision}

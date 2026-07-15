@@ -1,0 +1,602 @@
+{
+  "schema_version": "alphamind.delivery.v2",
+  "delivery_tier": "phase3-precision",
+  "status": "blocked",
+  "generated_at_utc": "2026-07-15T11:50:49+00:00",
+  "generator": "scripts/alphamind_release_manifest.py",
+  "source_spec": "dataset/delivery/source_spec/金融系统报价单_终版.phase3.md",
+  "git": {
+    "commit": "df188618ef76a94517d3e41eacc39ad733407683",
+    "branch": "alphamind-phase3-precision",
+    "dirty": true,
+    "dirty_entry_count": 1,
+    "dirty_entries_sha256": "ccb815da94b530a931852449f60ae9ed00dc93939200abee1632416faf7d0659"
+  },
+  "hashes": {
+    "algorithm": "sha256",
+    "file_encoding": "raw-bytes",
+    "aggregate_encoding": "sorted path + NUL + file sha256 + LF",
+    "configuration_sha256": "7e4101c752c1647a49bac577e94bf38398c5b9b752e03bfadbb5a170868dcec3",
+    "dataset_sha256": "7dc40bd20a9bdc7f0a1657700f8b7224bfaffd1523daaf017e076bf0c65902c2",
+    "acceptance_evidence_sha256": "f6e93d4dba0d0cce67b3ffcea9b01ba748cacc2fa0e3b400405eb51b208f28ff"
+  },
+  "acceptance": {
+    "run_id": "phase3-acceptance-5cc25f7b116a0c2a",
+    "run_id_source": "sha256-derived",
+    "report": "dataset/phase3_runs/phase3_acceptance_latest.json",
+    "report_sha256": "5cc25f7b116a0c2a1ff6cd84f77eaee0778fb205dad8f466dae397767d5095fd",
+    "status": "pass"
+  },
+  "release_evidence": {
+    "status": "fail",
+    "reports": [
+      {
+        "path": "dataset/phase3_runs/phase3_acceptance_latest.json",
+        "status": "pass"
+      },
+      {
+        "path": "dataset/phase3_runs/phase3_quality_gate_latest.json",
+        "status": "fail"
+      },
+      {
+        "path": "dataset/phase3_runs/phase3_online_eval_latest.json",
+        "status": "fail"
+      },
+      {
+        "path": "dataset/phase3_runs/phase3_load_latest.json",
+        "status": "pass"
+      },
+      {
+        "path": "dataset/alphamind_graph_online_acceptance.json",
+        "status": "pass"
+      },
+      {
+        "path": "dataset/delivery/restore_validation_latest.json",
+        "status": "pass"
+      },
+      {
+        "path": "dataset/delivery/offline_images_report.json",
+        "status": "pass"
+      },
+      {
+        "path": "dataset/delivery/alphamind_delivery_acceptance_latest.json",
+        "status": "pass_with_conditions"
+      }
+    ]
+  },
+  "dependencies": {
+    "tools": {
+      "python": ">=3.10",
+      "git": ">=2.30",
+      "docker_engine": ">=24",
+      "docker_compose": ">=2.24"
+    },
+    "python_lock": "delivery/requirements-phase3.txt",
+    "go_lock": [
+      "go.mod",
+      "go.sum"
+    ],
+    "frontend_lock": [
+      "frontend/package.json",
+      "frontend/package-lock.json"
+    ],
+    "services": [
+      "PostgreSQL 17/ParadeDB 0.22.2",
+      "Redis 7",
+      "Qdrant 1.16.2",
+      "Neo4j 2025.10.1",
+      "MinIO RELEASE.2025-09-07T16-13-09Z"
+    ],
+    "model_endpoints": [
+      "OpenAI-compatible LLM",
+      "OpenAI-compatible embedding",
+      "generic reranker"
+    ]
+  },
+  "runtime": {
+    "frontend_url": "http://localhost:18088",
+    "backend_url": "http://localhost:18080",
+    "qdrant_url": "http://localhost:16333",
+    "neo4j_browser_url": "http://localhost:17474",
+    "neo4j_bolt_url": "neo4j://localhost:17687",
+    "minio_url": "http://localhost:19000",
+    "minio_console_url": "http://localhost:19001"
+  },
+  "models": {
+    "llm": "qwen3-14b",
+    "llm_runtime": "vLLM OpenAI-compatible API",
+    "llm_base_url": "http://host.docker.internal:8000/v1",
+    "embedding": "qwen3-embedding-4b-local",
+    "reranker": "qwen3-reranker-0.6b-local",
+    "status": "target_qwen3_14b_vllm_configured_customer_host_validation_required",
+    "quoted_exact_models": "customer_substituted_35b_to_qwen3_14b"
+  },
+  "inherited_requirements": {
+    "cuda_tuning": {
+      "status": "CONDITIONAL",
+      "evidence": "Current Windows 10 + Docker Desktop 8GB GPU baseline is validated; customer Ubuntu/CUDA target tuning is not yet executed.",
+      "customer_action": "Provide target Ubuntu 24.04 GPU host, driver/CUDA matrix, then rerun acceptance."
+    },
+    "customer_data_redaction": {
+      "status": "CONDITIONAL",
+      "evidence": "No customer private corpus is included in this delivery inventory; redaction of future enterprise/WeCom material is not yet verifiable.",
+      "customer_action": "Redact core commercial and personal information before transfer and record corpus hash after approval."
+    }
+  },
+  "conditional_requirements": [
+    "Ubuntu 24.04 target-host and CUDA tuning validation",
+    "Customer vLLM qwen3-14b target-host validation",
+    "Exact quoted embedding 8B / reranker 0.6 model validation on target hardware",
+    "MinerU/OpenDataLab-compatible OCR endpoint for scanned PDFs",
+    "Customer-private-corpus redaction approval and final Recall/MRR/citation benchmark"
+  ],
+  "files": [
+    {
+      "path": ".env.phase3-precision.example",
+      "role": "configuration_example",
+      "size": 3281,
+      "sha256": "a323b51a43e374a0a7ba6864e77d20a69a46a7d7eb3b395876d6459b567bb5bd",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "config/builtin_models.phase3-precision.yaml",
+      "role": "model_configuration",
+      "size": 1205,
+      "sha256": "4a002b79dbc90d7044a58b1e256ebe81fdf23238f3f31568e69199ffd4b32395",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "dataset/alphamind_financial_lexicon_phase3.json",
+      "role": "financial_lexicon",
+      "size": 2667,
+      "sha256": "4edd1506907c9d043d77d5a3c071e0a348b58f278066da201ecc373590f6b41f",
+      "aggregate_group": "dataset"
+    },
+    {
+      "path": "dataset/alphamind_graph_online_acceptance.json",
+      "role": "graph_acceptance_evidence",
+      "size": 2522,
+      "sha256": "c02f61ea91043e7eb616aea8da7e0381569d809c65c5b8c2268b6314978f510c",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/alphamind_process_config_phase3_precision.json",
+      "role": "process_configuration",
+      "size": 6684,
+      "sha256": "8900f397924150bc226c729f86fbdcbd84726b052b2ab47cafb19ca5ea4f7735",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "dataset/alphamind_relation_graph.json",
+      "role": "relation_dataset",
+      "size": 1868387,
+      "sha256": "48641afddd032016759eb21e349afa518bd2b8aec05b429b917f067d76f894e0"
+    },
+    {
+      "path": "dataset/alphamind_relation_graph_report.json",
+      "role": "relation_evidence",
+      "size": 717,
+      "sha256": "741be321c9393d3e92a643b7879b4488f403da63caacff2efeb20a2a0dd0b1ca",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/alphamind_retrieval_config_phase3_precision.json",
+      "role": "retrieval_configuration",
+      "size": 1574,
+      "sha256": "4269f346480f04ae586b81d252811efe2161b32313fd5181dbaea9a6740d8732",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "dataset/delivery/alphamind_delivery_acceptance_latest.json",
+      "role": "delivery_acceptance_evidence",
+      "size": 2498,
+      "sha256": "70a6cd52070ad017a80448528b233ec75db3a8d914520a1246e2f54c08edecc8",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/delivery/offline_images_report.json",
+      "role": "offline_delivery_evidence",
+      "size": 491,
+      "sha256": "8a77662355522e278801ae5fae1f0469caad769ebf06c8e4413fce65e48efd5e",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/delivery/restore_validation_latest.json",
+      "role": "restore_validation_evidence",
+      "size": 881,
+      "sha256": "0e873acf6bd6f635a918fa7e0ccd6f5ff19ca79f4c5276ede857245921479546",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/delivery/source_spec/金融系统报价单_终版.phase3.manifest.json",
+      "role": "source_specification_manifest",
+      "size": 3587,
+      "sha256": "084d7bea7a48734f63cb3d26d89a104172c3b4b338ec2258440d7ae59a3b6826"
+    },
+    {
+      "path": "dataset/delivery/source_spec/金融系统报价单_终版.phase3.md",
+      "role": "source_specification",
+      "size": 10127,
+      "sha256": "56c2fee65f4626e2976eb238f70c2834d7039de992ff153e2dffd40f70f6201d"
+    },
+    {
+      "path": "dataset/phase3_eval_queries.json",
+      "role": "evaluation_dataset",
+      "size": 14047,
+      "sha256": "c0a041a8323a3978e046e6596c4b605c8bcf0f4fa5f3914cf10ed8b16a102dad",
+      "aggregate_group": "dataset"
+    },
+    {
+      "path": "dataset/phase3_runs/phase3_acceptance_latest.json",
+      "role": "acceptance_evidence",
+      "size": 2162,
+      "sha256": "5cc25f7b116a0c2a1ff6cd84f77eaee0778fb205dad8f466dae397767d5095fd",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/phase3_runs/phase3_business_load_latest.json",
+      "role": "business_load_evidence",
+      "size": 403,
+      "sha256": "a63fa62b6e33242cf2623c0aa93e37dffb8e97bd450b6e88410cd5a4649777ac",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/phase3_runs/phase3_load_latest.json",
+      "role": "quality_gate_load_evidence",
+      "size": 477,
+      "sha256": "b781f289eeae855559001604cfc8728822d3751922e6a772f2201dd12786d99a",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/phase3_runs/phase3_online_eval_latest.json",
+      "role": "online_eval_evidence",
+      "size": 69102,
+      "sha256": "c61af36683bd3a55c00a464453ff67dfba3af0d3eb1e4e593a625feb91902060",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "dataset/phase3_runs/phase3_quality_gate_latest.json",
+      "role": "quality_gate_evidence",
+      "size": 15713,
+      "sha256": "a7fbb9afbf2804262ed93390621ef40c1933ed6c478840c8ff229ef410b8f5bf",
+      "aggregate_group": "acceptance"
+    },
+    {
+      "path": "delivery/CUSTOMER_ACCEPTANCE_CHECKLIST.md",
+      "role": "delivery_documentation",
+      "size": 3323,
+      "sha256": "fb57970c13a8d17e9a9e274902d3687329fcae0a5fc0352db2220c043ba3110e"
+    },
+    {
+      "path": "delivery/DEVIATION_REGISTER.md",
+      "role": "delivery_documentation",
+      "size": 2135,
+      "sha256": "99dbf8cc9d9a3ed93c8e2a43556f73120cb281c1d21c5c1885a4254b9e2f1299"
+    },
+    {
+      "path": "delivery/README.md",
+      "role": "delivery_documentation",
+      "size": 4414,
+      "sha256": "5ad1bfb6717192ac231ab0c29786928d70f3388845883ffbd16d8329eb7c3d41"
+    },
+    {
+      "path": "delivery/requirements-phase3.txt",
+      "role": "python_dependency_lock",
+      "size": 154,
+      "sha256": "16cd548ccf4c53c8ae25537ced0c76bda21ea8dbc9fc022fd23898c6a15a7e64"
+    },
+    {
+      "path": "deploy/systemd/alphamind-qwen3.service",
+      "role": "linux_service_definition",
+      "size": 673,
+      "sha256": "e4bf5b6a9091d4e713b0f4c535353fb12e487bd46b8b92e4860b53cc8c0fddf9"
+    },
+    {
+      "path": "deploy/systemd/qwen3.env.example",
+      "role": "linux_configuration_example",
+      "size": 266,
+      "sha256": "0e5a1a57b3a1089c3e531ab378b4b383ac5974976625bda3db22c4e54a8cefe6"
+    },
+    {
+      "path": "docker-compose.delivery.yml",
+      "role": "compose_delivery",
+      "size": 2655,
+      "sha256": "19116dd1493ce5eecba9907b11268d91f42742438d283e15a6c4d7b43ca1a161",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "docker-compose.phase2-advanced.yml",
+      "role": "compose_phase2",
+      "size": 3708,
+      "sha256": "d8f10104e05cb7c00650717ea6c50fa79ace9bd63577849de85eb2e3046cbfa5",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "docker-compose.phase3-precision.yml",
+      "role": "compose_phase3",
+      "size": 1887,
+      "sha256": "a16daddc5eac3ab6e87ff998d13646e6e4072a2098f77971e6b3a6d4f04946f3",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "docker-compose.restore-validation.yml",
+      "role": "compose_restore_validation",
+      "size": 2355,
+      "sha256": "6231ec970dbfb2862e84f12d308edc41300c0b9d02383870632b22b6c16a4b2e",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "docker-compose.yml",
+      "role": "compose_base",
+      "size": 33317,
+      "sha256": "cc5d53ca23c73f02f78ff1142cec8761a3425507d80592b8f6e317b0a877ee8f",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "docs/ALPHAMIND_BACKUP_RESTORE.md",
+      "role": "delivery_documentation",
+      "size": 4392,
+      "sha256": "b8a3a0607773bacb06ca3eab872cc903a7a8971cb789e9fa2f05ec3557e2fef7"
+    },
+    {
+      "path": "docs/ALPHAMIND_DELIVERY_ACCEPTANCE_MATRIX.md",
+      "role": "delivery_documentation",
+      "size": 7959,
+      "sha256": "f85d8a5c2a53a4504c8898ff9b30c7e32df1c7c06f1e196c3587a643b43850c0"
+    },
+    {
+      "path": "docs/ALPHAMIND_DELIVERY_HANDOFF.md",
+      "role": "delivery_documentation",
+      "size": 5965,
+      "sha256": "24aeda8a1090c021cab0767fd12123ee2c8099a1892f9fb4185959bb44224380"
+    },
+    {
+      "path": "docs/ALPHAMIND_KB_CONFIG.phase3-precision.json",
+      "role": "knowledge_base_configuration",
+      "size": 3537,
+      "sha256": "179f0fe96821f2fafdd6f6f5838d89ee1559506ff76c571765c55a60a1401cff",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "docs/ALPHAMIND_KNOWLEDGE_GRAPH_SCHEMA_PHASE3.md",
+      "role": "delivery_documentation",
+      "size": 3276,
+      "sha256": "f1b9dec3cbd167b8c73a74a0b9bdfdc2e6bb48423597ab9fab0ccae7f6a360a2"
+    },
+    {
+      "path": "docs/ALPHAMIND_OFFLINE_DELIVERY.md",
+      "role": "delivery_documentation",
+      "size": 1386,
+      "sha256": "86b46eb5288884585bb0a33946785652fcfe4d097f304a08cbab77f26bb02a6c"
+    },
+    {
+      "path": "docs/ALPHAMIND_PHASE3_ACCEPTANCE_REPORT.md",
+      "role": "delivery_documentation",
+      "size": 8605,
+      "sha256": "8cc0b4c70e6dc4371db82c9b5792d1d0f82b12b8c3ac9b80e36bc5f14cab7fe0"
+    },
+    {
+      "path": "docs/ALPHAMIND_PHASE3_PRECISION_RUNBOOK.md",
+      "role": "delivery_documentation",
+      "size": 10178,
+      "sha256": "6b1ae5fcc7eaee098e1ffb89acfa83d7919de2832633befdde878fead5ed2807"
+    },
+    {
+      "path": "docs/ALPHAMIND_QWEN3_14B_VLLM.md",
+      "role": "model_runtime_documentation",
+      "size": 2763,
+      "sha256": "a882de2e23610ebfcb0b2202c582d4aae2771485aee4470649f6d658ead2ecb7",
+      "aggregate_group": "configuration"
+    },
+    {
+      "path": "docs/ALPHAMIND_RELATION_GRAPH_NEO4J.md",
+      "role": "delivery_documentation",
+      "size": 4326,
+      "sha256": "b2aac8a4f1ae18474a1e5cc7a587ea60f313027bd37baa49f04751f0d22cff74"
+    },
+    {
+      "path": "docs/ALPHAMIND_UBUNTU24_DEPLOYMENT.md",
+      "role": "delivery_documentation",
+      "size": 4519,
+      "sha256": "48cbf599ab7335494ae41fd4c95a25d2b9c361b45cbd229c4bf926bead342fb1"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "role": "frontend_dependency_lock",
+      "size": 200352,
+      "sha256": "cb1d97fac97a2545bc9e3e7f18039a12854adfcc5e358f27d7f1e8b81dd1d18a"
+    },
+    {
+      "path": "frontend/package.json",
+      "role": "frontend_dependency_manifest",
+      "size": 1881,
+      "sha256": "58b719bbc551441c57eedba7272e0b585a87ddcb5deccb3ca82d67ce1511aa80"
+    },
+    {
+      "path": "go.mod",
+      "role": "go_dependency_manifest",
+      "size": 17575,
+      "sha256": "d6195b22920d457987d84d251b1474508995ab29d8b6cf1e625c9b29b79625b4"
+    },
+    {
+      "path": "go.sum",
+      "role": "go_dependency_lock",
+      "size": 375544,
+      "sha256": "5d6c81a3d0a8b56aea8749a7d0620d472bbcb6c124f50be5f9c549055a776447"
+    },
+    {
+      "path": "scripts/alphamind_bulk_ingest.py",
+      "role": "operator_script",
+      "size": 28171,
+      "sha256": "52b15cbf33e8c2491e00b2c6f1dd5f1d2834597e9fb91d6fd3b95824aff31482"
+    },
+    {
+      "path": "scripts/alphamind_delivery.py",
+      "role": "operator_script",
+      "size": 27212,
+      "sha256": "ebc431414dcaf8611ee2993cd9913485a4d60574b552cab367b1e327b28dafd4"
+    },
+    {
+      "path": "scripts/alphamind_graph_online_acceptance.py",
+      "role": "acceptance_script",
+      "size": 6451,
+      "sha256": "43a050e488b99f87c2239ecd01735a4f81da2d4c41d177c6c49ba455349d68f4"
+    },
+    {
+      "path": "scripts/alphamind_healthcheck.py",
+      "role": "operator_script",
+      "size": 23035,
+      "sha256": "33a4719278fb68890395674549cbb46fd184073fafe9f1f1ca3546954912ee55"
+    },
+    {
+      "path": "scripts/alphamind_offline_images.py",
+      "role": "offline_delivery_script",
+      "size": 5475,
+      "sha256": "05311882826e6cbfae4517ed005cabce72943751845b3803e600ce579f36499e"
+    },
+    {
+      "path": "scripts/alphamind_phase3_acceptance.py",
+      "role": "acceptance_script",
+      "size": 30030,
+      "sha256": "717ae5fc5910caec53c00f356db37cd306acfc79a393533f5c468ad5c31e9a4f"
+    },
+    {
+      "path": "scripts/alphamind_phase3_graph.py",
+      "role": "pipeline_script",
+      "size": 12562,
+      "sha256": "e5b51d008a9b78e00f427aa03d4fb3cc5e800008a9b00d66c54b30ffc8697842"
+    },
+    {
+      "path": "scripts/alphamind_phase3_load_test.py",
+      "role": "acceptance_script",
+      "size": 7638,
+      "sha256": "ed275b97a1d6502ad69ce80f3bfcf020ff6f7ebd73eeb948af41a911d46796e8"
+    },
+    {
+      "path": "scripts/alphamind_phase3_online_eval.py",
+      "role": "acceptance_script",
+      "size": 23965,
+      "sha256": "3512f971a08ef6fccfcf88e128a1760386d29fdf85950e3b7fcb5169fc308a68"
+    },
+    {
+      "path": "scripts/alphamind_phase3_pdf.py",
+      "role": "pipeline_script",
+      "size": 10306,
+      "sha256": "33f9a1623f03b794883e72655bde1403a9b745bad49eb7410feb8824481f8f70"
+    },
+    {
+      "path": "scripts/alphamind_phase3_quality_gate.py",
+      "role": "acceptance_script",
+      "size": 14603,
+      "sha256": "70b6e1307d33106f9febc082e669b788bae657d8afd57d29083a599c047a3c8e"
+    },
+    {
+      "path": "scripts/alphamind_phase3_retrieval.py",
+      "role": "pipeline_script",
+      "size": 8932,
+      "sha256": "34f24cd10105c6d82b034dff1a9d169afe465b719a9d10335bbfef605e23eeb1"
+    },
+    {
+      "path": "scripts/alphamind_relation_graph.py",
+      "role": "pipeline_script",
+      "size": 33502,
+      "sha256": "4fc7de7293ea9345e34ec79a25cb9be4a5acf18964748e1c507d51ba661c0393"
+    },
+    {
+      "path": "scripts/alphamind_release_manifest.py",
+      "role": "reproducibility_script",
+      "size": 22452,
+      "sha256": "bd0fe1d85a9f80cfaaa3d9bc9e02006a72e68a5a4d3225812463907ea893b81e"
+    },
+    {
+      "path": "tests/test_alphamind_delivery.py",
+      "role": "automated_test",
+      "size": 17164,
+      "sha256": "53aa93b3aa7148062b9be6a3bb4d1c4d5920f2c596d7a29f935ff96e95efcbba"
+    },
+    {
+      "path": "tests/test_alphamind_healthcheck.py",
+      "role": "automated_test",
+      "size": 12427,
+      "sha256": "2cea3c5feb6bc8594d8d095e9facf7b9b0bba56d37a5104a731b3084bd456bc5"
+    },
+    {
+      "path": "tests/test_alphamind_offline_images.py",
+      "role": "automated_test",
+      "size": 2356,
+      "sha256": "2520df100755172d0f277296edb8dee0c57e9a844db2629a5ae07c9c25bdb8b5"
+    },
+    {
+      "path": "tests/test_alphamind_phase2_quality_eval.py",
+      "role": "automated_test",
+      "size": 13400,
+      "sha256": "70c75528720454fd32bb081c4d895bfdaccde2df5d4840464207bcb9f4578b8a"
+    },
+    {
+      "path": "tests/test_alphamind_phase2_quality_gate.py",
+      "role": "automated_test",
+      "size": 3126,
+      "sha256": "aa6405eaa9eb24644d5a09fc9be38cd8760f88b0b155335b0e8f00a546573b4d"
+    },
+    {
+      "path": "tests/test_alphamind_phase3_acceptance.py",
+      "role": "automated_test",
+      "size": 11720,
+      "sha256": "ae68bc51b5bbd06e6c0bfdf2e745c1be317f3f1c74d6bc7ee045aaa81a621d8c"
+    },
+    {
+      "path": "tests/test_alphamind_phase3_graph.py",
+      "role": "automated_test",
+      "size": 3959,
+      "sha256": "431b33b1a762c41d78e8cde55ae35a90a494be0b501c64cd8b2f6f991a1d3002"
+    },
+    {
+      "path": "tests/test_alphamind_phase3_graph_online_acceptance.py",
+      "role": "automated_test",
+      "size": 4203,
+      "sha256": "2ef58d5a241a8ca1cd4b06f46c34e42f5e30a076c1595e716f931d16c4459d19"
+    },
+    {
+      "path": "tests/test_alphamind_phase3_online_eval.py",
+      "role": "automated_test",
+      "size": 5589,
+      "sha256": "20792cc8bdeeecaab4db8eca2347f46475dde41612d06aeafd0b74b3333464a5"
+    },
+    {
+      "path": "tests/test_alphamind_phase3_pdf.py",
+      "role": "automated_test",
+      "size": 2687,
+      "sha256": "f7b5dd7bee49927d589013ac985adf36e09c309b422438e5f15d886cc16857c6"
+    },
+    {
+      "path": "tests/test_alphamind_phase3_quality_gate.py",
+      "role": "automated_test",
+      "size": 6300,
+      "sha256": "230d994b841810d897846441aa46e5fce57c1719bb1982320566d34f71696754"
+    },
+    {
+      "path": "tests/test_alphamind_phase3_retrieval.py",
+      "role": "automated_test",
+      "size": 5173,
+      "sha256": "cd297f983fa86f17d8774fd3248410db013eed40b4fde899e914ac41f00a38a4"
+    },
+    {
+      "path": "tests/test_alphamind_relation_graph.py",
+      "role": "automated_test",
+      "size": 25587,
+      "sha256": "371c9d417d84d034a986bf25959a4bf8bda56649eaaa9869235e03bd3398f1a1"
+    },
+    {
+      "path": "tests/test_alphamind_release_manifest.py",
+      "role": "automated_test",
+      "size": 6923,
+      "sha256": "9a706874cb468e7efb1e76ae5c50a7938737c4cb4759fcc49ac1f731e76be177"
+    },
+    {
+      "path": "tests/test_alphamind_stack_diagnose.py",
+      "role": "automated_test",
+      "size": 3964,
+      "sha256": "a8df8a7f9a7325f958dab8e8c85fab4b708a342222ee9ec07cafa51e1c553e04"
+    }
+  ]
+}

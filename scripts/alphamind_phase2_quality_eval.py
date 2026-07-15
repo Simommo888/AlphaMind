@@ -358,29 +358,51 @@ def doc_stem_from_path(value: str) -> str:
     return Path(cleaned).stem
 
 
+def normalize_identifier(value: str) -> str:
+    return "".join(str(value or "").lower().split())
+
+
+def doc_id_without_hash(value: str) -> str:
+    value = str(value or "").strip()
+    match = re.match(r"^(?P<prefix>.+)_[0-9a-f]{12}$", value, flags=re.IGNORECASE)
+    return match.group("prefix") if match else value
+
+
 def add_alias(alias_to_doc: dict[str, str], alias: str, doc_id: str) -> None:
     alias = str(alias or "").strip()
     doc_id = str(doc_id or "").strip()
     if not alias or not doc_id:
         return
-    alias_to_doc.setdefault(alias, doc_id)
-    alias_to_doc.setdefault(normalize_identifier(alias), doc_id)
-
-
-def normalize_identifier(value: str) -> str:
-    return "".join(str(value or "").lower().split())
+    alias_to_doc[alias] = doc_id
+    alias_to_doc[normalize_identifier(alias)] = doc_id
+    stable_alias = doc_id_without_hash(alias)
+    if stable_alias and stable_alias != alias:
+        alias_to_doc[stable_alias] = doc_id
+        alias_to_doc[normalize_identifier(stable_alias)] = doc_id
 
 
 def canonical_doc_id(value: str, alias_to_doc: dict[str, str]) -> str:
     value = str(value or "").strip()
     if not value:
         return ""
+    stable_value = doc_id_without_hash(value)
+    if stable_value and stable_value != value:
+        stable_direct = alias_to_doc.get(stable_value) or alias_to_doc.get(normalize_identifier(stable_value))
+        if stable_direct:
+            return stable_direct
     direct = alias_to_doc.get(value) or alias_to_doc.get(normalize_identifier(value))
     if direct:
         return direct
     stem = doc_stem_from_path(value)
     if stem and stem != value:
-        return alias_to_doc.get(stem) or alias_to_doc.get(normalize_identifier(stem)) or stem
+        stable_stem = doc_id_without_hash(stem)
+        return (
+            alias_to_doc.get(stable_stem)
+            or alias_to_doc.get(normalize_identifier(stable_stem))
+            or alias_to_doc.get(stem)
+            or alias_to_doc.get(normalize_identifier(stem))
+            or stem
+        )
     return value
 
 
@@ -458,6 +480,64 @@ def build_knowledge_map(run_dir: Path, acceptance_report: Path, ingest_reports: 
                     title=str(metadata.get("title") or ""),
                 )
     return knowledge_to_doc, doc_to_knowledge, alias_to_doc
+
+
+def merge_kb_knowledge_map_from_payload(
+    knowledge_to_doc: dict[str, str],
+    doc_to_knowledge: dict[str, str],
+    alias_to_doc: dict[str, str],
+    payload: Any,
+) -> int:
+    count = 0
+    for item in extract_items(payload):
+        metadata = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
+        add_mapping(
+            knowledge_to_doc,
+            doc_to_knowledge,
+            alias_to_doc,
+            str(item.get("id") or item.get("knowledge_id") or item.get("knowledgeId") or ""),
+            doc_id=str(metadata.get("doc_id") or item.get("doc_id") or ""),
+            file_path=str(metadata.get("file_path") or item.get("file_path") or ""),
+            relative_path=str(metadata.get("relative_path") or item.get("relative_path") or ""),
+            title=str(item.get("title") or item.get("file_name") or metadata.get("title") or ""),
+        )
+        count += 1
+    return count
+
+
+def merge_kb_knowledge_map_from_api(
+    knowledge_to_doc: dict[str, str],
+    doc_to_knowledge: dict[str, str],
+    alias_to_doc: dict[str, str],
+    *,
+    base_url: str,
+    api_key: str,
+    kb_id: str,
+    timeout: float,
+) -> int:
+    if not kb_id:
+        return 0
+    total = 0
+    page = 1
+    page_size = 100
+    while True:
+        status, payload = http_json(
+            base_url,
+            f"api/v1/knowledge-bases/{kb_id}/knowledge",
+            api_key=api_key,
+            query={"page": page, "page_size": page_size},
+            timeout=timeout,
+        )
+        if status < 200 or status >= 300:
+            break
+        items = extract_items(payload)
+        if not items:
+            break
+        total += merge_kb_knowledge_map_from_payload(knowledge_to_doc, doc_to_knowledge, alias_to_doc, payload)
+        if len(items) < page_size:
+            break
+        page += 1
+    return total
 
 
 def item_title(item: dict[str, Any]) -> str:
@@ -1309,6 +1389,16 @@ def evaluate(args: argparse.Namespace) -> dict[str, Any]:
     acceptance_report = Path(args.acceptance_report) if args.acceptance_report else latest_acceptance_report(DEFAULT_PHASE2_RUN_DIR)
     ingest_reports = [Path(path) for path in args.ingest_report] if args.ingest_report else ingest_reports_from_dir(DEFAULT_PHASE2_RUN_DIR)
     knowledge_to_doc, doc_to_knowledge, alias_to_doc = build_knowledge_map(DEFAULT_PHASE2_RUN_DIR, acceptance_report, ingest_reports)
+    if kb_id:
+        merge_kb_knowledge_map_from_api(
+            knowledge_to_doc,
+            doc_to_knowledge,
+            alias_to_doc,
+            base_url=base_url,
+            api_key=api_key,
+            kb_id=kb_id,
+            timeout=args.timeout,
+        )
     gt_entries, gt_validation = load_ground_truth_entries(queries, ground_truth_payload, alias_to_doc)
     gt_entries = {query_id: canonicalize_entry(entry, alias_to_doc) for query_id, entry in gt_entries.items()}
     gt_validation = validate_ground_truth(queries, gt_entries)

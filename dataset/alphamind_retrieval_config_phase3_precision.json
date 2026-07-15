@@ -1,0 +1,58 @@
+{
+  "schema_version": "alphamind.phase3.retrieval.v1",
+  "embedding_top_k": 100,
+  "vector_threshold": 0.1,
+  "keyword_threshold": 0.18,
+  "rerank_model_id": "alphamind-rerank-default",
+  "rerank_top_k": 30,
+  "rerank_threshold": 0.12,
+  "query_expansion": {
+    "enabled": true,
+    "lexicon_path": "dataset/alphamind_financial_lexicon_phase3.json",
+    "max_expansions": 8,
+    "preserve_original_query": true
+  },
+  "fusion": {
+    "algorithm": "weighted_rrf",
+    "rrf_k": 60,
+    "weights": {
+      "dense": 0.5,
+      "sparse": 0.3,
+      "graph": 0.2
+    },
+    "deduplicate_by": "chunk_id"
+  },
+  "rerank": {
+    "enabled": true,
+    "mode": "model_api",
+    "model_enabled": true,
+    "top_k": 30,
+    "require_source_lineage": true,
+    "boost_exact_financial_terms": 0.2,
+    "boost_graph_doc_ids": 0.15,
+    "provider": "qwen3-shared-service",
+    "endpoint_env": "RERANK_BASE_URL"
+  },
+  "answer_policy": {
+    "require_references": true,
+    "no_evidence_response": "未在知识库中检索到足够且可追溯的证据，不能编造财务数据、客户供应商关系、目标价或评级。",
+    "financial_metric_fields": [
+      "period",
+      "value",
+      "unit",
+      "source_doc_id",
+      "source_chunk_id",
+      "page"
+    ],
+    "cross_document_min_distinct_doc_ids": 2,
+    "graph_is_retrieval_hint_only": true
+  },
+  "quality_thresholds": {
+    "mean_recall_at_10": 0.9,
+    "mean_reciprocal_rank": 0.9,
+    "citation_doc_recall": 0.95,
+    "no_evidence_refusal_rate": 1.0,
+    "p95_search_latency_ms": 3000,
+    "error_rate": 0.01
+  }
+}

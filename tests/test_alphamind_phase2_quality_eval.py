@@ -143,6 +143,87 @@ class Phase2QualityEvalTests(unittest.TestCase):
         self.assertNotIn(" True", expanded)
         self.assertNotRegex(expanded, r"\s2(?:\s|$)")
 
+    def test_canonical_doc_id_ignores_unstable_hash_suffix_aliases(self):
+        alias_to_doc = {}
+
+        evaluator.add_alias(
+            alias_to_doc,
+            "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_44bfbdfba4a2",
+            "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_44bfbdfba4a2",
+        )
+
+        self.assertEqual(
+            evaluator.canonical_doc_id(
+                "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_a51e9c0f4fa1",
+                alias_to_doc,
+            ),
+            "alphamind_2025_07_02_华泰证券_信捷电气_603416_SH_PLC筑牢工控基本盘_人形布局加速_pdf_44bfbdfba4a2",
+        )
+
+    def test_add_mapping_aliases_doc_id_without_hash_suffix(self):
+        knowledge_to_doc = {}
+        doc_to_knowledge = {}
+        alias_to_doc = {}
+
+        evaluator.add_mapping(
+            knowledge_to_doc,
+            doc_to_knowledge,
+            alias_to_doc,
+            "kid-current",
+            doc_id="alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_f96d20512a82",
+        )
+
+        self.assertEqual(
+            evaluator.canonical_doc_id(
+                "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_b22476eeb0dd",
+                alias_to_doc,
+            ),
+            "alphamind_2026_05_31_国盛证券_德龙激光_688170_SH_超快激光平台型小巨人_下游应用全面开花_pdf_f96d20512a82",
+        )
+
+    def test_stable_doc_id_alias_prefers_current_kb_mapping_over_stale_direct_alias(self):
+        alias_to_doc = {}
+        old_doc_id = "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_b2c1aedc210b"
+        current_doc_id = "alphamind_2026_02_27_银河证券_信捷电气_603416_SH_首次覆盖报告_工控基本盘扎实_加速布局具身智能_pdf_0250ed0d0d33"
+
+        evaluator.add_alias(alias_to_doc, old_doc_id, old_doc_id)
+        evaluator.add_alias(alias_to_doc, current_doc_id, current_doc_id)
+
+        self.assertEqual(evaluator.canonical_doc_id(old_doc_id, alias_to_doc), current_doc_id)
+        self.assertEqual(evaluator.canonical_doc_id(current_doc_id, alias_to_doc), current_doc_id)
+
+    def test_merge_current_kb_knowledge_map_uses_api_metadata_doc_ids(self):
+        knowledge_to_doc = {}
+        doc_to_knowledge = {}
+        alias_to_doc = {}
+        payload = {
+            "data": [
+                {
+                    "id": "kid-current",
+                    "metadata": {
+                        "doc_id": "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_3e1125e664dd",
+                        "file_path": "D:/AlphaMind/数据/Documents(1)/2025-08-05-国金证券-信捷电气(603416.SH)小型PLC龙头行稳致远，新品类&机器人多级驱动.pdf",
+                    },
+                    "file_name": "Documents(1)/2025-08-05-国金证券-信捷电气(603416.SH)小型PLC龙头行稳致远，新品类&机器人多级驱动.pdf",
+                    "title": "Documents(1)/2025-08-05-国金证券-信捷电气(603416.SH)小型PLC龙头行稳致远，新品类&机器人多级驱动.pdf",
+                }
+            ]
+        }
+
+        evaluator.merge_kb_knowledge_map_from_payload(knowledge_to_doc, doc_to_knowledge, alias_to_doc, payload)
+
+        self.assertEqual(
+            knowledge_to_doc["kid-current"],
+            "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_3e1125e664dd",
+        )
+        self.assertEqual(
+            evaluator.canonical_doc_id(
+                "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_e536152e95ec",
+                alias_to_doc,
+            ),
+            "alphamind_2025_08_05_国金证券_信捷电气_603416_SH_小型PLC龙头行稳致远_新品类_机器人多级驱动_pdf_3e1125e664dd",
+        )
+
     def test_retrieval_warn_is_quality_warning_not_setup_failure(self):
         validation = evaluator.GroundTruthValidation(
             status="complete",
